@@ -1,0 +1,39 @@
+{
+  "name": "google-sheets-summarizer",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AI summarizer tool for shared google sheets on Google Drive.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "migrate": "node migrations/migrate.js",
+    "migrate:status": "node -e \"require('./migrations/migrate.js').MigrationRunner.getAppliedMigrations().then(console.log)\"",
+    "db:create": "node database/scripts/createDatabase.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GarethNobleLFG/google-sheets-summarizer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GarethNobleLFG/google-sheets-summarizer/issues"
+  },
+  "homepage": "https://github.com/GarethNobleLFG/google-sheets-summarizer#readme",
+  "dependencies": {
+    "csv-parser": "^3.2.0",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "googleapis": "^170.0.0",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.12",
+    "nodemon": "^3.1.11",
+    "openai": "^6.16.0",
+    "pg": "^8.17.2",
+    "pg-pool": "^3.11.0",
+    "twilio": "^5.11.2"
+  }
+}
