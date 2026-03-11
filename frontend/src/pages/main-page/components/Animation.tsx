@@ -147,7 +147,7 @@ export const Animation = () => {
                     />
                 ))}
 
-                {/* The Head - updated colors to match theme */}
+                {/* The Head - Simple fun design with thick outline */}
                 <motion.div
                     initial={{ scale: 0.8, y: 10 }}
                     animate={{
@@ -160,53 +160,116 @@ export const Animation = () => {
                         repeat: Infinity,
                         repeatType: "reverse"
                     }}
-                    className="relative w-24 h-24 rounded-full bg-gradient-to-br from-indigo-100 to-purple-200 dark:from-indigo-800 dark:to-purple-900 shadow-xl border-3 border-white/30"
+                    className="relative w-24 h-24 rounded-full bg-white dark:bg-gray-100 border-4 border-gray-600 dark:border-gray-500 shadow-lg z-10"
                 >
-                    {/* Face features */}
+                    {/* Simple fun face features */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        {/* Eyes */}
-                        <div className="flex space-x-3 mb-1">
+                        {/* Eyes - simple dots */}
+                        <div className="flex space-x-3 mb-2">
                             <motion.div
-                                className="w-2.5 h-2.5 bg-gray-700 dark:bg-gray-300 rounded-full"
-                                animate={{ scaleY: [1, 0.1, 1] }}
+                                className="w-3 h-3 bg-gray-600 dark:bg-gray-700 rounded-full"
+                                animate={{ scaleY: [1, 0.2, 1] }}
                                 transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
                             />
                             <motion.div
-                                className="w-2.5 h-2.5 bg-gray-700 dark:bg-gray-300 rounded-full"
-                                animate={{ scaleY: [1, 0.1, 1] }}
+                                className="w-3 h-3 bg-gray-600 dark:bg-gray-700 rounded-full"
+                                animate={{ scaleY: [1, 0.2, 1] }}
                                 transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
                             />
                         </div>
 
-                        {/* Mouth - excited expression */}
+                        {/* Mouth - happy curve */}
                         <motion.div
-                            className="w-5 h-2.5 border-2 border-gray-700 dark:border-gray-300 border-t-0 rounded-b-full"
-                            animate={{ scaleX: [1, 1.2, 1] }}
+                            className="w-6 h-3 border-b-4 border-gray-600 dark:border-gray-700 rounded-b-full"
+                            animate={{ scaleX: [1, 1.3, 1] }}
                             transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
                         />
                     </div>
-
-                    {/* Glow effect - updated color */}
-                    <motion.div
-                        className="absolute inset-0 rounded-full bg-indigo-400/20"
-                        animate={{
-                            scale: [1, 1.2, 1],
-                            opacity: [0.2, 0.4, 0.2]
-                        }}
-                        transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                    />
                 </motion.div>
 
-                {/* Pulsing ring around head - updated color */}
+                {/* Saturn Ring 1 - Far top right */}
                 <motion.div
-                    className="absolute inset-0 w-24 h-24 rounded-full border-2 border-indigo-400/40"
+                    className="absolute -top-8 -right-12 w-20 h-6 border-2 border-indigo-400/70 rounded-full"
+                    animate={{ rotate: [0, 360] }}
+                    transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatType: "loop"
+                    }}
+                />
+
+                {/* Saturn Ring 2 - Far left side */}
+                <motion.div
+                    className="absolute top-1/2 -left-16 w-24 h-5 border-2 border-purple-400/60 rounded-full"
+                    style={{ transform: "translateY(-50%) rotate(30deg)" }}
+                    animate={{ rotate: [0, 360] }}
+                    transition={{
+                        duration: 6,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatType: "loop"
+                    }}
+                />
+
+                {/* Saturn Ring 3 - Far bottom left */}
+                <motion.div
+                    className="absolute -bottom-10 -left-8 w-18 h-4 border-2 border-cyan-400/50 rounded-full"
+                    style={{ transform: "rotate(-45deg)" }}
+                    animate={{ rotate: [0, -360] }}
+                    transition={{
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatType: "loop"
+                    }}
+                />
+
+                {/* Saturn Ring 4 - Far right side */}
+                <motion.div
+                    className="absolute top-1/4 -right-20 w-16 h-3 border border-gray-400/40 rounded-full"
+                    style={{ transform: "rotate(60deg)" }}
+                    animate={{ rotate: [0, 360] }}
+                    transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatType: "loop"
+                    }}
+                />
+
+                {/* Saturn Ring 5 - Far top */}
+                <motion.div
+                    className="absolute -top-12 left-1/2 w-22 h-5 border-2 border-green-400/50 rounded-full"
+                    style={{ transform: "translateX(-50%) rotate(15deg)" }}
+                    animate={{ rotate: [0, 360] }}
+                    transition={{
+                        duration: 7,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatType: "loop"
+                    }}
+                />
+
+                {/* Saturn Ring 6 - Far bottom right */}
+                <motion.div
+                    className="absolute -bottom-6 -right-14 w-14 h-3 border border-yellow-400/40 rounded-full"
+                    style={{ transform: "rotate(-30deg)" }}
+                    animate={{ rotate: [0, -360] }}
+                    transition={{
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: "linear",
+                        repeatType: "loop"
+                    }}
+                />
+
+                {/* Simple pulsing outline ring */}
+                <motion.div
+                    className="absolute inset-0 w-24 h-24 rounded-full border-2 border-gray-400/60 z-20"
                     animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [0.6, 0.1, 0.6]
+                        scale: [1, 1.1, 1],
+                        opacity: [0.5, 0.8, 0.5]
                     }}
                     transition={{
                         duration: 2.5,
