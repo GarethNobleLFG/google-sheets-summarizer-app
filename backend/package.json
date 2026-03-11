@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/GarethNobleLFG/google-sheets-summarizer#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "csv-parser": "^3.2.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^17.2.3",
