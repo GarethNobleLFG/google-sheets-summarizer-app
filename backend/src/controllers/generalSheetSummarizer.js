@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { generateGeneralSummary } from '../services/generateGeneralSummary.js';
-import * as sheetSummary from '../modules/sheetSummary.js';
 
 dotenv.config();
 

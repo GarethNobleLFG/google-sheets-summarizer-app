@@ -1,37 +1,39 @@
+import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
-import { Pool } from 'pg';
 
 dotenv.config();
 
-let pool;
+let sequelize;
 
 if (process.env.DB_CONNECTION_TYPE === 'local') {
-    // For local development PostgreSQL server.
-    pool = new Pool({
-        user: process.env.DB_USER,
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
-        port: process.env.DB_PORT || 5432,
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-        max: 20,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 2000,
-    });
-}
-else {
-    // Connect to external PostgreSQL databse (configured for Railway).
-    pool = new Pool({
-        connectionString: process.env.DATABASE_PUBLIC_URL,
-        ssl: {
-            rejectUnauthorized: false
+    sequelize = new Sequelize(
+        process.env.DB_NAME,
+        process.env.DB_USER,
+        process.env.DB_PASSWORD,
+        {
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT || 5432,
+            dialect: 'postgres',
+            logging: process.env.NODE_ENV === 'development' ? console.log : false,
+            pool: {
+                max: 20,
+                min: 0,
+                acquire: 30000,
+                idle: 10000
+            },
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        }
+    );
+} else {
+    sequelize = new Sequelize(process.env.DATABASE_PUBLIC_URL, {
+        dialect: 'postgres',
+        logging: process.env.NODE_ENV === 'development' ? console.log : false,
+        dialectOptions: {
+            ssl: {
+                rejectUnauthorized: false
+            }
         }
     });
 }
 
-pool.on('error', (err) => {
-    console.error('Unexpected error on idle client', err);
-    process.exit(-1);
-});
-
-export default pool;
+export default sequelize;

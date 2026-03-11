@@ -1,18 +1,27 @@
 import dotenv from 'dotenv';
-import pool from './database.js';
+import sequelize from './database.js'; 
 import { createDatabase } from '../modules/createDatabase.js';
 import { runAllPending } from '../migrations/migrate.js';
 
 dotenv.config();
 
 export async function initializeDatabase() {
-    // Only create database in local development
+    // Create database if needed
     const dbResult = await createDatabase();
     if (dbResult.error) {
         throw new Error(`Database setup failed: ${dbResult.error}`);
     }
 
-    // Run migrations
+    // Test Sequelize connection
+    try {
+        await sequelize.authenticate();
+        console.log('Sequelize database connection established successfully.');
+    } 
+    catch (error) {
+        throw new Error(`Sequelize connection failed: ${error.message}`);
+    }
+    
+    // Run SQL migrations
     try {
         await runAllPending();
     }
@@ -20,10 +29,10 @@ export async function initializeDatabase() {
         console.error('Migration failed:', error.message);
         throw new Error(`Migration failed: ${error.message}`);
     }
-
+    
     console.log('Database initialization complete');
 }
 
 export async function closeDatabase() {
-    await pool.end();
+    await sequelize.close(); // Use Sequelize close instead of pool.end()
 }

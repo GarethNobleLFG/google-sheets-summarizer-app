@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import { sendMessage } from './messagingService.js';
 import { processSheetForAI } from './google/googleSheetService.js';
-import { create } from '../modules/sheetSummary.js';
+import { create } from '../repositories/sheetSummary.js';  
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ const openai = new OpenAI({
 
 export async function generateDailySummary(spreadsheetUrl, sheetOptions) {
     try {
-        // Step 1: Process and get result from google sheet using the URL
+        // Step 1: Process and get result from google sheet using the URL.
         const sheetData = await processSheetForAI(spreadsheetUrl, sheetOptions);
 
         if (!sheetData.success) {

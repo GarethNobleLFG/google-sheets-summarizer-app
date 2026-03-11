@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import { sendMessage } from './messagingService.js';
 import { processSheetForAI } from './google/googleSheetService.js';
-import { create } from '../modules/sheetSummary.js';
+import { create } from '../repositories/sheetSummary.js';  
 
 dotenv.config();
 
