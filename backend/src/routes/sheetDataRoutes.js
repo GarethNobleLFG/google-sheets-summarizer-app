@@ -13,6 +13,5 @@ router.put('/:id', /* authenticateToken, */ sheetDataController.updateSheetData)
 router.delete('/:id', /* authenticateToken, */ sheetDataController.deleteSheetData);
 router.delete('/user/:userId/all', /* authenticateToken, */ sheetDataController.deleteAllUserSheetData);
 router.post('/user/:userId/trigger', /* authenticateToken, */ sheetDataController.triggerUserSummaries);
-router.post('/admin/trigger-poll', /* authenticateToken, */ sheetDataController.triggerManualPollingCycle);
 
 export default router;

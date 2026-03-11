@@ -1,6 +1,5 @@
 import * as sheetDataCrudServices from '../services/summary-services/sheetDataCrudServices.js';
 import * as sheetDataServices from '../services/summary-services/sheetDataServices.js';
-import { triggerManualPoll } from '../services/cronScheduler.js';
 
 // Create a new sheet data entry
 export async function createSheetData(req, res) {
@@ -272,35 +271,6 @@ export async function triggerUserSummaries(req, res) {
         
         if (error.message.includes('required')) {
             return res.status(400).json({
-                success: false,
-                error: error.message
-            });
-        }
-        
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error'
-        });
-    }
-}
-
-// Manually trigger polling cycle for all users (from cronScheduler)
-export async function triggerManualPollingCycle(req, res) {
-    try {
-        const result = await triggerManualPoll();
-        
-        res.status(200).json({
-            success: true,
-            data: result,
-            message: `Manual polling cycle completed. Processed: ${result.processed}, Executed: ${result.executed}, Errors: ${result.errors?.length || 0}`
-        });
-        
-    } 
-    catch (error) {
-        console.error('Error triggering manual polling cycle:', error);
-        
-        if (error.message.includes('already running')) {
-            return res.status(409).json({
                 success: false,
                 error: error.message
             });

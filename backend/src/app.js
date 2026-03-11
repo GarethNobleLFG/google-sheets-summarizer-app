@@ -10,29 +10,16 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Initialize database on first request.
-let dbInitialized = false;
+// Initialize everything on startup
+try {
+    await initializeDatabase();    
 
-app.use(async (req, res, next) => {
-    if (!dbInitialized) {
-        try {
-            await initializeDatabase();
-            
-            // Start the cron scheduler after database is initialized
-            startScheduler();
-            
-            dbInitialized = true;
-        } 
-        catch (error) {
-            console.error('❌ Database initialization failed:', error.message);
-            return res.status(500).json({
-                error: 'Database initialization failed',
-                message: error.message
-            });
-        }
-    }
-    next();
-});
+    startScheduler();
+} 
+catch (error) {
+    console.error('App initialization failed:', error.message);
+    process.exit(1); 
+}
 
 // Add graceful shutdown handler
 process.on('SIGTERM', () => {
