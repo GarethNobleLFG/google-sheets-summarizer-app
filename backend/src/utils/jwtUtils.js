@@ -22,8 +22,3 @@ export function verifyToken(token) {
         throw new Error('Invalid or expired token');
     }
 }
-
-// Decode token without verification (for debugging)
-export function decodeToken(token) {
-    return jwt.decode(token);
-}

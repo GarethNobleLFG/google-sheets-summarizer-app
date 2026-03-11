@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import * as userRepository from '../repositories/userOperations.js';
+import { generateToken } from '../utils/jwtUtils.js';
 
 // Create a new user
 export async function createUser(email, password) {
@@ -29,7 +30,7 @@ export async function createUser(email, password) {
         const { hashed_password: _, ...userResponse } = user;
         return userResponse;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -43,7 +44,7 @@ export async function getUserById(id) {
         }
 
         const user = await userRepository.findById(parseInt(id));
-        
+
         if (!user) {
             throw new Error('User not found');
         }
@@ -52,7 +53,7 @@ export async function getUserById(id) {
         const { hashed_password: _, ...userResponse } = user;
         return userResponse;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -66,7 +67,7 @@ export async function getUserByEmail(email) {
         }
 
         const user = await userRepository.findByEmail(email);
-        
+
         if (!user) {
             throw new Error('User not found');
         }
@@ -75,7 +76,7 @@ export async function getUserByEmail(email) {
         const { hashed_password: _, ...userResponse } = user;
         return userResponse;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -100,7 +101,7 @@ export async function getAllUsers(limit = 50) {
             }
         };
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -146,7 +147,7 @@ export async function updateUser(id, updateData) {
         const updatedUser = await userRepository.updateById(parseInt(id), updateFields);
         return updatedUser;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -160,14 +161,14 @@ export async function deleteUser(id) {
         }
 
         const deletedUser = await userRepository.deleteById(parseInt(id));
-        
+
         if (!deletedUser) {
             throw new Error('User not found');
         }
 
         return deletedUser;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -181,20 +182,30 @@ export async function authenticateUser(email, password) {
         }
 
         const user = await userRepository.findByEmail(email);
-        
+
         if (!user) {
             throw new Error('Invalid credentials');
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
-        
+
         if (!isPasswordValid) {
             throw new Error('Invalid credentials');
         }
 
         // Remove password from response
         const { hashed_password: _, ...userResponse } = user;
-        return userResponse;
+
+        // Generate JWT token
+        const token = generateToken({
+            id: user.id,
+            email: user.email
+        });
+
+        return {
+            user: userResponse,
+            token
+        };
 
     } 
     catch (error) {
