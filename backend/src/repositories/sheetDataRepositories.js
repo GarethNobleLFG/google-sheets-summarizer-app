@@ -4,7 +4,7 @@ import { Op } from 'sequelize';
 // Create a new sheet data entry
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency } = sheetDataInput;
-    
+
     try {
         const sheetData = await SheetData.create({
             user_id,
@@ -13,7 +13,7 @@ export async function create(sheetDataInput) {
             frequency
         });
         return sheetData.dataValues;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to create sheet data: ${error.message}`);
     }
@@ -24,21 +24,25 @@ export async function findById(id) {
     try {
         const sheetData = await SheetData.findByPk(id);
         return sheetData ? sheetData.dataValues : null;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to find sheet data: ${error.message}`);
     }
 }
 
-// Find all sheet data entries
-export async function findAll(limit = 50) {
+// Find all sheet data entries for a specific user
+export async function findAllFromUser(userId, limit = 50) {
     try {
         const sheetDataEntries = await SheetData.findAll({
+            where: {
+                user_id: userId
+            },
+            attributes: ['id', 'user_id', 'link', 'sheet_name', 'frequency', 'created_at'],
             order: [['created_at', 'DESC']],
             limit: limit
         });
         return sheetDataEntries.map(entry => entry.dataValues);
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to fetch sheet data entries: ${error.message}`);
     }
@@ -55,7 +59,7 @@ export async function findByUserId(userId, limit = 20) {
             limit: limit
         });
         return sheetDataEntries.map(entry => entry.dataValues);
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to fetch sheet data by user ID: ${error.message}`);
     }
@@ -68,14 +72,14 @@ export async function updateById(id, updateData) {
             where: { id },
             returning: true
         });
-        
+
         if (updatedRowsCount === 0) {
             return null;
         }
-        
+
         const updatedSheetData = await SheetData.findByPk(id);
         return updatedSheetData.dataValues;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to update sheet data: ${error.message}`);
     }
@@ -88,11 +92,11 @@ export async function deleteById(id) {
         if (!sheetData) {
             return null;
         }
-        
+
         const sheetDataValues = sheetData.dataValues;
         await sheetData.destroy();
         return sheetDataValues;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to delete sheet data: ${error.message}`);
     }
@@ -105,7 +109,7 @@ export async function deleteByUserId(userId) {
             where: { user_id: userId }
         });
         return deletedRowsCount;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to delete sheet data by user ID: ${error.message}`);
     }
