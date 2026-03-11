@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import sequelize from './config/database.js';  
 import { initializeDatabase } from './config/databaseSetup.js';
+import { startScheduler, stopScheduler } from './services/cronScheduler.js';
 
 dotenv.config();
 
@@ -17,17 +17,34 @@ app.use(async (req, res, next) => {
     if (!dbInitialized) {
         try {
             await initializeDatabase();
+            
+            // Start the cron scheduler after database is initialized
+            startScheduler();
+            
             dbInitialized = true;
         } 
         catch (error) {
             console.error('❌ Database initialization failed:', error.message);
             return res.status(500).json({
                 error: 'Database initialization failed',
-                message: error.mesWsage
+                message: error.message
             });
         }
     }
     next();
+});
+
+// Add graceful shutdown handler
+process.on('SIGTERM', () => {
+    console.log('Received SIGTERM, shutting down gracefully');
+    stopScheduler();
+    process.exit(0);
+});
+
+process.on('SIGINT', () => {
+    console.log('Received SIGINT, shutting down gracefully');
+    stopScheduler();
+    process.exit(0);
 });
 
 // Import routes
