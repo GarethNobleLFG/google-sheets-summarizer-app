@@ -46,7 +46,7 @@ export const HeroSection = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">Real-time Updates</span>
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">Scheduled Reports</span>
                         </div>
                     </div>
                     <Animation />

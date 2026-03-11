@@ -16,7 +16,7 @@ export const Navigation = () => {
                         </svg>
                     </div>
                     <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
-                        SheetsFlow
+                        Clarus
                     </span>
                 </div>
                 <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
