@@ -8,8 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "migrate": "node migrations/migrate.js",
-    "migrate:status": "node -e \"require('./migrations/migrate.js').MigrationRunner.getAppliedMigrations().then(console.log)\"",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:status": "npx sequelize-cli db:migrate:status",
     "db:create": "node database/scripts/createDatabase.js"
   },
   "repository": {

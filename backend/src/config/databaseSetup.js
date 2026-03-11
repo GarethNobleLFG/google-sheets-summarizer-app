@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
-import sequelize from './database.js'; 
-import { createDatabase } from '../modules/createDatabase.js';
-import { runAllPending } from '../migrations/migrate.js';
+import sequelize from './database.js';
+import { createDatabase } from '../models/createDatabase.js';
+import { execSync } from 'child_process';
+import '../models/sheetSummaryModel.js'; 
 
 dotenv.config();
 
@@ -13,18 +14,18 @@ export async function initializeDatabase() {
     }
 
     // Test Sequelize connection
-    try {
-        await sequelize.authenticate();
-        console.log('Sequelize database connection established successfully.');
-    } 
-    catch (error) {
-        throw new Error(`Sequelize connection failed: ${error.message}`);
-    }
+    await sequelize.authenticate();
+    console.log('Sequelize database connection established successfully.');
     
-    // Run SQL migrations
+    // Run Sequelize CLI migrations instead of using explicit migrations.js file.
     try {
-        await runAllPending();
-    }
+        console.log('Running Sequelize migrations...');
+        execSync('npx sequelize-cli db:migrate', { 
+            stdio: 'inherit',
+            cwd: process.cwd()
+        });
+        console.log('All migrations completed successfully!');
+    } 
     catch (error) {
         console.error('Migration failed:', error.message);
         throw new Error(`Migration failed: ${error.message}`);
@@ -34,5 +35,5 @@ export async function initializeDatabase() {
 }
 
 export async function closeDatabase() {
-    await sequelize.close(); // Use Sequelize close instead of pool.end()
+    await sequelize.close();
 }
