@@ -1,9 +1,9 @@
 import * as userRepository from '../../repositories/userRepositories.js';
 import * as sheetDataCrudServices from './sheetDataCrudServices.js';
-import { generateGeneralSummary } from '../generateGeneralSummary.js';
+import { generateGeneralSummary } from './ai-generations/generateGeneralSummary.js';
 import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 
-// Main polling function
+// Main polling function.
 export async function pollUsersForScheduledSummaries() {
     try {
         console.log('Starting scheduled summary polling...');
