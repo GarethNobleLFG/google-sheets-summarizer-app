@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import * as userRepository from '../repositories/userOperations.js';
+import * as userRepository from '../repositories/userRepositories.js';
 import { generateToken } from '../utils/jwtUtils.js';
 
 // Create a new user
