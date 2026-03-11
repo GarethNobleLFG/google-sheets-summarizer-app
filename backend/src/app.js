@@ -31,8 +31,6 @@ app.use(async (req, res, next) => {
 });
 
 // Import routes
-import dailySummaryRoutes from './routes/dailySheetSummary.js';
-import generalSummaryRoutes from './routes/generalSheetSummary.js';
 import userRoutes from './routes/userRoutes.js';
 
 // Routes
@@ -44,8 +42,6 @@ app.get('/', (req, res) => {
     });
 });
 
-app.use('/daily-summary', dailySummaryRoutes);
-app.use('/general-summary', generalSummaryRoutes);
 app.use('/users', userRoutes);
 
 // 404 handler
