@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Animation } from './Animation';
 
 export const HeroSection = () => {
     return (
@@ -48,21 +49,7 @@ export const HeroSection = () => {
                             <span className="text-gray-700 dark:text-gray-300 font-medium">Real-time Updates</span>
                         </div>
                     </div>
-
-                    <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-8 text-sm text-gray-500 dark:text-gray-400">
-                        <div className="flex items-center space-x-2">
-                            <div className="flex -space-x-1">
-                                <div className="w-7 h-7 bg-gradient-to-r from-pink-400 to-pink-500 rounded-full border-2 border-white"></div>
-                                <div className="w-7 h-7 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full border-2 border-white"></div>
-                                <div className="w-7 h-7 bg-gradient-to-r from-green-400 to-green-500 rounded-full border-2 border-white"></div>
-                            </div>
-                            <span>Trusted by 10,000+ users</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                            <span>⭐⭐⭐⭐⭐</span>
-                            <span>4.9/5 rating</span>
-                        </div>
-                    </div>
+                    <Animation />
                 </motion.div>
             </div>
         </motion.div>
