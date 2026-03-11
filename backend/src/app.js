@@ -49,6 +49,7 @@ process.on('SIGINT', () => {
 
 // Import routes
 import userRoutes from './routes/userRoutes.js';
+import sheetDataRoutes from './routes/sheetDataRoutes.js';
 
 // Routes
 app.get('/', (req, res) => {
@@ -60,6 +61,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRoutes);
+app.use('/sheet-data', sheetDataRoutes);
 
 // 404 handler
 app.use((req, res) => {
