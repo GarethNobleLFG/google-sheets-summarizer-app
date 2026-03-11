@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sheets-summarizer-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/index.js:/app/index.js
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sheets-summarizer-frontend
+    ports:
+      - "5173:5173"  
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=5173  
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      - BROWSER=none
+      - FAST_REFRESH=true
+      - WDS_SOCKET_HOST=localhost 
+      - WDS_SOCKET_PORT=0  
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file: ./frontend/.env
+    command: npm run dev
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
