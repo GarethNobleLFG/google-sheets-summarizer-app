@@ -21,19 +21,19 @@ A Node.js API that automatically analyzes Google Sheets and generates AI-powered
 ## API Endpoints
 
 ### User Management
-POST /users/register - Create new user account
-POST /users/login - Authenticate and get JWT token
-GET /users - Get all users (protected)
-GET /users/:id - Get user by ID (protected)
-GET /users/email/:email - Get user by email (protected)
-PUT /users/:id - Update user details (protected)
-DELETE /users/:id - Delete user account (protected)
+- POST /users/register - Create new user account
+- POST /users/login - Authenticate and get JWT token
+- GET /users - Get all users (protected)
+- GET /users/:id - Get user by ID (protected)
+- GET /users/email/:email - Get user by email (protected)
+- PUT /users/:id - Update user details (protected)
+- DELETE /users/:id - Delete user account (protected)
 
 ### Sheet Data Management
-POST /sheet-data - Add Google Sheet for analysis
-GET /sheet-data/:id - Get specific sheet data entry
-GET /sheet-data/user/:userId/all - Get all sheets for a user
-PUT /sheet-data/:id - Update sheet configuration
-DELETE /sheet-data/:id - Remove sheet from analysis
-DELETE /sheet-data/user/:userId/all - Remove all user sheets
-POST /sheet-data/user/:userId/trigger - Manually trigger analysis
+- POST /sheet-data - Add Google Sheet for analysis
+- GET /sheet-data/:id - Get specific sheet data entry
+- GET /sheet-data/user/:userId/all - Get all sheets for a user
+- PUT /sheet-data/:id - Update sheet configuration
+- DELETE /sheet-data/:id - Remove sheet from analysis
+- DELETE /sheet-data/user/:userId/all - Remove all user sheets
+- POST /sheet-data/user/:userId/trigger - Manually trigger analysis
