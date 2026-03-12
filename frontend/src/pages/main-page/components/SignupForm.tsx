@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 export const SignupForm = () => {
     return (
         <motion.div
-            className="flex-1 flex items-start justify-center p-6 lg:p-12 bg-gradient-to-br from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm border-l border-gray-200/50 dark:border-gray-700/50"
+            className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm border-l border-gray-200/50 dark:border-gray-700/50"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
         >
-            <div className="w-full max-w-sm mt-12">
+            <div className="w-full max-w-sm">
                 <motion.div
                     className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/50 dark:border-gray-700/50"
                     initial={{ opacity: 0, y: 30 }}
