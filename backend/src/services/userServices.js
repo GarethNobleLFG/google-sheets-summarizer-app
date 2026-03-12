@@ -28,8 +28,17 @@ export async function createUser(email, password) {
 
         // Return user without password
         const { hashed_password: _, ...userResponse } = user;
-        return userResponse;
 
+         // Generate JWT token
+        const token = generateToken({
+            id: user.id,
+            email: user.email
+        });
+
+        return {
+            user: userResponse,
+            token
+        };
     }
     catch (error) {
         throw error;
