@@ -10,20 +10,21 @@ export const MainPage = () => {
     const [user, setUser] = useState(() => checkAuth().user);
     const [_loading, _setLoading] = useState(false);
 
-    // Signup form state
+    // Signup form state.
     const [formData, setFormData] = useState({
         sheetUrl: '',
         sheetName: '',
         frequency: 'weekly'
     });
 
+    // Handle auth state across components.
     const handleAuthSuccess = () => {
         const authState = checkAuth();
         setIsAuthenticated(authState.isAuthenticated);
         setUser(authState.user);
     };
 
-    // Function to populate form for editing
+    // Function to populate form for editing.
     const handleEditSheet = (sheet: { link: string; sheet_name: string; frequency: string }) => {
         setFormData({
             sheetUrl: sheet.link,
@@ -32,7 +33,7 @@ export const MainPage = () => {
         });
     };
 
-    // Unauthenticated user view (landing page)
+    // Unauthenticated user view (landing page).
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-x-hidden">
             {/* Navigation */}
