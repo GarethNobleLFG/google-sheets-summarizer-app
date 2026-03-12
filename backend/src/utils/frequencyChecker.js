@@ -25,6 +25,11 @@ export function checkIfShouldExecute(frequency, createdAt) {
         return timeDiff >= (28 * 24 * 60 * 60 * 1000);
     }
 
+    // Now for testing
+    if (freq === 'now') {
+        return true;
+    }
+
     // Default: don't execute if we can't parse the frequency
     console.warn(`Unknown frequency format: ${frequency}`);
     return false;

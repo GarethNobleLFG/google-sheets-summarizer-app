@@ -2,10 +2,12 @@ import * as userRepository from '../../repositories/userRepositories.js';
 import * as sheetDataCrudServices from './sheetDataCrudServices.js';
 import { generateGeneralSummary } from './ai-generations/generateGeneralSummary.js';
 import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
+import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
     try {
+
         // Get all users
         const users = await userRepository.findAll(1000); // High limit to get all users
 
@@ -27,13 +29,26 @@ export async function pollUsersForScheduledSummaries() {
                 const userSheetData = await sheetDataCrudServices.getAllSheetDataFromUser(user.id, 100);
                 totalProcessed++;
 
+                if (!userSheetData || userSheetData.length === 0) {
+                    console.log(`No sheet data found for user ${user.id}`);
+                    continue;
+                }
+
                 let userExecuted = 0;
 
+                // Process each sheet for this user
                 for (const sheetData of userSheetData) {
                     try {
+
                         const shouldExecute = checkIfShouldExecute(sheetData.frequency, sheetData.created_at);
 
                         if (shouldExecute) {
+                            // Validate URL before processing
+                            const spreadsheetId = extractSpreadsheetId(sheetData.link);
+
+                            if (!spreadsheetId || spreadsheetId === sheetData.link) {
+                                throw new Error(`Invalid Google Sheets URL: ${sheetData.link}`);
+                            }
 
                             const sheetOptions = {
                                 range: `${sheetData.sheet_name}!A:Z`,
@@ -41,7 +56,6 @@ export async function pollUsersForScheduledSummaries() {
                                 maxPreviewRows: 100
                             };
 
-                            // Generate general summary for all frequencies
                             const result = await generateGeneralSummary(sheetData.link, sheetOptions);
 
                             if (!result.success) {
@@ -49,42 +63,43 @@ export async function pollUsersForScheduledSummaries() {
                             }
 
                             userExecuted++;
-                            totalExecuted++;
-                            console.log(`Executed summary for user ${user.id}, sheet: ${sheetData.sheet_name}`);
+                        } 
+                        else {
+                            console.log(`⏭️  Skipping sheet ${sheetData.id} (frequency check failed)`);
                         }
 
                     } 
                     catch (error) {
-                        console.error(`Error processing sheet ${sheetData.id} for user ${user.id}:`, error);
                         errors.push({
                             userId: user.id,
-                            email: user.email,
-                            error: `Sheet ${sheetData.sheet_name}: ${error.message}`
+                            sheetId: sheetData.id,
+                            sheetUrl: sheetData.link,
+                            error: error.message
                         });
                     }
                 }
+
+                totalExecuted += userExecuted;
+                console.log(`Completed processing user ${user.id}: ${userExecuted} sheets executed`);
+
             } 
             catch (error) {
                 console.error(`Error processing user ${user.id}:`, error);
                 errors.push({
                     userId: user.id,
-                    email: user.email,
                     error: error.message
                 });
             }
         }
 
-        console.log(`Polling completed. Processed: ${totalProcessed}, Executed: ${totalExecuted}, Errors: ${errors.length}`);
-
         return {
             processed: totalProcessed,
             executed: totalExecuted,
-            errors
+            errors: errors
         };
 
     } 
     catch (error) {
-        console.error('Error in polling service:', error);
         throw error;
     }
 }
@@ -100,7 +115,7 @@ export async function triggerUserSummaries(userId) {
 
         // Get all sheet data for this user
         const userSheetData = await sheetDataCrudServices.getAllSheetDataFromUser(parseInt(userId), 100);
-        
+
         let executed = 0;
         const errors = [];
 
@@ -125,7 +140,7 @@ export async function triggerUserSummaries(userId) {
                     console.log(`Executed summary for user ${userId}, sheet: ${sheetData.sheet_name}`);
                 }
 
-            } 
+            }
             catch (error) {
                 console.error(`Error processing sheet ${sheetData.id} for user ${userId}:`, error);
                 errors.push(`Sheet ${sheetData.sheet_name}: ${error.message}`);
@@ -134,7 +149,7 @@ export async function triggerUserSummaries(userId) {
 
         return { executed, errors };
 
-    } 
+    }
     catch (error) {
         throw error;
     }
