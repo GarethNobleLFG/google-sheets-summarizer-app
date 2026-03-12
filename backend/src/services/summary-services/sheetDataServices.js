@@ -6,8 +6,6 @@ import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
     try {
-        console.log('Starting scheduled summary polling...');
-
         // Get all users
         const users = await userRepository.findAll(1000); // High limit to get all users
 
