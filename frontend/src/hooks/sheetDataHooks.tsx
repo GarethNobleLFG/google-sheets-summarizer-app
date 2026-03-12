@@ -1,9 +1,10 @@
-// Create Sheet Data
-export const createSheetData = async (userId: number, link: string, sheetName: string, frequency: string) => {
+// POST - Create Sheet Data
+export const createSheetData = async (userId: number, link: string, sheetName: string, frequency: string, token?: string) => {
     const response = await fetch('http://localhost:5000/sheet-data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ userId, link, sheetName, frequency }),
     });
@@ -12,31 +13,40 @@ export const createSheetData = async (userId: number, link: string, sheetName: s
     return data.data;
 };
 
-// Get Sheet Data By ID
-export const getSheetDataById = async (id: string | number) => {
-    const response = await fetch(`http://localhost:5000/sheet-data/${id}`);
+// GET - Get Sheet Data By ID
+export const getSheetDataById = async (id: string | number, token?: string) => {
+    const response = await fetch(`http://localhost:5000/sheet-data/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
     return data.data;
 };
 
-// Get All Sheet Data From User
-export const getAllSheetDataFromUser = async (userId: string | number, limit?: number) => {
+// GET - Get All Sheet Data From User
+export const getAllSheetDataFromUser = async (userId: string | number, limit?: number, token?: string) => {
     const url = limit
         ? `http://localhost:5000/sheet-data/user/${userId}/all?limit=${limit}`
         : `http://localhost:5000/sheet-data/user/${userId}/all`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
     return data.data;
 };
 
-// Update Sheet Data
-export const updateSheetData = async (id: string | number, updateData: { userId?: number; link?: string; sheetName?: string; frequency?: string }) => {
+// PUT - Update Sheet Data
+export const updateSheetData = async (id: string | number, updateData: { userId?: number; link?: string; sheetName?: string; frequency?: string }, token?: string) => {
     const response = await fetch(`http://localhost:5000/sheet-data/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(updateData),
     });
@@ -45,30 +55,39 @@ export const updateSheetData = async (id: string | number, updateData: { userId?
     return data.data;
 };
 
-// Delete Sheet Data
-export const deleteSheetData = async (id: string | number) => {
+// DELETE - Delete Sheet Data
+export const deleteSheetData = async (id: string | number, token?: string) => {
     const response = await fetch(`http://localhost:5000/sheet-data/${id}`, {
         method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
     });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
     return data.data;
 };
 
-// Delete All User Sheet Data
-export const deleteAllUserSheetData = async (userId: string | number) => {
+// DELETE - Delete All User Sheet Data
+export const deleteAllUserSheetData = async (userId: string | number, token?: string) => {
     const response = await fetch(`http://localhost:5000/sheet-data/user/${userId}/all`, {
         method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
     });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
     return data.data;
 };
 
-// Trigger User Summaries
-export const triggerUserSummaries = async (userId: string | number) => {
+// POST - Trigger User Summaries
+export const triggerUserSummaries = async (userId: string | number, token?: string) => {
     const response = await fetch(`http://localhost:5000/sheet-data/user/${userId}/trigger`, {
         method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
     });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);

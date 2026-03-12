@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { UserAuthModal } from './userAuthModal';
 
-export const Navigation = () => {
+export const Navigation = ({ onAuthSuccess }: { onAuthSuccess?: () => void }) => {
     const [showAuthModal, setShowAuthModal] = useState(false);
 
     return (
         <>
-            <motion.nav 
+            <motion.nav
                 className="fixed top-0 w-full bg-white/70 dark:bg-gray-900/70 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-700/50 z-50"
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
@@ -27,7 +27,7 @@ export const Navigation = () => {
                     <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
                         <a href="#" className="hover:text-indigo-600 transition-colors">Features</a>
                         <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
-                        <button 
+                        <button
                             onClick={() => setShowAuthModal(true)}
                             className="px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-lg hover:shadow-lg transition-all text-sm"
                         >
@@ -37,7 +37,11 @@ export const Navigation = () => {
                 </div>
             </motion.nav>
 
-            <UserAuthModal isOpen={showAuthModal} setIsOpen={setShowAuthModal} />
+            <UserAuthModal
+                isOpen={showAuthModal}
+                setIsOpen={setShowAuthModal}
+                onAuthSuccess={onAuthSuccess}
+            />
         </>
     );
 };

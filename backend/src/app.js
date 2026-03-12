@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import cors from 'cors';
 import { initializeDatabase } from './config/databaseSetup.js';
 import { startScheduler, stopScheduler } from './services/cronScheduler.js';
 
@@ -8,6 +9,10 @@ dotenv.config();
 const app = express();
 
 // Middleware
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow requests from your frontend
+    credentials: true
+}));
 app.use(express.json());
 
 // Initialize everything on startup

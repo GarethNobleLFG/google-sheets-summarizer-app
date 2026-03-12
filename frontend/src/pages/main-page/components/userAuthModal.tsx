@@ -2,7 +2,15 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createUser, loginUser } from '../../../hooks/userHooks';
 
-export const UserAuthModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) => {
+export const UserAuthModal = ({
+    isOpen,
+    setIsOpen,
+    onAuthSuccess
+}: {
+    isOpen: boolean;
+    setIsOpen: (open: boolean) => void;
+    onAuthSuccess?: () => void;
+}) => {
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -34,6 +42,7 @@ export const UserAuthModal = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpe
                 await loginUser(email, password);
             }
             closeModal();
+            onAuthSuccess?.();
         }
         catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
