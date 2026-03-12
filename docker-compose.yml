@@ -1,7 +1,6 @@
 version: '3.8'
 
-services:
-  # Backend API
+services: # Backend API
   backend:
     build:
       context: ./backend
@@ -12,14 +11,15 @@ services:
     environment:
       NODE_ENV: development
       PORT: 5000
-      CHOKIDAR_USEPOLLING: true  
+      CHOKIDAR_USEPOLLING: true
+      CHOKIDAR_INTERVAL: 1000 # Add this
     ports:
       - "5000:5000"
     networks:
       - app-network
     volumes:
-      - ./backend/src:/app/src
-      - ./backend/index.js:/app/index.js
+      - ./backend:/app # Mount entire backend folder
+      - /app/node_modules # But exclude node_modules
     restart: unless-stopped
 
   # Frontend
@@ -29,17 +29,17 @@ services:
       dockerfile: Dockerfile
     container_name: sheets-summarizer-frontend
     ports:
-      - "5173:5173"  
+      - "5173:5173"
     environment:
       - NODE_ENV=development
       - HOST=0.0.0.0
-      - PORT=5173  
+      - PORT=5173
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
       - BROWSER=none
       - FAST_REFRESH=true
-      - WDS_SOCKET_HOST=localhost 
-      - WDS_SOCKET_PORT=0  
+      - WDS_SOCKET_HOST=localhost
+      - WDS_SOCKET_PORT=0
     restart: unless-stopped
     volumes:
       - ./frontend:/app

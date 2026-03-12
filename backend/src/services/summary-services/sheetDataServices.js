@@ -7,91 +7,135 @@ import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
     try {
-
-        // Get all users
-        const users = await userRepository.findAll(1000); // High limit to get all users
+        // Get all users.
+        const users = await userRepository.findAll(1000); 
 
         if (!users || users.length === 0) {
             console.log('No users found for polling');
             return { processed: 0, executed: 0, errors: [] };
         }
 
-        console.log(`Found ${users.length} users to check`);
-
-        let totalProcessed = 0;
-        let totalExecuted = 0;
-        const errors = [];
-
-        // Process each user
-        for (const user of users) {
+        // Process ALL users - PARALLEL VERSION.
+        const userPromises = users.map(async (user) => {
             try {
-                // Get all sheet data for this user using CRUD service
+                // Get all sheet data for this user using CRUD service.
                 const userSheetData = await sheetDataCrudServices.getAllSheetDataFromUser(user.id, 100);
-                totalProcessed++;
 
                 if (!userSheetData || userSheetData.length === 0) {
                     console.log(`No sheet data found for user ${user.id}`);
-                    continue;
+                    return { userId: user.id, processed: 1, executed: 0, errors: [] };
                 }
 
-                let userExecuted = 0;
+                console.log(`Processing ${userSheetData.length} sheets for user ${user.id} in parallel.`);
 
-                // Process each sheet for this user
-                for (const sheetData of userSheetData) {
+                // Process each sheet for this user - PARALLEL VERSION.
+                const sheetPromises = userSheetData.map(async (sheetData) => {
                     try {
-
                         const shouldExecute = checkIfShouldExecute(sheetData.frequency, sheetData.created_at);
 
-                        if (shouldExecute) {
-                            // Validate URL before processing
-                            const spreadsheetId = extractSpreadsheetId(sheetData.link);
+                        if (!shouldExecute) {
+                            return { skipped: true, sheetId: sheetData.id };
+                        }
 
-                            if (!spreadsheetId || spreadsheetId === sheetData.link) {
-                                throw new Error(`Invalid Google Sheets URL: ${sheetData.link}`);
-                            }
+                        // Validate URL before processing
+                        const spreadsheetId = extractSpreadsheetId(sheetData.link);
 
-                            const sheetOptions = {
-                                range: `${sheetData.sheet_name}!A:Z`,
-                                filterEmptyRows: true,
-                                maxPreviewRows: 100
-                            };
+                        if (!spreadsheetId || spreadsheetId === sheetData.link) {
+                            throw new Error(`Invalid Google Sheets URL: ${sheetData.link}`);
+                        }
 
-                            const result = await generateGeneralSummary(sheetData.link, sheetOptions);
+                        const sheetOptions = {
+                            range: `${sheetData.sheet_name}!A:Z`,
+                            filterEmptyRows: true,
+                            maxPreviewRows: 100
+                        };
 
-                            if (!result.success) {
-                                throw new Error(`General summary failed: ${result.error}`);
-                            }
+                        const result = await generateGeneralSummary(sheetData.link, sheetOptions);
 
-                            userExecuted++;
-                        } 
+                        if (!result.success) {
+                            throw new Error(`General summary failed: ${result.error}`);
+                        }
+
+                        return { success: true, sheetId: sheetData.id };
+
                     } 
                     catch (error) {
-                        errors.push({
-                            userId: user.id,
+                        return {
+                            error: true,
                             sheetId: sheetData.id,
-                            sheetUrl: sheetData.link,
-                            error: error.message
-                        });
+                            message: error.message,
+                            sheetUrl: sheetData.link
+                        };
                     }
-                }
+                });
 
-                totalExecuted += userExecuted;
-                console.log(`Completed processing user ${user.id}: ${userExecuted} sheets executed`);
+                // Wait for all sheets to complete being processed.
+                const sheetResults = await Promise.allSettled(sheetPromises);
+
+                // Process results for this user
+                let userExecuted = 0;
+                const userErrors = [];
+
+                sheetResults.forEach((result) => {
+                    if (result.status === 'fulfilled') {
+                        if (result.value.success) {
+                            userExecuted++;
+                        } 
+                        else if (result.value.error) {
+                            userErrors.push({
+                                userId: user.id,
+                                sheetId: result.value.sheetId,
+                                sheetUrl: result.value.sheetUrl,
+                                error: result.value.message
+                            });
+                        }
+                    }
+                });
+
+                return {
+                    userId: user.id,
+                    processed: 1,
+                    executed: userExecuted,
+                    errors: userErrors
+                };
 
             } 
             catch (error) {
                 console.error(`Error processing user ${user.id}:`, error);
-                errors.push({
+                return {
                     userId: user.id,
-                    error: error.message
-                });
+                    processed: 1,
+                    executed: 0,
+                    errors: [{
+                        userId: user.id,
+                        error: error.message
+                    }]
+                };
             }
-        }
+        });
+
+        // Wait for ALL users to complete
+        const userResults = await Promise.allSettled(userPromises);
+
+        // Aggregate results from all users.
+        let totalProcessed = 0;
+        let totalExecuted = 0;
+        const allErrors = [];
+
+        userResults.forEach((result) => {
+            if (result.status === 'fulfilled') {
+                totalProcessed += result.value.processed;
+                totalExecuted += result.value.executed;
+                allErrors.push(...result.value.errors);
+            }
+        });
+
+        console.log(`All users completed. Total processed: ${totalProcessed}, executed: ${totalExecuted}, errors: ${allErrors.length}`);
 
         return {
             processed: totalProcessed,
             executed: totalExecuted,
-            errors: errors
+            errors: allErrors
         };
 
     } 
