@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
 
-export const SignupForm = () => {
+export const SignupForm = ({
+    formData,
+    setFormData
+}: {
+    formData: { sheetUrl: string; sheetName: string; frequency: string };
+    setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string }) => void;
+}) => {
     return (
         <motion.div
             className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm border-l border-gray-200/50 dark:border-gray-700/50"
@@ -37,6 +43,8 @@ export const SignupForm = () => {
                             <input
                                 type="url"
                                 placeholder="https://docs.google.com/spreadsheets/d/..."
+                                value={formData.sheetUrl}
+                                onChange={(e) => setFormData({ ...formData, sheetUrl: e.target.value })}
                                 className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white placeholder-gray-500 transition-all"
                             />
                         </motion.div>
@@ -53,6 +61,8 @@ export const SignupForm = () => {
                             <input
                                 type="text"
                                 placeholder="My Budget"
+                                value={formData.sheetName}
+                                onChange={(e) => setFormData({ ...formData, sheetName: e.target.value })}
                                 className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white placeholder-gray-500 transition-all"
                             />
                         </motion.div>
@@ -68,9 +78,8 @@ export const SignupForm = () => {
                             </label>
                             <div className="grid grid-cols-3 gap-2">
                                 {['Daily', 'Weekly', 'Monthly'].map((freq) => (
-                                    <label key={freq} className={`
-                                        flex flex-col items-center p-2 rounded-lg border-2 cursor-pointer transition-all
-                                        ${freq === 'Weekly'
+                                    <label key={freq} className={`flex flex-col items-center p-2 rounded-lg border-2 cursor-pointer transition-all
+                                            ${formData.frequency === freq.toLowerCase()
                                             ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
                                             : 'border-gray-300 dark:border-gray-600 hover:border-indigo-300'
                                         }
@@ -79,7 +88,8 @@ export const SignupForm = () => {
                                             type="radio"
                                             name="frequency"
                                             value={freq.toLowerCase()}
-                                            defaultChecked={freq === 'Weekly'}
+                                            checked={formData.frequency === freq.toLowerCase()}
+                                            onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
                                             className="sr-only"
                                         />
                                         <div className="text-lg mb-0.5">

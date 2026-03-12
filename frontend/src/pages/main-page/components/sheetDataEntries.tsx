@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { getAllSheetDataFromUser, deleteSheetData } from '../../../hooks/sheetDataHooks';
 import { getToken, decodeToken } from '../../../utils/tokenAuth';
 
-export const SheetDataEntries = () => {
+export const SheetDataEntries = ({ onEditSheet }: { onEditSheet: (sheet: { link: string; sheet_name: string; frequency: string }) => void }) => {
     const [sheetData, setSheetData] = useState<{
         id: number;
         sheet_name: string;
@@ -104,7 +104,14 @@ export const SheetDataEntries = () => {
                                     <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                                         <span>Created {new Date(sheet.created_at).toLocaleDateString()}</span>
                                         <div className="flex gap-2">
-                                            <button className="text-indigo-500 hover:text-indigo-600 font-medium">
+                                            <button
+                                                className="text-indigo-500 hover:text-indigo-600 font-medium"
+                                                onClick={() => onEditSheet({
+                                                    link: sheet.link,
+                                                    sheet_name: sheet.sheet_name,
+                                                    frequency: sheet.frequency
+                                                })}
+                                            >
                                                 Edit
                                             </button>
                                             <button
