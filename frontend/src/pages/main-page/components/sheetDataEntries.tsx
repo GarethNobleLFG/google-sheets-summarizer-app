@@ -1,14 +1,137 @@
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { getAllSheetDataFromUser, deleteSheetData } from '../../../hooks/sheetDataHooks';
+import { getToken, decodeToken } from '../../../utils/tokenAuth';
+
 export const SheetDataEntries = () => {
+    const [sheetData, setSheetData] = useState<{
+        id: number;
+        sheet_name: string;
+        link: string;
+        frequency: string;
+        created_at: string;
+    }[]>([]);
+    const [_loading, setLoading] = useState(true);
+    const [_error, setError] = useState('');
+
+    useEffect(() => {
+        const loadSheetData = async () => {
+            try {
+                const token = getToken();
+                if (!token) throw new Error('No authentication token found');
+
+                const userData = decodeToken(token);
+                if (!userData || !userData.id) throw new Error('Invalid user data');
+
+                const data = await getAllSheetDataFromUser(userData.id, 20, token);
+                setSheetData(data);
+            }
+            catch (err) {
+                setError(err instanceof Error ? err.message : 'Failed to load sheet data');
+            }
+            finally {
+                setLoading(false);
+            }
+        };
+
+        loadSheetData();
+    }, []);
+
     return (
-        <div className="flex items-center justify-center w-full min-h-screen pt-20">
-            <div className="text-center">
-                <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-4">
-                    Sheet Data Entries
-                </h1>
-                <p className="text-lg text-gray-600 dark:text-gray-300">
-                    Your authenticated sheet data will be displayed here.
-                </p>
+        <motion.div
+            className="flex-1 flex items-center justify-center p-6 lg:p-12"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+        >
+            <div className="w-full max-w-4xl">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                    <h1 className="text-3xl lg:text-4xl xl:text-5xl font-black leading-tight mb-4">
+                        <span className="text-gray-900 dark:text-white">Sheet </span>
+                        <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">Data </span>
+                        <span className="text-gray-900 dark:text-white">Entries</span>
+                    </h1>
+
+                    <p className="text-lg leading-relaxed text-gray-600 dark:text-gray-300 mb-8 max-w-2xl">
+                        Manage and monitor your Google Sheets summaries.
+                        {sheetData.length === 0 ? 'Add your first sheet to get started.' : `You have ${sheetData.length} active sheet${sheetData.length !== 1 ? 's' : ''}.`}
+                    </p>
+
+                    {sheetData.length === 0 ? (
+                        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50 dark:border-gray-700/50 text-center">
+                            <div className="text-gray-500 dark:text-gray-400 mb-4">
+                                <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No sheets yet</h3>
+                            <p className="text-gray-600 dark:text-gray-300">Start tracking!.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {sheetData.map((sheet, index) => (
+                                <motion.div
+                                    key={sheet.id}
+                                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-xl p-6 border border-white/50 dark:border-gray-700/50 transition-all duration-300"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4, delay: 0.1 * index }}
+                                    whileHover={{ scale: 1.02 }}
+                                >
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                        </div>
+                                        <span className="text-xs px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full font-medium">
+                                            {sheet.frequency}
+                                        </span>
+                                    </div>
+
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                                        {sheet.sheet_name}
+                                    </h3>
+
+                                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 truncate">
+                                        {sheet.link}
+                                    </p>
+
+                                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                                        <span>Created {new Date(sheet.created_at).toLocaleDateString()}</span>
+                                        <div className="flex gap-2">
+                                            <button className="text-indigo-500 hover:text-indigo-600 font-medium">
+                                                Edit
+                                            </button>
+                                            <button
+                                                className="text-red-500 hover:text-red-600 font-medium"
+                                                onClick={async () => {
+                                                    try {
+                                                        const token = getToken();
+                                                        if (token) {
+                                                            await deleteSheetData(sheet.id, token);
+                                                            setSheetData(prev => prev.filter(s => s.id !== sheet.id));
+                                                        }
+                                                    } catch (err) {
+                                                        console.error('Failed to delete sheet:', err);
+                                                    }
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+
+                            ))}
+                        </div>
+                    )}
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
     );
 };
