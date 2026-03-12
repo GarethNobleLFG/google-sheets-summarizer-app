@@ -64,10 +64,6 @@ export async function pollUsersForScheduledSummaries() {
 
                             userExecuted++;
                         } 
-                        else {
-                            console.log(`⏭️  Skipping sheet ${sheetData.id} (frequency check failed)`);
-                        }
-
                     } 
                     catch (error) {
                         errors.push({
