@@ -9,6 +9,12 @@ export const createUser = async (email: string, password: string) => {
     });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
+
+    // Store the token in localStorage
+    if (data.data.token) {
+        localStorage.setItem('authToken', data.data.token);
+    }
+    
     return data.data;
 };
 
@@ -23,6 +29,12 @@ export const loginUser = async (email: string, password: string) => {
     });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
+
+    // Store the token in localStorage
+    if (data.data.token) {
+        localStorage.setItem('authToken', data.data.token);
+    }
+
     return data.data;
 };
 
