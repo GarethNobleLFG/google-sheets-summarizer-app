@@ -5,7 +5,7 @@ let cronJob = null;
 
 // Schedule the polling to run every 5 mins.
 export function startScheduler() {
-    cronJob = cron.schedule('*/30 * * * * *', async () => { // Change to every 5 mins after testing.
+    cronJob = cron.schedule('*/5 * * * *', async () => {
         try {
             console.log(`Starting polling cycle at ${new Date().toISOString()}`);
             const result = await pollUsersForScheduledSummaries();
