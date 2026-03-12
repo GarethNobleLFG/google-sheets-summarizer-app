@@ -8,7 +8,6 @@ const router = express.Router();
 router.post('/', /* authenticateToken, */ sheetDataController.createSheetData);
 router.get('/:id', /* authenticateToken, */ sheetDataController.getSheetDataById);
 router.get('/user/:userId/all', /* authenticateToken, */ sheetDataController.getAllSheetDataFromUser);
-router.get('/user/:userId', /* authenticateToken, */ sheetDataController.getSheetDataByUserId);
 router.put('/:id', /* authenticateToken, */ sheetDataController.updateSheetData);
 router.delete('/:id', /* authenticateToken, */ sheetDataController.deleteSheetData);
 router.delete('/user/:userId/all', /* authenticateToken, */ sheetDataController.deleteAllUserSheetData);

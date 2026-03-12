@@ -105,42 +105,6 @@ export async function getAllSheetDataFromUser(req, res) {
     }
 }
 
-// Get sheet data by user ID
-export async function getSheetDataByUserId(req, res) {
-    try {
-        const { userId } = req.params;
-        const { limit } = req.query;
-        
-        const sheetData = await sheetDataCrudServices.getSheetDataByUserId(userId, limit ? parseInt(limit) : undefined);
-        
-        res.status(200).json({
-            success: true,
-            data: sheetData,
-            meta: {
-                count: sheetData.length,
-                userId: parseInt(userId),
-                limit: limit ? parseInt(limit) : 20
-            }
-        });
-        
-    } 
-    catch (error) {
-        console.error('Error fetching sheet data by user ID:', error);
-        
-        if (error.message.includes('required') || error.message.includes('positive number')) {
-            return res.status(400).json({
-                success: false,
-                error: error.message
-            });
-        }
-        
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error'
-        });
-    }
-}
-
 // Update sheet data
 export async function updateSheetData(req, res) {
     try {
