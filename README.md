@@ -1,6 +1,6 @@
 # Google Sheets Summarizer App
 
-A full-stack web application that automatically analyzes Google Sheets data and generates AI-powered financial summaries delivered via email and SMS. Users can register Google Sheets for automated analysis on custom schedules.
+A full-stack web application that automatically analyzes Google Drive created files such as sheets or docs and generates AI-powered summaries delivered via email and SMS. Users can register Google Sheets for automated analysis on custom schedules.
 
 ## System Overview
 
