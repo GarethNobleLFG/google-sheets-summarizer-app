@@ -70,27 +70,6 @@ export async function getAllSheetDataFromUser(userId, limit = 50) {
     }
 }
 
-// Get sheet data by user ID
-export async function getSheetDataByUserId(userId, limit = 20) {
-    try {
-        if (!userId || isNaN(userId)) {
-            throw new Error('Valid user ID is required');
-        }
-
-        if (limit && (isNaN(limit) || limit < 1)) {
-            throw new Error('Limit must be a positive number');
-        }
-
-        const sheetDataEntries = await sheetDataRepository.findByUserId(parseInt(userId), limit);
-
-        return sheetDataEntries;
-
-    } 
-    catch (error) {
-        throw error;
-    }
-}
-
 // Get sheet data by frequency
 export async function getSheetDataByFrequency(frequency, limit = 20) {
     try {
