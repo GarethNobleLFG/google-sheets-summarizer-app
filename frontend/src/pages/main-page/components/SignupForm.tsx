@@ -1,23 +1,29 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { createSheetData, updateSheetData } from '../../../hooks/sheetDataHooks';
 import { getToken, decodeToken } from '../../../utils/tokenAuth';
 
 export const SignupForm = ({
     formData,
-    setFormData
+    setFormData,
+    showNotification
 }: {
     formData: { sheetUrl: string; sheetName: string; frequency: string; isEdit: boolean; id?: string | number };
     setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string; isEdit: boolean; id?: string | number }) => void;
+    showNotification: (message: string, type: 'success' | 'error') => void; 
 }) => {
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
 
         try {
             const token = getToken();
             const userData = token ? decodeToken(token) : null;
 
             if (!userData || !token) {
+                showNotification('Please log in or sign up to continue', 'error');
                 console.error('User not authenticated');
                 return;
             }
@@ -38,6 +44,8 @@ export const SignupForm = ({
                     },
                     token
                 );
+
+                showNotification('Sheet data updated successfully!', 'success');
             }
             else {
                 // Create new sheet data
@@ -48,6 +56,8 @@ export const SignupForm = ({
                     formData.frequency,
                     token
                 );
+
+                showNotification('Sheet added successfully! Enjoy your summaries.', 'success');
             }
 
             // Reset form data
@@ -62,6 +72,13 @@ export const SignupForm = ({
         }
         catch (error) {
             console.error('Error submitting form:', error);
+            showNotification(
+                error instanceof Error ? error.message : 'Something went wrong. Please try again.',
+                'error'
+            );
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
@@ -72,6 +89,7 @@ export const SignupForm = ({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
         >
+
             <div className="w-full max-w-sm">
                 <motion.div
                     className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/50 dark:border-gray-700/50"
@@ -164,14 +182,21 @@ export const SignupForm = ({
                         {/* Submit Button */}
                         <motion.button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 hover:from-indigo-600 hover:via-purple-600 hover:to-cyan-600 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-sm"
+                            disabled={isLoading}
+                            className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 hover:from-indigo-600 hover:via-purple-600 hover:to-cyan-600 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.4, delay: 1.0 }}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={!isLoading ? { scale: 1.02 } : {}}
+                            whileTap={!isLoading ? { scale: 0.98 } : {}}
                         >
-                            {formData.isEdit ? 'Update Summary Settings' : 'Start Receiving Summaries'}
+                            {isLoading && (
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            )}
+                            {isLoading ? 'Processing...' : (formData.isEdit ? 'Update Summary Settings' : 'Start Receiving Summaries')}
                         </motion.button>
 
                         <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
