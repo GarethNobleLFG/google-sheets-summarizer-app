@@ -6,11 +6,19 @@ import { getToken, decodeToken } from '../../../utils/tokenAuth';
 export const SignupForm = ({
     formData,
     setFormData,
-    showNotification
+    showNotification,
+    addNewSheet
 }: {
     formData: { sheetUrl: string; sheetName: string; frequency: string; isEdit: boolean; id?: string | number };
     setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string; isEdit: boolean; id?: string | number }) => void;
-    showNotification: (message: string, type: 'success' | 'error') => void; 
+    showNotification: (message: string, type: 'success' | 'error') => void;
+    addNewSheet: (newSheet: {
+        id: number;
+        sheet_name: string;
+        link: string;
+        frequency: string;
+        created_at: string;
+    }) => void;
 }) => {
     const [isLoading, setIsLoading] = useState(false);
 
@@ -49,13 +57,15 @@ export const SignupForm = ({
             }
             else {
                 // Create new sheet data
-                await createSheetData(
+                const newSheet = await createSheetData(
                     userData.id,
                     formData.sheetUrl,
                     formData.sheetName,
                     formData.frequency,
                     token
                 );
+
+                addNewSheet(newSheet);
 
                 showNotification('Sheet added successfully! Enjoy your summaries.', 'success');
             }

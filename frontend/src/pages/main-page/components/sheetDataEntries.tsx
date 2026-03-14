@@ -1,42 +1,22 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { getAllSheetDataFromUser, deleteSheetData } from '../../../hooks/sheetDataHooks';
-import { getToken, decodeToken } from '../../../utils/tokenAuth';
+import { deleteSheetData } from '../../../hooks/sheetDataHooks';
+import { getToken } from '../../../utils/tokenAuth';
 
-export const SheetDataEntries = ({ onEditSheet }: { onEditSheet: (sheet: { id: number; link: string; sheet_name: string; frequency: string }) => void }) => {
-    const [sheetData, setSheetData] = useState<{
+export const SheetDataEntries = ({
+    onEditSheet,
+    sheetData,
+    removeSheet
+}: {
+    onEditSheet: (sheet: { id: number; link: string; sheet_name: string; frequency: string }) => void;
+    sheetData: {
         id: number;
         sheet_name: string;
         link: string;
         frequency: string;
         created_at: string;
-    }[]>([]);
-    const [_loading, setLoading] = useState(true);
-    const [_error, setError] = useState('');
-
-    useEffect(() => {
-        const loadSheetData = async () => {
-            try {
-                const token = getToken();
-                if (!token) throw new Error('No authentication token found');
-
-                const userData = decodeToken(token);
-                if (!userData || !userData.id) throw new Error('Invalid user data');
-
-                const data = await getAllSheetDataFromUser(userData.id, 20, token);
-                setSheetData(data);
-            }
-            catch (err) {
-                setError(err instanceof Error ? err.message : 'Failed to load sheet data');
-            }
-            finally {
-                setLoading(false);
-            }
-        };
-
-        loadSheetData();
-    }, []);
-
+    }[];
+    removeSheet: (sheetId: number) => void;
+}) => {
     return (
         <motion.div
             className="flex-1 flex items-center justify-center p-6 lg:p-12"
@@ -122,9 +102,10 @@ export const SheetDataEntries = ({ onEditSheet }: { onEditSheet: (sheet: { id: n
                                                         const token = getToken();
                                                         if (token) {
                                                             await deleteSheetData(sheet.id, token);
-                                                            setSheetData(prev => prev.filter(s => s.id !== sheet.id));
+                                                            removeSheet(sheet.id);
                                                         }
-                                                    } catch (err) {
+                                                    } 
+                                                    catch (err) {
                                                         console.error('Failed to delete sheet:', err);
                                                     }
                                                 }}
