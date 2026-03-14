@@ -81,8 +81,10 @@ export const SheetDataEntries = ({
                                         {sheet.link}
                                     </p>
 
-                                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                                        <span>Created {new Date(sheet.created_at).toLocaleDateString()}</span>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                                        <div className="mb-2">
+                                            <span>Last summarized {new Date(sheet.created_at).toLocaleDateString()}</span>
+                                        </div>
                                         <div className="flex gap-2">
                                             <button
                                                 className="text-indigo-500 hover:text-indigo-600 font-medium"
@@ -104,7 +106,7 @@ export const SheetDataEntries = ({
                                                             await deleteSheetData(sheet.id, token);
                                                             removeSheet(sheet.id);
                                                         }
-                                                    } 
+                                                    }
                                                     catch (err) {
                                                         console.error('Failed to delete sheet:', err);
                                                     }
