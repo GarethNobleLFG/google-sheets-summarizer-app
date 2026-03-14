@@ -87,6 +87,11 @@ export const SheetDataEntries = ({
                                         </div>
                                         <div className="flex gap-2">
                                             <button
+                                                className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 bg-clip-text text-transparent font-medium transition-all duration-200"
+                                            >
+                                                Summarize
+                                            </button>
+                                            <button
                                                 className="text-indigo-500 hover:text-indigo-600 font-medium"
                                                 onClick={() => onEditSheet({
                                                     id: sheet.id,
@@ -113,11 +118,6 @@ export const SheetDataEntries = ({
                                                 }}
                                             >
                                                 Delete
-                                            </button>
-                                            <button
-                                                className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 bg-clip-text text-transparent font-medium transition-all duration-200"
-                                            >
-                                                Summarize
                                             </button>
                                         </div>
                                     </div>
