@@ -8,7 +8,7 @@ import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 export async function pollUsersForScheduledSummaries() {
     try {
         // Get all users.
-        const users = await userRepository.findAll(1000); 
+        const users = await userRepository.findAll(1000);
 
         if (!users || users.length === 0) {
             console.log('No users found for polling');
@@ -33,6 +33,8 @@ export async function pollUsersForScheduledSummaries() {
                     try {
                         const shouldExecute = checkIfShouldExecute(sheetData.frequency, sheetData.created_at);
 
+                        console.log(`\n\nSheet ${sheetData.id} (${sheetData.sheet_name}): frequency=${sheetData.frequency}, created_at=${sheetData.created_at}, shouldExecute=${shouldExecute}\n\n`);
+
                         if (!shouldExecute) {
                             return { skipped: true, sheetId: sheetData.id };
                         }
@@ -52,13 +54,18 @@ export async function pollUsersForScheduledSummaries() {
 
                         const result = await generateGeneralSummary(sheetData.link, sheetOptions);
 
+                        // Update created_at to current time to reset the frequency timer
+                        await sheetDataCrudServices.updateSheetData(sheetData.id, {
+                            created_at: new Date()
+                        });
+
                         if (!result.success) {
                             throw new Error(`General summary failed: ${result.error}`);
                         }
 
                         return { success: true, sheetId: sheetData.id };
 
-                    } 
+                    }
                     catch (error) {
                         return {
                             error: true,
@@ -80,7 +87,7 @@ export async function pollUsersForScheduledSummaries() {
                     if (result.status === 'fulfilled') {
                         if (result.value.success) {
                             userExecuted++;
-                        } 
+                        }
                         else if (result.value.error) {
                             userErrors.push({
                                 userId: user.id,
@@ -99,7 +106,7 @@ export async function pollUsersForScheduledSummaries() {
                     errors: userErrors
                 };
 
-            } 
+            }
             catch (error) {
                 console.error(`Error processing user ${user.id}:`, error);
                 return {
@@ -138,7 +145,7 @@ export async function pollUsersForScheduledSummaries() {
             errors: allErrors
         };
 
-    } 
+    }
     catch (error) {
         throw error;
     }

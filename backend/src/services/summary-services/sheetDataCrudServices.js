@@ -22,7 +22,7 @@ export async function createSheetData(userId, link, sheetName, frequency) {
 
         return sheetData;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -36,14 +36,14 @@ export async function getSheetDataById(id) {
         }
 
         const sheetData = await sheetDataRepository.findById(parseInt(id));
-        
+
         if (!sheetData) {
             throw new Error('Sheet data not found');
         }
 
         return sheetData;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -64,7 +64,7 @@ export async function getAllSheetDataFromUser(userId, limit = 50) {
 
         return sheetDataEntries;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -85,7 +85,7 @@ export async function getSheetDataByFrequency(frequency, limit = 20) {
 
         return sheetDataEntries;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -98,7 +98,7 @@ export async function updateSheetData(id, updateData) {
             throw new Error('Valid sheet data ID is required');
         }
 
-        const { link, sheet_name, frequency } = updateData;
+        const { link, sheet_name, frequency, created_at } = updateData;
 
         // Check if sheet data exists
         const existingSheetData = await sheetDataRepository.findById(parseInt(id));
@@ -123,6 +123,10 @@ export async function updateSheetData(id, updateData) {
             updateFields.frequency = frequency.trim();
         }
 
+        if (created_at) {
+            updateFields.created_at = created_at;
+        }
+
         if (Object.keys(updateFields).length === 0) {
             throw new Error('No valid fields to update');
         }
@@ -130,7 +134,7 @@ export async function updateSheetData(id, updateData) {
         const updatedSheetData = await sheetDataRepository.updateById(parseInt(id), updateFields);
         return updatedSheetData;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -144,14 +148,14 @@ export async function deleteSheetData(id) {
         }
 
         const deletedSheetData = await sheetDataRepository.deleteById(parseInt(id));
-        
+
         if (!deletedSheetData) {
             throw new Error('Sheet data not found');
         }
 
         return deletedSheetData;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
@@ -165,10 +169,10 @@ export async function deleteAllUserSheetData(userId) {
         }
 
         const deletedCount = await sheetDataRepository.deleteByUserId(parseInt(userId));
-        
+
         return deletedCount;
 
-    } 
+    }
     catch (error) {
         throw error;
     }
