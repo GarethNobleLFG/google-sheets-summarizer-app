@@ -122,7 +122,11 @@ export const MainPage = () => {
             />
 
             {/* Navigation */}
-            <Navigation onAuthSuccess={handleAuthSuccess} />
+            <Navigation
+                onAuthSuccess={handleAuthSuccess}
+                isAuthenticated={isAuthenticated}
+                user={user}
+            />
 
             {/* Main Content */}
             <div className="flex min-h-screen">

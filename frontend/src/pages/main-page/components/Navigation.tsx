@@ -1,9 +1,25 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { UserAuthModal } from './userAuthModal';
+import { logout } from '../../../utils/tokenAuth';
 
-export const Navigation = ({ onAuthSuccess }: { onAuthSuccess?: () => void }) => {
+export const Navigation = ({
+    onAuthSuccess,
+    isAuthenticated = false,
+    user
+}: {
+    onAuthSuccess?: () => void;
+    isAuthenticated?: boolean;
+    user?: { id: number; email: string; } | null;
+}) => {
     const [showAuthModal, setShowAuthModal] = useState(false);
+
+    const handleLogout = () => {
+        logout();
+        if (onAuthSuccess) {
+            onAuthSuccess();
+        }
+    };
 
     return (
         <>
@@ -14,6 +30,7 @@ export const Navigation = ({ onAuthSuccess }: { onAuthSuccess?: () => void }) =>
                 transition={{ duration: 0.6 }}
             >
                 <div className="w-full px-6 py-3 flex justify-between items-center">
+                    {/* Left - Logo */}
                     <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-lg flex items-center justify-center">
                             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,16 +41,40 @@ export const Navigation = ({ onAuthSuccess }: { onAuthSuccess?: () => void }) =>
                             Clarus
                         </span>
                     </div>
-                    <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
-                        <a href="#" className="hover:text-indigo-600 transition-colors">Features</a>
-                        <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
-                        <button
-                            onClick={() => setShowAuthModal(true)}
-                            className="px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-lg hover:shadow-lg transition-all text-sm"
-                        >
-                            Sign In
-                        </button>
-                    </div>
+
+                    {/* Center - Welcome Message (only when authenticated) */}
+                    {isAuthenticated && user && (
+                        <div className="absolute left-1/2 transform -translate-x-1/2">
+                            <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
+                                {user.email}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Right - Navigation Items */}
+                    {isAuthenticated && user ? (
+                        <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
+                            <a href="#" className="hover:text-indigo-600 transition-colors">Features</a>
+                            <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
+                            <button
+                                onClick={handleLogout}
+                                className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg hover:shadow-lg transition-all text-sm"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
+                            <a href="#" className="hover:text-indigo-600 transition-colors">Features</a>
+                            <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
+                            <button
+                                onClick={() => setShowAuthModal(true)}
+                                className="px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-lg hover:shadow-lg transition-all text-sm"
+                            >
+                                Sign In
+                            </button>
+                        </div>
+                    )}
                 </div>
             </motion.nav>
 
