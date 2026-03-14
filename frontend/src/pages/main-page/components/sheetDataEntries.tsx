@@ -114,6 +114,11 @@ export const SheetDataEntries = ({
                                             >
                                                 Delete
                                             </button>
+                                            <button
+                                                className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 bg-clip-text text-transparent font-medium transition-all duration-200"
+                                            >
+                                                Summarize
+                                            </button>
                                         </div>
                                     </div>
                                 </motion.div>
