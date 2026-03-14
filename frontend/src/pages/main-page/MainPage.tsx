@@ -11,10 +11,18 @@ export const MainPage = () => {
     const [_loading, _setLoading] = useState(false);
 
     // Signup form state.
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<{
+        sheetUrl: string;
+        sheetName: string;
+        frequency: string;
+        isEdit: boolean;
+        id?: string | number;
+    }>({
         sheetUrl: '',
         sheetName: '',
-        frequency: 'weekly'
+        frequency: 'weekly',
+        isEdit: false,
+        id: undefined,
     });
 
     // Handle auth state across components.
@@ -25,11 +33,13 @@ export const MainPage = () => {
     };
 
     // Function to populate form for editing.
-    const handleEditSheet = (sheet: { link: string; sheet_name: string; frequency: string }) => {
+    const handleEditSheet = (sheet: { id: string | number; link: string; sheet_name: string; frequency: string }) => {
         setFormData({
             sheetUrl: sheet.link,
             sheetName: sheet.sheet_name,
-            frequency: sheet.frequency.toLowerCase()
+            frequency: sheet.frequency.toLowerCase(),
+            isEdit: true,
+            id: sheet.id
         });
     };
 
@@ -50,7 +60,7 @@ export const MainPage = () => {
                     </>
                 )}
                 {/* Signup Form - Right Side */}
-                <SignupForm formData={formData} setFormData={setFormData}/>
+                <SignupForm formData={formData} setFormData={setFormData} />
             </div>
         </div>
     );

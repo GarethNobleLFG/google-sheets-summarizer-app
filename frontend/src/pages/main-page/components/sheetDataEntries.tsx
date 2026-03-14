@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { getAllSheetDataFromUser, deleteSheetData } from '../../../hooks/sheetDataHooks';
 import { getToken, decodeToken } from '../../../utils/tokenAuth';
 
-export const SheetDataEntries = ({ onEditSheet }: { onEditSheet: (sheet: { link: string; sheet_name: string; frequency: string }) => void }) => {
+export const SheetDataEntries = ({ onEditSheet }: { onEditSheet: (sheet: { id: number; link: string; sheet_name: string; frequency: string }) => void }) => {
     const [sheetData, setSheetData] = useState<{
         id: number;
         sheet_name: string;
@@ -107,6 +107,7 @@ export const SheetDataEntries = ({ onEditSheet }: { onEditSheet: (sheet: { link:
                                             <button
                                                 className="text-indigo-500 hover:text-indigo-600 font-medium"
                                                 onClick={() => onEditSheet({
+                                                    id: sheet.id,
                                                     link: sheet.link,
                                                     sheet_name: sheet.sheet_name,
                                                     frequency: sheet.frequency

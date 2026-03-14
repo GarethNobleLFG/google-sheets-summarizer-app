@@ -1,12 +1,70 @@
 import { motion } from 'framer-motion';
+import { createSheetData, updateSheetData } from '../../../hooks/sheetDataHooks';
+import { getToken, decodeToken } from '../../../utils/tokenAuth';
 
 export const SignupForm = ({
     formData,
     setFormData
 }: {
-    formData: { sheetUrl: string; sheetName: string; frequency: string };
-    setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string }) => void;
+    formData: { sheetUrl: string; sheetName: string; frequency: string; isEdit: boolean; id?: string | number };
+    setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string; isEdit: boolean; id?: string | number }) => void;
 }) => {
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            const token = getToken();
+            const userData = token ? decodeToken(token) : null;
+
+            if (!userData || !token) {
+                console.error('User not authenticated');
+                return;
+            }
+
+            if (formData.isEdit) {
+                if (!formData.id) {
+                    console.error('No sheet ID provided for update');
+                    return;
+                }
+
+                await updateSheetData(
+                    formData.id,
+                    {
+                        userId: userData.userId,
+                        link: formData.sheetUrl,
+                        sheetName: formData.sheetName,
+                        frequency: formData.frequency
+                    },
+                    token
+                );
+            }
+            else {
+                // Create new sheet data
+                await createSheetData(
+                    userData.userId,
+                    formData.sheetUrl,
+                    formData.sheetName,
+                    formData.frequency,
+                    token
+                );
+            }
+
+            // Reset form data
+            setFormData({
+                sheetUrl: '',
+                sheetName: '',
+                frequency: '',
+                isEdit: false,
+                id: undefined
+            });
+
+        }
+        catch (error) {
+            console.error('Error submitting form:', error);
+        }
+    };
+
     return (
         <motion.div
             className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm border-l border-gray-200/50 dark:border-gray-700/50"
@@ -30,7 +88,7 @@ export const SignupForm = ({
                         </p>
                     </div>
 
-                    <form className="space-y-4">
+                    <form className="space-y-4" onSubmit={handleSubmit}>
                         {/* Sheet Link */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -113,7 +171,7 @@ export const SignupForm = ({
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                         >
-                            Start Receiving Summaries
+                            {formData.isEdit ? 'Update Summary Settings' : 'Start Receiving Summaries'}
                         </motion.button>
 
                         <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
