@@ -109,10 +109,10 @@ export const SignupForm = ({
                 >
                     <div className="text-center mb-6">
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                            Get Started Today
+                            Get Started
                         </h2>
                         <p className="text-sm text-gray-600 dark:text-gray-300">
-                            Setup your first automated summary
+                            Setup your automated summaries
                         </p>
                     </div>
 
