@@ -31,7 +31,7 @@ export const SignupForm = ({
                 await updateSheetData(
                     formData.id,
                     {
-                        userId: userData.userId,
+                        userId: userData.id,
                         link: formData.sheetUrl,
                         sheetName: formData.sheetName,
                         frequency: formData.frequency
@@ -42,7 +42,7 @@ export const SignupForm = ({
             else {
                 // Create new sheet data
                 await createSheetData(
-                    userData.userId,
+                    userData.id,
                     formData.sheetUrl,
                     formData.sheetName,
                     formData.frequency,
