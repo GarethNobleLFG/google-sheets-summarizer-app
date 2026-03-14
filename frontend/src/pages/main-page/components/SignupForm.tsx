@@ -162,9 +162,9 @@ export const SignupForm = ({
                             <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                                 ⏰ Summary Frequency
                             </label>
-                            <div className="grid grid-cols-3 gap-2">
-                                {['Daily', 'Weekly', 'Monthly'].map((freq) => (
-                                    <label key={freq} className={`flex flex-col items-center p-2 rounded-lg border-2 cursor-pointer transition-all
+                            <div className="grid grid-cols-4 gap-1">
+                                {['Daily', 'Weekly', 'Monthly', 'None'].map((freq) => (
+                                    <label key={freq} className={`flex flex-col items-center p-1.5 rounded-lg border-2 cursor-pointer transition-all
                                             ${formData.frequency === freq.toLowerCase()
                                             ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
                                             : 'border-gray-300 dark:border-gray-600 hover:border-indigo-300'
@@ -178,8 +178,8 @@ export const SignupForm = ({
                                             onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
                                             className="sr-only"
                                         />
-                                        <div className="text-lg mb-0.5">
-                                            {freq === 'Daily' ? '🌅' : freq === 'Weekly' ? '📅' : '📊'}
+                                        <div className="text-base mb-0.5">
+                                            {freq === 'Daily' ? '🌅' : freq === 'Weekly' ? '📅' : freq === 'Monthly' ? '📊' : freq === 'None' ? '🚫' : '📊'}
                                         </div>
                                         <span className="text-xs font-medium text-gray-900 dark:text-white">
                                             {freq}
