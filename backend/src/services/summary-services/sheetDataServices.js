@@ -33,8 +33,6 @@ export async function pollUsersForScheduledSummaries() {
                     try {
                         const shouldExecute = checkIfShouldExecute(sheetData.frequency, sheetData.created_at);
 
-                        console.log(`\n\nSheet ${sheetData.id} (${sheetData.sheet_name}): frequency=${sheetData.frequency}, created_at=${sheetData.created_at}, shouldExecute=${shouldExecute}\n\n`);
-
                         if (!shouldExecute) {
                             return { skipped: true, sheetId: sheetData.id };
                         }
