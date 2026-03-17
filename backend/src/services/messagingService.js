@@ -25,6 +25,7 @@ export async function sendMessage(message) {
             to: process.env.YOUR_PHONE_NUMBER
         });
         */
+       // gsg
 
         // Send email
         await emailTransporter.sendMail({
