@@ -17,7 +17,7 @@ const emailTransporter = nodemailer.createTransport({
 
 export async function sendMessage(message) {
     try {
-        /*
+        /* fsfsf
         // Send via SMS
         await twilioClient.messages.create({
             body: `Daily Budget Summary:\n\n${message.text}`,
