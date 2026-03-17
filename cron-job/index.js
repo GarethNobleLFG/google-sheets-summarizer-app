@@ -13,7 +13,7 @@ async function triggerScheduledSummaries() {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    //'Authorization': `Bearer ${CRON_SECRET}`,
+                    'Authorization': `Bearer ${CRON_SECRET}`,
                 },
                 timeout: 300000 // 5 minute timeout
             }
