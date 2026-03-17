@@ -1,7 +1,7 @@
 import * as sheetDataCrudServices from '../services/summary-services/sheetDataCrudServices.js';
 import * as sheetDataServices from '../services/summary-services/sheetDataPolling.js';
 
-// Create a new sheet data entry.
+// Create a new sheet data entry..
 export async function createSheetData(req, res) {
     try {
         const { userId, link, sheetName, frequency } = req.body;
