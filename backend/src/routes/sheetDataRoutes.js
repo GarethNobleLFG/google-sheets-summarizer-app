@@ -4,7 +4,7 @@ import * as sheetDataController from '../controllers/sheetDataControllers.js';
 
 const router = express.Router();
 
-// Protected routes (authentication required)
+// Protected routes. (authentication required)
 router.post('/', /* authenticateToken, */ sheetDataController.createSheetData);
 router.get('/:id', /* authenticateToken, */ sheetDataController.getSheetDataById);
 router.get('/user/:userId/all', /* authenticateToken, */ sheetDataController.getAllSheetDataFromUser);
