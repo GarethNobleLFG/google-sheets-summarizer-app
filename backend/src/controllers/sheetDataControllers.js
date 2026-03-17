@@ -219,14 +219,13 @@ export async function deleteAllUserSheetData(req, res) {
 // Poll all users for scheduled summaries
 export async function pollUsersForScheduledSummaries(req, res) {
     try {
-        const result = await sheetDataServices.pollUsersForScheduledSummaries();
 
         res.status(200).json({
             success: true,
-            data: result,
-            message: `Polling completed. Processed: ${result.processed}, Executed: ${result.executed}, Errors: ${result.errors.length}`
+            message: 'Polling started in background'
         });
 
+        const result = await sheetDataServices.pollUsersForScheduledSummaries();
     }
     catch (error) {
         console.error('Error polling users for scheduled summaries:', error);
