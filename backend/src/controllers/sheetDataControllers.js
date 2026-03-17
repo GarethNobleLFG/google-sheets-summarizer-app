@@ -5,26 +5,26 @@ import * as sheetDataServices from '../services/summary-services/sheetDataServic
 export async function createSheetData(req, res) {
     try {
         const { userId, link, sheetName, frequency } = req.body;
-        
+
         const sheetData = await sheetDataCrudServices.createSheetData(userId, link, sheetName, frequency);
-        
+
         res.status(201).json({
             success: true,
             data: sheetData,
             message: 'Sheet data created successfully'
         });
-        
-    } 
+
+    }
     catch (error) {
         console.error('Error creating sheet data:', error);
-        
+
         if (error.message.includes('required')) {
             return res.status(400).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -36,32 +36,32 @@ export async function createSheetData(req, res) {
 export async function getSheetDataById(req, res) {
     try {
         const { id } = req.params;
-        
+
         const sheetData = await sheetDataCrudServices.getSheetDataById(id);
-        
+
         res.status(200).json({
             success: true,
             data: sheetData
         });
-        
-    } 
+
+    }
     catch (error) {
         console.error('Error fetching sheet data:', error);
-        
+
         if (error.message.includes('not found')) {
             return res.status(404).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         if (error.message.includes('required') || error.message.includes('Valid')) {
             return res.status(400).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -74,9 +74,9 @@ export async function getAllSheetDataFromUser(req, res) {
     try {
         const { userId } = req.params;
         const { limit } = req.query;
-        
+
         const sheetData = await sheetDataCrudServices.getAllSheetDataFromUser(userId, limit ? parseInt(limit) : undefined);
-        
+
         res.status(200).json({
             success: true,
             data: sheetData,
@@ -86,18 +86,18 @@ export async function getAllSheetDataFromUser(req, res) {
                 limit: limit ? parseInt(limit) : 50
             }
         });
-        
-    } 
+
+    }
     catch (error) {
         console.error('Error fetching user sheet data:', error);
-        
+
         if (error.message.includes('required') || error.message.includes('positive number')) {
             return res.status(400).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -110,33 +110,33 @@ export async function updateSheetData(req, res) {
     try {
         const { id } = req.params;
         const updateData = req.body;
-        
+
         const updatedSheetData = await sheetDataCrudServices.updateSheetData(id, updateData);
-        
+
         res.status(200).json({
             success: true,
             data: updatedSheetData,
             message: 'Sheet data updated successfully'
         });
-        
-    } 
+
+    }
     catch (error) {
         console.error('Error updating sheet data:', error);
-        
+
         if (error.message.includes('not found')) {
             return res.status(404).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         if (error.message.includes('required') || error.message.includes('No valid fields')) {
             return res.status(400).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -148,33 +148,33 @@ export async function updateSheetData(req, res) {
 export async function deleteSheetData(req, res) {
     try {
         const { id } = req.params;
-        
+
         const deletedSheetData = await sheetDataCrudServices.deleteSheetData(id);
-        
+
         res.status(200).json({
             success: true,
             data: deletedSheetData,
             message: 'Sheet data deleted successfully'
         });
-        
-    } 
+
+    }
     catch (error) {
         console.error('Error deleting sheet data:', error);
-        
+
         if (error.message.includes('not found')) {
             return res.status(404).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         if (error.message.includes('required')) {
             return res.status(400).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -186,9 +186,9 @@ export async function deleteSheetData(req, res) {
 export async function deleteAllUserSheetData(req, res) {
     try {
         const { userId } = req.params;
-        
+
         const deletedCount = await sheetDataCrudServices.deleteAllUserSheetData(userId);
-        
+
         res.status(200).json({
             success: true,
             data: {
@@ -197,18 +197,40 @@ export async function deleteAllUserSheetData(req, res) {
             },
             message: `Deleted ${deletedCount} sheet data entries for user ${userId}`
         });
-        
-    } 
+
+    }
     catch (error) {
         console.error('Error deleting user sheet data:', error);
-        
+
         if (error.message.includes('required')) {
             return res.status(400).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
+}
+
+// Poll all users for scheduled summaries
+export async function pollUsersForScheduledSummaries(req, res) {
+    try {
+        const result = await sheetDataServices.pollUsersForScheduledSummaries();
+
+        res.status(200).json({
+            success: true,
+            data: result,
+            message: `Polling completed. Processed: ${result.processed}, Executed: ${result.executed}, Errors: ${result.errors.length}`
+        });
+
+    }
+    catch (error) {
+        console.error('Error polling users for scheduled summaries:', error);
+
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -220,26 +242,26 @@ export async function deleteAllUserSheetData(req, res) {
 export async function triggerUserSummaries(req, res) {
     try {
         const { userId } = req.params;
-        
+
         const result = await sheetDataServices.triggerUserSummaries(userId);
-        
+
         res.status(200).json({
             success: true,
             data: result,
             message: `Triggered summaries for user ${userId}. Executed: ${result.executed}, Errors: ${result.errors.length}`
         });
-        
-    } 
+
+    }
     catch (error) {
         console.error('Error triggering user summaries:', error);
-        
+
         if (error.message.includes('required')) {
             return res.status(400).json({
                 success: false,
                 error: error.message
             });
         }
-        
+
         res.status(500).json({
             success: false,
             error: 'Internal server error'
