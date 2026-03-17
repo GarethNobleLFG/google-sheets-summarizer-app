@@ -1,5 +1,5 @@
 import * as sheetDataCrudServices from '../services/summary-services/sheetDataCrudServices.js';
-import * as sheetDataServices from '../services/summary-services/sheetDataServices.js';
+import * as sheetDataServices from '../services/summary-services/sheetDataPolling.js';
 
 // Create a new sheet data entry
 export async function createSheetData(req, res) {

@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { pollUsersForScheduledSummaries } from './summary-services/sheetDataServices.js';
+import { pollUsersForScheduledSummaries } from './summary-services/sheetDataPolling.js';
 
 let cronJob = null;
 
