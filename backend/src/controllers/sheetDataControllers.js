@@ -1,5 +1,6 @@
 import * as sheetDataCrudServices from '../services/summary-services/sheetDataCrudServices.js';
 import * as sheetDataServices from '../services/summary-services/sheetDataPolling.js';
+import * as sheetDataQuickGen from '../services/summary-services/sheetDataQuickGen.js';
 
 // Create a new sheet data entry....
 export async function createSheetData(req, res) {
@@ -256,6 +257,52 @@ export async function triggerUserSummaries(req, res) {
 
         if (error.message.includes('required')) {
             return res.status(400).json({
+                success: false,
+                error: error.message
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
+}
+
+export async function quickGenerateSummary(req, res) {
+    try {
+        const { id } = req.params;
+
+        // Validate that we have sheet ID
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                error: 'Sheet ID is required'
+            });
+        }
+
+        const result = await sheetDataQuickGen.quickGenerateSummary(id);
+
+        if (!result.success) {
+            return res.status(400).json({
+                success: false,
+                error: result.error
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: result,
+            message: `Summary generated successfully for sheet ID: ${id}`
+        });
+
+    }
+    catch (error) {
+        console.error('Error in quick generate summary controller:', error);
+
+        if (error.message.includes('required') || error.message.includes('Invalid') || error.message.includes('not found')) {
+            const statusCode = error.message.includes('not found') ? 404 : 400;
+            return res.status(statusCode).json({
                 success: false,
                 error: error.message
             });
