@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { deleteSheetData, quickGenerateSummary } from '../../../hooks/sheetDataHooks';
 import { getToken } from '../../../utils/tokenAuth';
+import { Notification } from './Notification';
+
 
 export const SheetDataEntries = ({
     onEditSheet,
@@ -17,6 +20,33 @@ export const SheetDataEntries = ({
     }[];
     removeSheet: (sheetId: number) => void;
 }) => {
+    const [loadingSheets, setLoadingSheets] = useState<Set<number>>(new Set());
+    const [notification, setNotification] = useState({ message: '', type: 'success' as 'success' | 'error', visible: false });
+
+    const handleQuickSummary = async (sheetId: number) => {
+        try {
+            setLoadingSheets(prev => new Set(prev).add(sheetId));
+
+            const token = getToken();
+            if (token) {
+                await quickGenerateSummary(sheetId, token);
+                setNotification({ message: 'Summary generated successfully!', type: 'success', visible: true });
+                setTimeout(() => setNotification(prev => ({ ...prev, visible: false })), 3000);
+            }
+        }
+        catch (err) {
+            setNotification({ message: `Failed to generate summary: ${err}`, type: 'error', visible: true });
+            setTimeout(() => setNotification(prev => ({ ...prev, visible: false })), 5000);
+        }
+        finally {
+            setLoadingSheets(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(sheetId);
+                return newSet;
+            });
+        }
+    };
+
     return (
         <motion.div
             className="flex-1 flex items-center justify-center p-6 lg:p-12"
@@ -87,20 +117,24 @@ export const SheetDataEntries = ({
                                         </div>
                                         <div className="flex gap-2">
                                             <button
-                                                className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 bg-clip-text text-transparent font-medium transition-all duration-200"
-                                                onClick={async () => {
-                                                    try {
-                                                        const token = getToken();
-                                                        if (token) {
-                                                            await quickGenerateSummary(sheet.id, token);
-                                                        }
-                                                    }
-                                                    catch (err) {
-                                                        alert(`Failed to generate summary: ${err}`);
-                                                    }
-                                                }}
+                                                className={`flex items-center gap-1 font-medium transition-all duration-200 ${loadingSheets.has(sheet.id)
+                                                    ? 'text-gray-400 cursor-not-allowed'
+                                                    : 'bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 bg-clip-text text-transparent'
+                                                    }`}
+                                                onClick={() => handleQuickSummary(sheet.id)}
+                                                disabled={loadingSheets.has(sheet.id)}
                                             >
-                                                Summarize
+                                                {loadingSheets.has(sheet.id) ? (
+                                                    <>
+                                                        <svg className="w-3 h-3 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                            <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                        Loading...
+                                                    </>
+                                                ) : (
+                                                    'Summarize'
+                                                )}
                                             </button>
                                             <button
                                                 className="text-indigo-500 hover:text-indigo-600 font-medium"
@@ -139,6 +173,15 @@ export const SheetDataEntries = ({
                     )}
                 </motion.div>
             </div>
+
+            {/* Notification for enrty interactions */}
+            <Notification
+                message={notification.message}
+                type={notification.type}
+                visible={notification.visible}
+                onClose={() => setNotification(prev => ({ ...prev, visible: false }))}
+            />
+
         </motion.div>
     );
 };
