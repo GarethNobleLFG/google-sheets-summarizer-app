@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { deleteSheetData } from '../../../hooks/sheetDataHooks';
+import { deleteSheetData, quickGenerateSummary } from '../../../hooks/sheetDataHooks';
 import { getToken } from '../../../utils/tokenAuth';
 
 export const SheetDataEntries = ({
@@ -88,6 +88,17 @@ export const SheetDataEntries = ({
                                         <div className="flex gap-2">
                                             <button
                                                 className="bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 bg-clip-text text-transparent font-medium transition-all duration-200"
+                                                onClick={async () => {
+                                                    try {
+                                                        const token = getToken();
+                                                        if (token) {
+                                                            await quickGenerateSummary(sheet.id, token);
+                                                        }
+                                                    }
+                                                    catch (err) {
+                                                        alert(`Failed to generate summary: ${err}`);
+                                                    }
+                                                }}
                                             >
                                                 Summarize
                                             </button>
