@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import { initializeDatabase } from './config/databaseSetup.js';
-import { startScheduler, stopScheduler } from './services/cronScheduler.js';
 
 dotenv.config();
 
@@ -18,26 +17,11 @@ app.use(express.json());
 // Initialize everything on startup
 try {
     await initializeDatabase();    
-
-    startScheduler();
 } 
 catch (error) {
     console.error('App initialization failed:', error.message);
     process.exit(1); 
 }
-
-// Add graceful shutdown handler
-process.on('SIGTERM', () => {
-    console.log('Received SIGTERM, shutting down gracefully');
-    stopScheduler();
-    process.exit(0);
-});
-
-process.on('SIGINT', () => {
-    console.log('Received SIGINT, shutting down gracefully');
-    stopScheduler();
-    process.exit(0);
-});
 
 // Import routes
 import userRoutes from './routes/userRoutes.js';
