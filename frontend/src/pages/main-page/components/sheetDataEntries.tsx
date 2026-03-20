@@ -113,7 +113,7 @@ export const SheetDataEntries = ({
 
                                     <div className="text-xs text-gray-500 dark:text-gray-400">
                                         <div className="mb-2">
-                                            <span>Google Sheet</span>
+                                            <span>Type: Google Sheet</span>
                                         </div>
                                         <div className="flex gap-2">
                                             <button
