@@ -209,6 +209,31 @@ export const SignupForm = ({
                             {isLoading ? 'Processing...' : (formData.isEdit ? 'Update Summary Settings' : 'Start Receiving Summaries')}
                         </motion.button>
 
+                        {/* Cancel Edit Button - Only show when editing */}
+                        {formData.isEdit && (
+                            <motion.button
+                                type="button"
+                                onClick={() => {
+                                    // Reset form data
+                                    setFormData({
+                                        sheetUrl: '',
+                                        sheetName: '',
+                                        frequency: '',
+                                        isEdit: false,
+                                        id: undefined
+                                    });
+                                }}
+                                className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-sm flex items-center justify-center gap-2"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.1, delay: 0.4 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                ✖️ Cancel Edit
+                            </motion.button>
+                        )}
+
                         <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
                             Free for 30 days. No credit card required.
                         </p>
