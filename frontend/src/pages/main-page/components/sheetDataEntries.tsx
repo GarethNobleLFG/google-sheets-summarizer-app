@@ -112,9 +112,6 @@ export const SheetDataEntries = ({
                                     </p>
 
                                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                                        <div className="mb-2">
-                                            <span>Last summarized {new Date(sheet.created_at).toLocaleDateString()}</span>
-                                        </div>
                                         <div className="flex gap-2">
                                             <button
                                                 className={`flex items-center gap-1 font-medium transition-all duration-200 ${loadingSheets.has(sheet.id)
