@@ -120,6 +120,25 @@ export const SheetDataEntries = ({
                                         {sheet.link}
                                     </p>
 
+                                    {/* Pre-Prompt and Post-Prompt */}
+                                    <div className="space-y-1 mb-4">
+                                        {/* Pre-Prompt */}
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">Pre:</span>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex-1">
+                                                {sheet.pre_prompt || "No pre-prompt set"}
+                                            </p>
+                                        </div>
+
+                                        {/* Post-Prompt */}
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">Post:</span>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex-1">
+                                                {sheet.post_prompt || "No post-prompt set"}
+                                            </p>
+                                        </div>
+                                    </div>
+
                                     <div className="text-xs text-gray-500 dark:text-gray-400">
                                         <div className="mb-2">
                                             <span>Type: Google Sheet</span>
