@@ -128,7 +128,7 @@ export const MainPage = () => {
 
     // Unauthenticated user view (landing page).
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-x-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-x-hidden scrollbar-hide">
 
             {/* Notification */}
             <Notification
@@ -146,9 +146,9 @@ export const MainPage = () => {
             />
 
             {/* Main Content */}
-            <div className="flex h-screen pt-16 items-start">
+            <div className="flex h-screen pt-10 items-start">
                 {isAuthenticated && user ? (
-                    <div className="flex-1 flex items-start justify-center pt-20 px-6 lg:px-12">
+                    <div className="flex-1 flex items-start justify-center pt-24 px-6 lg:px-12">
                         <SheetDataEntries
                             onEditSheet={handleEditSheet}
                             sheetData={sheetData}
@@ -158,7 +158,7 @@ export const MainPage = () => {
                 ) : (
                     <>
                         {/* Hero Section - Left Side */}
-                        <div className="flex-1 flex items-start justify-center pt-20 px-6 lg:px-12">
+                        <div className="flex-1 flex items-start justify-center pt-24 px-6 lg:px-12">
                             <HeroSection />
                         </div>
                     </>
