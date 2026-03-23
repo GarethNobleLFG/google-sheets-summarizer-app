@@ -3,8 +3,8 @@ import { Animation } from './Animation';
 
 export const HeroSection = () => {
     return (
-        <motion.div 
-            className="flex-1 flex items-center justify-center p-6 lg:p-12"
+        <motion.div
+            className="flex-1 flex items-center justify-center"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
@@ -19,18 +19,18 @@ export const HeroSection = () => {
                         <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-2 animate-pulse"></span>
                         Now Available
                     </div>
-                    
+
                     <h1 className="text-3xl lg:text-4xl xl:text-5xl font-black leading-tight mb-4 whitespace-nowrap">
                         <span className="text-gray-900 dark:text-white">Smart </span>
                         <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">Sheet </span>
                         <span className="text-gray-900 dark:text-white">Summaries</span>
                     </h1>
-                    
+
                     <p className="text-lg leading-relaxed text-gray-600 dark:text-gray-300 mb-8 max-w-2xl">
-                        Transform your Google Sheets into intelligent insights delivered automatically. 
+                        Transform your Google Sheets into intelligent insights delivered automatically.
                         Stay informed without the manual effort.
                     </p>
-                    
+
                     <div className="flex flex-col sm:flex-row gap-4 mb-8">
                         <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center">

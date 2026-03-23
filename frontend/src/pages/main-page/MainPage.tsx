@@ -146,26 +146,32 @@ export const MainPage = () => {
             />
 
             {/* Main Content */}
-            <div className="flex min-h-screen">
+            <div className="flex h-screen pt-16 items-start">
                 {isAuthenticated && user ? (
-                    <SheetDataEntries
-                        onEditSheet={handleEditSheet}
-                        sheetData={sheetData}
-                        removeSheet={removeSheet}
-                    />
+                    <div className="flex-1 flex items-start justify-center pt-16 px-6 lg:px-12">
+                        <SheetDataEntries
+                            onEditSheet={handleEditSheet}
+                            sheetData={sheetData}
+                            removeSheet={removeSheet}
+                        />
+                    </div>
                 ) : (
                     <>
                         {/* Hero Section - Left Side */}
-                        <HeroSection />
+                        <div className="flex-1 flex items-start justify-center pt-16 px-6 lg:px-12">
+                            <HeroSection />
+                        </div>
                     </>
                 )}
                 {/* Signup Form - Right Side */}
-                <SignupForm
-                    showNotification={showNotification}
-                    formData={formData}
-                    setFormData={setFormData}
-                    addNewSheet={addNewSheet}
-                />
+                <div className="flex-1 h-full">
+                    <SignupForm
+                        showNotification={showNotification}
+                        formData={formData}
+                        setFormData={setFormData}
+                        addNewSheet={addNewSheet}
+                    />
+                </div>
             </div>
         </div>
     );
