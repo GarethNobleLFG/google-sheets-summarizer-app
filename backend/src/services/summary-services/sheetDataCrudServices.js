@@ -1,11 +1,11 @@
 import * as sheetDataRepository from '../../repositories/sheetDataRepositories.js';
 
 // Create a new sheet data entry
-export async function createSheetData(userId, link, sheetName, frequency) {
+export async function createSheetData(userId, link, sheetName, frequency, prePrompt, postPrompt) {
     try {
         // Validation
-        if (!userId || !link || !sheetName || !frequency) {
-            throw new Error('User ID, link, sheet name, and frequency are required');
+        if (!userId || !link || !sheetName || !frequency || !prePrompt || !postPrompt) {
+            throw new Error('User ID, link, sheet name, frequency, pre-prompt, and post-prompt are required');
         }
 
         if (isNaN(userId)) {
@@ -17,7 +17,9 @@ export async function createSheetData(userId, link, sheetName, frequency) {
             user_id: parseInt(userId),
             link: link.trim(),
             sheet_name: sheetName.trim(),
-            frequency: frequency.trim()
+            frequency: frequency.trim(),
+            pre_prompt: prePrompt.trim(),
+            post_prompt: postPrompt.trim()
         });
 
         return sheetData;
@@ -98,7 +100,7 @@ export async function updateSheetData(id, updateData) {
             throw new Error('Valid sheet data ID is required');
         }
 
-        const { link, sheet_name, frequency, created_at } = updateData;
+        const { link, sheet_name, frequency, pre_prompt, post_prompt, created_at } = updateData;
 
         // Check if sheet data exists
         const existingSheetData = await sheetDataRepository.findById(parseInt(id));
@@ -121,6 +123,16 @@ export async function updateSheetData(id, updateData) {
         // Update frequency if provided
         if (frequency) {
             updateFields.frequency = frequency.trim();
+        }
+
+        // Update pre_prompt if provided
+        if (pre_prompt) {
+            updateFields.pre_prompt = pre_prompt.trim();
+        }
+
+        // Update post_prompt if provided
+        if (post_prompt) {
+            updateFields.post_prompt = post_prompt.trim();
         }
 
         if (created_at) {
