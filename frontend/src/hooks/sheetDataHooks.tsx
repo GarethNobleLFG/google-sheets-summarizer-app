@@ -1,12 +1,12 @@
 // POST - Create Sheet Data
-export const createSheetData = async (userId: number, link: string, sheetName: string, frequency: string, token?: string) => {
+export const createSheetData = async (userId: number, link: string, sheetName: string, frequency: string, prePrompt: string, postPrompt: string, token?: string) => {
     const response = await fetch('http://localhost:5000/sheet-data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ userId, link, sheetName, frequency }),
+        body: JSON.stringify({ userId, link, sheetName, frequency, prePrompt, postPrompt }),
     });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
@@ -41,7 +41,7 @@ export const getAllSheetDataFromUser = async (userId: string | number, limit?: n
 };
 
 // PUT - Update Sheet Data
-export const updateSheetData = async (id: string | number, updateData: { userId?: number; link?: string; sheetName?: string; frequency?: string }, token?: string) => {
+export const updateSheetData = async (id: string | number, updateData: { userId?: number; link?: string; sheetName?: string; frequency?: string; prePrompt?: string; postPrompt?: string }, token?: string) => {
     const response = await fetch(`http://localhost:5000/sheet-data/${id}`, {
         method: 'PUT',
         headers: {

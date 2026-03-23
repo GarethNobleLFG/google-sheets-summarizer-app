@@ -10,12 +10,21 @@ export const SheetDataEntries = ({
     sheetData,
     removeSheet
 }: {
-    onEditSheet: (sheet: { id: number; link: string; sheet_name: string; frequency: string }) => void;
+    onEditSheet: (sheet: {
+        id: number;
+        link: string;
+        sheet_name: string;
+        frequency: string;
+        pre_prompt: string;
+        post_prompt: string;
+    }) => void;
     sheetData: {
         id: number;
         sheet_name: string;
         link: string;
         frequency: string;
+        pre_prompt: string;
+        post_prompt: string;
         created_at: string;
     }[];
     removeSheet: (sheetId: number) => void;
@@ -142,7 +151,9 @@ export const SheetDataEntries = ({
                                                     id: sheet.id,
                                                     link: sheet.link,
                                                     sheet_name: sheet.sheet_name,
-                                                    frequency: sheet.frequency
+                                                    frequency: sheet.frequency,
+                                                    pre_prompt: sheet.pre_prompt,
+                                                    post_prompt: sheet.post_prompt
                                                 })}
                                             >
                                                 Edit

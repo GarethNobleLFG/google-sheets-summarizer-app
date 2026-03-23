@@ -17,6 +17,8 @@ export const MainPage = () => {
         sheet_name: string;
         link: string;
         frequency: string;
+        pre_prompt: string;
+        post_prompt: string;
         created_at: string;
     }[]>([]);
 
@@ -25,12 +27,16 @@ export const MainPage = () => {
         sheetUrl: string;
         sheetName: string;
         frequency: string;
+        prePrompt: string;
+        postPrompt: string;
         isEdit: boolean;
         id?: string | number;
     }>({
         sheetUrl: '',
         sheetName: '',
         frequency: 'weekly',
+        prePrompt: '',
+        postPrompt: '',
         isEdit: false,
         id: undefined,
     });
@@ -83,11 +89,20 @@ export const MainPage = () => {
     };
 
     // Function to populate form for editing.
-    const handleEditSheet = (sheet: { id: string | number; link: string; sheet_name: string; frequency: string }) => {
+    const handleEditSheet = (sheet: {
+        id: string | number;
+        link: string;
+        sheet_name: string;
+        frequency: string;
+        pre_prompt: string;
+        post_prompt: string;
+    }) => {
         setFormData({
             sheetUrl: sheet.link,
             sheetName: sheet.sheet_name,
             frequency: sheet.frequency.toLowerCase(),
+            prePrompt: sheet.pre_prompt || '',
+            postPrompt: sheet.post_prompt || '',
             isEdit: true,
             id: sheet.id
         });
@@ -99,6 +114,8 @@ export const MainPage = () => {
         sheet_name: string;
         link: string;
         frequency: string;
+        pre_prompt: string;
+        post_prompt: string;
         created_at: string;
     }) => {
         setSheetData(prev => [newSheet, ...prev]);

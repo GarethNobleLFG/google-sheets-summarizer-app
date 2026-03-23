@@ -9,14 +9,16 @@ export const SignupForm = ({
     showNotification,
     addNewSheet
 }: {
-    formData: { sheetUrl: string; sheetName: string; frequency: string; isEdit: boolean; id?: string | number };
-    setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string; isEdit: boolean; id?: string | number }) => void;
+    formData: { sheetUrl: string; sheetName: string; frequency: string; prePrompt: string; postPrompt: string; isEdit: boolean; id?: string | number };
+    setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string; prePrompt: string; postPrompt: string; isEdit: boolean; id?: string | number }) => void;
     showNotification: (message: string, type: 'success' | 'error') => void;
     addNewSheet: (newSheet: {
         id: number;
         sheet_name: string;
         link: string;
         frequency: string;
+        pre_prompt: string;
+        post_prompt: string;
         created_at: string;
     }) => void;
 }) => {
@@ -48,7 +50,9 @@ export const SignupForm = ({
                         userId: userData.id,
                         link: formData.sheetUrl,
                         sheetName: formData.sheetName,
-                        frequency: formData.frequency
+                        frequency: formData.frequency,
+                        prePrompt: formData.prePrompt,
+                        postPrompt: formData.postPrompt
                     },
                     token
                 );
@@ -62,6 +66,8 @@ export const SignupForm = ({
                     formData.sheetUrl,
                     formData.sheetName,
                     formData.frequency,
+                    formData.prePrompt,
+                    formData.postPrompt,
                     token
                 );
 
@@ -75,6 +81,8 @@ export const SignupForm = ({
                 sheetUrl: '',
                 sheetName: '',
                 frequency: '',
+                prePrompt: '',
+                postPrompt: '',
                 isEdit: false,
                 id: undefined
             });
@@ -153,6 +161,44 @@ export const SignupForm = ({
                             />
                         </motion.div>
 
+                        {/* Pre-Prompt */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.8 }}
+                        >
+                            <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                💬 Pre-Processing Prompt *
+                            </label>
+                            <textarea
+                                placeholder="Instructions for analyzing the data before summarization..."
+                                value={formData.prePrompt}
+                                onChange={(e) => setFormData({ ...formData, prePrompt: e.target.value })}
+                                required
+                                rows={3}
+                                className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white placeholder-gray-500 transition-all resize-none"
+                            />
+                        </motion.div>
+
+                        {/* Post-Prompt */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.85 }}
+                        >
+                            <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                ✨ Post-Processing Prompt *
+                            </label>
+                            <textarea
+                                placeholder="Instructions for final formatting or additional analysis..."
+                                value={formData.postPrompt}
+                                onChange={(e) => setFormData({ ...formData, postPrompt: e.target.value })}
+                                required
+                                rows={3}
+                                className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white placeholder-gray-500 transition-all resize-none"
+                            />
+                        </motion.div>
+
                         {/* Frequency */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -219,6 +265,8 @@ export const SignupForm = ({
                                         sheetUrl: '',
                                         sheetName: '',
                                         frequency: '',
+                                        prePrompt: '',
+                                        postPrompt: '',
                                         isEdit: false,
                                         id: undefined
                                     });
