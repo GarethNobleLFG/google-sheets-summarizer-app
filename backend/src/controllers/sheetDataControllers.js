@@ -5,9 +5,9 @@ import * as sheetDataQuickGen from '../services/summary-services/sheetDataQuickG
 // Create a new sheet data entry....
 export async function createSheetData(req, res) {
     try {
-        const { userId, link, sheetName, frequency } = req.body;
+        const { userId, link, sheetName, frequency, prePrompt, postPrompt } = req.body;
 
-        const sheetData = await sheetDataCrudServices.createSheetData(userId, link, sheetName, frequency);
+        const sheetData = await sheetDataCrudServices.createSheetData(userId, link, sheetName, frequency, prePrompt, postPrompt);
 
         res.status(201).json({
             success: true,
