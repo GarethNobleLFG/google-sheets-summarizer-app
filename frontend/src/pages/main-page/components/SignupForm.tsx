@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { createSheetData, updateSheetData } from '../../../hooks/sheetDataHooks';
 import { getToken, decodeToken } from '../../../utils/tokenAuth';
+import { PromptInfoModal } from './promptQueModal';
 
 export const SignupForm = ({
     formData,
@@ -23,6 +24,7 @@ export const SignupForm = ({
     }) => void;
 }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [showPromptInfo, setShowPromptInfo] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -168,8 +170,16 @@ export const SignupForm = ({
                             transition={{ duration: 0.4, delay: 0.8 }}
                             className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-lg p-3 border border-white/50 dark:border-gray-700/50 shadow-lg"
                         >
-                            <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                                💬 Pre-Processing Prompt *
+                            <label className="flex items-center justify-between text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                <span>💬 Pre-Processing Prompt *</span>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPromptInfo(true)}
+                                    className="w-4 h-4 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors text-xs font-bold flex items-center justify-center"
+                                    title="Learn about prompts"
+                                >
+                                    ?
+                                </button>
                             </label>
                             <textarea
                                 placeholder="You are a financial advisor...."
@@ -188,8 +198,16 @@ export const SignupForm = ({
                             transition={{ duration: 0.4, delay: 0.85 }}
                             className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-lg p-3 border border-white/50 dark:border-gray-700/50 shadow-lg"
                         >
-                            <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                                ✨ Post-Processing Prompt *
+                            <label className="flex items-center justify-between text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                <span>✨ Post-Processing Prompt *</span>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPromptInfo(true)}
+                                    className="w-4 h-4 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors text-xs font-bold flex items-center justify-center"
+                                    title="Learn about prompts"
+                                >
+                                    ?
+                                </button>
                             </label>
                             <textarea
                                 placeholder="Specific instructions..."
@@ -287,6 +305,13 @@ export const SignupForm = ({
                     </form>
                 </motion.div>
             </div>
+
+            {/* Prompt Info Modal */}
+            <PromptInfoModal 
+                isOpen={showPromptInfo} 
+                setIsOpen={setShowPromptInfo} 
+            />
+
         </motion.div>
     );
 };
