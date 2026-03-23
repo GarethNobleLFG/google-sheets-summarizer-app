@@ -148,7 +148,7 @@ export const MainPage = () => {
             {/* Main Content */}
             <div className="flex h-screen pt-16 items-start">
                 {isAuthenticated && user ? (
-                    <div className="flex-1 flex items-start justify-center pt-16 px-6 lg:px-12">
+                    <div className="flex-1 flex items-start justify-center pt-20 px-6 lg:px-12">
                         <SheetDataEntries
                             onEditSheet={handleEditSheet}
                             sheetData={sheetData}
@@ -158,7 +158,7 @@ export const MainPage = () => {
                 ) : (
                     <>
                         {/* Hero Section - Left Side */}
-                        <div className="flex-1 flex items-start justify-center pt-16 px-6 lg:px-12">
+                        <div className="flex-1 flex items-start justify-center pt-20 px-6 lg:px-12">
                             <HeroSection />
                         </div>
                     </>
