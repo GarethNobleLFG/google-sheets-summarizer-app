@@ -38,7 +38,7 @@ export const Navigation = ({
                             </svg>
                         </div>
                         <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
-                            Clarus
+                            DocuSums
                         </span>
                     </div>
 
