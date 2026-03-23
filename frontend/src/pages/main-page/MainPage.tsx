@@ -158,13 +158,13 @@ export const MainPage = () => {
                 ) : (
                     <>
                         {/* Hero Section - Left Side */}
-                        <div className="flex-1 flex items-start justify-center pt-24 px-6 lg:px-12">
+                        <div className="w-1/2 flex items-start justify-center pt-24 px-6 lg:px-12">
                             <HeroSection />
                         </div>
                     </>
                 )}
                 {/* Signup Form - Right Side */}
-                <div className="flex-1 h-full">
+                <div className="w-1/2 h-full">
                     <SignupForm
                         showNotification={showNotification}
                         formData={formData}
