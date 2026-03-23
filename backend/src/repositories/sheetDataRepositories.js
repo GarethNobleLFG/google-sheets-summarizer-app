@@ -3,14 +3,16 @@ import { Op } from 'sequelize';
 
 // Create a new sheet data entry
 export async function create(sheetDataInput) {
-    const { user_id, link, sheet_name, frequency } = sheetDataInput;
+    const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
 
     try {
         const sheetData = await SheetData.create({
             user_id,
             link,
             sheet_name,
-            frequency
+            frequency,
+            pre_prompt,
+            post_prompt
         });
         return sheetData.dataValues;
     }
@@ -37,7 +39,7 @@ export async function findAllFromUser(userId, limit = 50) {
             where: {
                 user_id: userId
             },
-            attributes: ['id', 'user_id', 'link', 'sheet_name', 'frequency', 'created_at'],
+            attributes: ['id', 'user_id', 'link', 'sheet_name', 'frequency', 'pre_prompt', 'post_prompt', 'created_at'],
             order: [['created_at', 'DESC']],
             limit: limit
         });

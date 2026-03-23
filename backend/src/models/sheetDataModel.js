@@ -31,6 +31,16 @@ export default sequelize.define('SheetData', {
         allowNull: false,
         field: 'frequency'
     },
+    pre_prompt: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        field: 'pre_prompt'
+    },
+    post_prompt: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        field: 'post_prompt'
+    },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
