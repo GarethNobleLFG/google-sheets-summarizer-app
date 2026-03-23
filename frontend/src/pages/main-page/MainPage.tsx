@@ -148,7 +148,7 @@ export const MainPage = () => {
             {/* Main Content */}
             <div className="flex h-screen pt-10 items-start">
                 {isAuthenticated && user ? (
-                    <div className="flex-1 flex items-start justify-center pt-24 px-6 lg:px-12">
+                    <div className="w-1/2 flex items-start justify-center pt-24 px-6 lg:px-12">
                         <SheetDataEntries
                             onEditSheet={handleEditSheet}
                             sheetData={sheetData}
