@@ -1,6 +1,6 @@
 import * as userRepository from '../../repositories/userRepositories.js';
 import * as sheetDataCrudServices from './sheetDataCrudServices.js';
-import { generateGeneralSummary } from './ai-generations/generateGeneralSummary.js';
+import { generateGeneralSummary } from '../ai-summary-services/generateGeneralSummary.js';
 import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 

@@ -1,4 +1,4 @@
-import { generateGeneralSummary } from './ai-generations/generateGeneralSummary.js';
+import { generateGeneralSummary } from '../ai-summary-services/generateGeneralSummary.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 import * as sheetDataCrudServices from './sheetDataCrudServices.js';
 
