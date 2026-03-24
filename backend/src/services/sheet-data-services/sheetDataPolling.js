@@ -50,7 +50,7 @@ export async function pollUsersForScheduledSummaries() {
                             maxPreviewRows: 100
                         };
 
-                        const result = await generateGeneralSummary(sheetData.link, sheetOptions);
+                        const result = await generateGeneralSummary(sheetData.link, sheetOptions, sheetData.pre_prompt, sheetData.post_prompt);
 
                         // Update created_at to current time to reset the frequency timer
                         await sheetDataCrudServices.updateSheetData(sheetData.id, {
