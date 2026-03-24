@@ -10,7 +10,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-export async function generateGeneralSummary(spreadsheetUrl, sheetOptions) {
+export async function generateGeneralSummary(spreadsheetUrl, sheetOptions, prePrompt, postPrompt ) {
     try {
         // Step 1: Process and get result from google sheet using the URL
         const sheetData = await processSheetForAI(spreadsheetUrl, sheetOptions);
@@ -22,18 +22,13 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions) {
         // Step 2: Create the analysis prompt for OpenAI to collect correct data from sheet
         const analysisPrompt = `
             RULES:
-                - Use exact dollar amounts from the data
+                - ${prePrompt}
 
-            BUDGET DATA:
-            ${sheetData.csvContent}
+            SHEET DATA:
+                ${sheetData.csvContent}
 
-            RESPONSE:
-                * Weekly income: $[week 1 total income], $[week 2 total income], $[week 3 total income], $[week 4 total income], $[week 5 total income]
-                * Total monthly income: $[month's total income]
-                * Total monthly expenses: $[month's total expenses]
-                * List most expensive categories and their cash amounts, ignore tuition and housing categories such as rent (except electricity).
-
-            Format your response like this and only this:
+            RESPONSE (Provide EXACTLY this structure):
+                [Collect all relative information based on the RULES and discard non essential information. List findings as response.]
         `;
 
         // Step 3: Make OpenAI API call for analysis
@@ -42,7 +37,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions) {
             messages: [
                 {
                     role: "system",
-                    content: "You are a data analyist."
+                    content: prePrompt
                 },
                 {
                     role: "user",
@@ -57,21 +52,15 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions) {
 
         // Step 4: Create general summary prompt
         const generalPrompt = `
-            You are a financial analyst for Google Sheets. Analyze this budget data.
-
             RULES:
-                - Ignore tuition and housing categories (except electricity)
-                - Use exact dollar amounts from the data
-                - Cash amounts gained in green, red in deficit
+                -  ${postPrompt}
 
-            BUDGET DATA:
-            ${analysisData}
+            SHEET DATA:
+                ${analysisData}
 
-            RESPONSE FORMAT: Provide EXACTLY this structure:
+            RESPONSE (Provide EXACTLY this structure):
 
-            **The General Info On Your Spending:**
-
-            [Write a decently long and comprehensive review/report on the budget data. Include actionable advice on it]
+            [Write a decently long and comprehensive summary on the sheet data based on the RULES section.]
 
             TEXT_VERSION_START
             [Plain text version - no formatting, just clean readable text]
@@ -90,7 +79,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions) {
             messages: [
                 {
                     role: "system",
-                    content: "You are a professional financial analyst who provides clear, actionable budget insights."
+                    content: postPrompt
                 },
                 {
                     role: "user",
@@ -113,7 +102,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions) {
         // Step 7: Save to database
         try {
             const summaryData = {
-                summary_type: 'General Budget Summary',
+                summary_type: 'DocuSums Summary',
                 text_version: textVersion, 
                 html_version: htmlVersion  
             };
@@ -129,7 +118,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions) {
         const response = {
             text: textVersion,
             html: htmlVersion,
-            messageType: 'General Budget Summary',
+            messageType: 'DocuSums Summary',
             success: true
         };
 
@@ -139,7 +128,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions) {
             success: true,
             text: textVersion,
             html: htmlVersion,
-            messageType: 'General Budget Summary'
+            messageType: 'DocuSums Summary'
         };
 
     } catch (error) {
