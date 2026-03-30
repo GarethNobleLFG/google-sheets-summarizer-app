@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { UserAuthModal } from './components/userAuthModal';
 import { logout } from '../../../../utils/tokenAuth';
+import { Features } from './components/Features';
 
 export const Navigation = ({
     onAuthSuccess,
@@ -13,6 +14,7 @@ export const Navigation = ({
     user?: { id: number; email: string; } | null;
 }) => {
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showFeaturesModal, setShowFeaturesModal] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -45,7 +47,7 @@ export const Navigation = ({
                     {/* Right - Navigation Items */}
                     {isAuthenticated && user ? (
                         <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
-                            <a href="#" className="hover:text-indigo-600 transition-colors">Features</a>
+                            <button onClick={() => setShowFeaturesModal(true)} className="hover:text-indigo-600 transition-colors">Features</button>
                             <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
                             <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
                                 {user.email}
@@ -59,7 +61,7 @@ export const Navigation = ({
                         </div>
                     ) : (
                         <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
-                            <a href="#" className="hover:text-indigo-600 transition-colors">Features</a>
+                            <button onClick={() => setShowFeaturesModal(true)} className="hover:text-indigo-600 transition-colors">Features</button>
                             <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
                             <button
                                 onClick={() => setShowAuthModal(true)}
@@ -76,6 +78,11 @@ export const Navigation = ({
                 isOpen={showAuthModal}
                 setIsOpen={setShowAuthModal}
                 onAuthSuccess={onAuthSuccess}
+            />
+
+            <Features
+                isOpen={showFeaturesModal}
+                setIsOpen={setShowFeaturesModal}
             />
         </>
     );
