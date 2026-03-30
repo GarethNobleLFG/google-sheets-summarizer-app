@@ -1,5 +1,5 @@
 import * as userRepository from '../../repositories/userRepositories.js';
-import * as sheetDataCrudServices from './sheetDataCrudServices.js';
+import * as sheetDataRepository from '../../repositories/sheetDataRepositories.js';
 import { generateGeneralSummary } from '../ai-summary-services/generateGeneralSummary.js';
 import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
@@ -19,7 +19,7 @@ export async function pollUsersForScheduledSummaries() {
         const userPromises = users.map(async (user) => {
             try {
                 // Get all sheet data for this user using CRUD service.
-                const userSheetData = await sheetDataCrudServices.getAllSheetDataFromUser(user.id, 100);
+                const userSheetData = await sheetDataRepository.findAllFromUser(user.id, 100);
 
                 if (!userSheetData || userSheetData.length === 0) {
                     console.log(`No sheet data found for user ${user.id}`);
@@ -53,7 +53,7 @@ export async function pollUsersForScheduledSummaries() {
                         const result = await generateGeneralSummary(sheetData, sheetOptions);
 
                         // Update created_at to current time to reset the frequency timer
-                        await sheetDataCrudServices.updateSheetData(sheetData.id, {
+                        await sheetDataRepository.updateById(sheetData.id, {
                             created_at: new Date()
                         });
 
@@ -159,7 +159,7 @@ export async function triggerUserSummaries(userId) {
         console.log(`Manually triggering summaries for user ${userId}`);
 
         // Get all sheet data for this user
-        const userSheetData = await sheetDataCrudServices.getAllSheetDataFromUser(parseInt(userId), 100);
+        const userSheetData = await sheetDataRepository.findAllFromUser(parseInt(userId), 100);
 
         let executed = 0;
         const errors = [];
@@ -175,7 +175,7 @@ export async function triggerUserSummaries(userId) {
                         maxPreviewRows: 100
                     };
 
-                    const result = await generateGeneralSummary(sheetData.link, sheetOptions);
+                    const result = await generateGeneralSummary(sheetData, sheetOptions);
 
                     if (!result.success) {
                         throw new Error(`General summary failed: ${result.error}`);
