@@ -1,13 +1,19 @@
-import * as sheetDataCrudServices from '../services/sheet-data-services/sheetDataCrudServices.js';
+import * as sheetDataRepository from '../repositories/sheetDataRepositories.js';
 import * as sheetDataServices from '../services/sheet-data-services/sheetDataPolling.js';
 import * as sheetDataQuickGen from '../services/sheet-data-services/sheetDataQuickGen.js';
 
-// Create a new sheet data entry....
 export async function createSheetData(req, res) {
     try {
         const { userId, link, sheetName, frequency, prePrompt, postPrompt } = req.body;
 
-        const sheetData = await sheetDataCrudServices.createSheetData(userId, link, sheetName, frequency, prePrompt, postPrompt);
+        const sheetData = await sheetDataRepository.create({
+            user_id: userId,
+            link,
+            sheet_name: sheetName,
+            frequency,
+            pre_prompt: prePrompt,
+            post_prompt: postPrompt
+        });
 
         res.status(201).json({
             success: true,
@@ -33,12 +39,18 @@ export async function createSheetData(req, res) {
     }
 }
 
-// Get sheet data by ID
 export async function getSheetDataById(req, res) {
     try {
         const { id } = req.params;
 
-        const sheetData = await sheetDataCrudServices.getSheetDataById(id);
+        const sheetData = await sheetDataRepository.findById(id);
+
+        if (!sheetData) {
+            return res.status(404).json({
+                success: false,
+                error: 'Sheet data not found'
+            });
+        }
 
         res.status(200).json({
             success: true,
@@ -48,13 +60,6 @@ export async function getSheetDataById(req, res) {
     }
     catch (error) {
         console.error('Error fetching sheet data:', error);
-
-        if (error.message.includes('not found')) {
-            return res.status(404).json({
-                success: false,
-                error: error.message
-            });
-        }
 
         if (error.message.includes('required') || error.message.includes('Valid')) {
             return res.status(400).json({
@@ -70,13 +75,12 @@ export async function getSheetDataById(req, res) {
     }
 }
 
-// Get all sheet data for a specific user
 export async function getAllSheetDataFromUser(req, res) {
     try {
         const { userId } = req.params;
         const { limit } = req.query;
 
-        const sheetData = await sheetDataCrudServices.getAllSheetDataFromUser(userId, limit ? parseInt(limit) : undefined);
+        const sheetData = await sheetDataRepository.findAllFromUser(userId, limit ? parseInt(limit) : undefined);
 
         res.status(200).json({
             success: true,
@@ -106,13 +110,19 @@ export async function getAllSheetDataFromUser(req, res) {
     }
 }
 
-// Update sheet data
 export async function updateSheetData(req, res) {
     try {
         const { id } = req.params;
         const updateData = req.body;
 
-        const updatedSheetData = await sheetDataCrudServices.updateSheetData(id, updateData);
+        const updatedSheetData = await sheetDataRepository.updateById(id, updateData);
+
+        if (!updatedSheetData) {
+            return res.status(404).json({
+                success: false,
+                error: 'Sheet data not found'
+            });
+        }
 
         res.status(200).json({
             success: true,
@@ -145,12 +155,18 @@ export async function updateSheetData(req, res) {
     }
 }
 
-// Delete sheet data
 export async function deleteSheetData(req, res) {
     try {
         const { id } = req.params;
 
-        const deletedSheetData = await sheetDataCrudServices.deleteSheetData(id);
+        const deletedSheetData = await sheetDataRepository.deleteById(id);
+
+        if (!deletedSheetData) {
+            return res.status(404).json({
+                success: false,
+                error: 'Sheet data not found'
+            });
+        }
 
         res.status(200).json({
             success: true,
@@ -161,13 +177,6 @@ export async function deleteSheetData(req, res) {
     }
     catch (error) {
         console.error('Error deleting sheet data:', error);
-
-        if (error.message.includes('not found')) {
-            return res.status(404).json({
-                success: false,
-                error: error.message
-            });
-        }
 
         if (error.message.includes('required')) {
             return res.status(400).json({
@@ -183,12 +192,11 @@ export async function deleteSheetData(req, res) {
     }
 }
 
-// Delete all sheet data for a user
 export async function deleteAllUserSheetData(req, res) {
     try {
         const { userId } = req.params;
 
-        const deletedCount = await sheetDataCrudServices.deleteAllUserSheetData(userId);
+        const deletedCount = await sheetDataRepository.deleteByUserId(userId);
 
         res.status(200).json({
             success: true,
@@ -217,10 +225,8 @@ export async function deleteAllUserSheetData(req, res) {
     }
 }
 
-// Poll all users for scheduled summaries
 export async function pollUsersForScheduledSummaries(req, res) {
     try {
-
         res.status(200).json({
             success: true,
             message: 'Polling started in background'
@@ -238,7 +244,6 @@ export async function pollUsersForScheduledSummaries(req, res) {
     }
 }
 
-// Trigger user summaries (from sheetDataServices)
 export async function triggerUserSummaries(req, res) {
     try {
         const { userId } = req.params;
@@ -273,7 +278,6 @@ export async function quickGenerateSummary(req, res) {
     try {
         const { id } = req.params;
 
-        // Validate that we have sheet ID
         if (!id) {
             return res.status(400).json({
                 success: false,
