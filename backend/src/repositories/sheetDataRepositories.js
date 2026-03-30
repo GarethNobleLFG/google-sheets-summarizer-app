@@ -1,18 +1,25 @@
 import SheetData from '../models/sheetDataModel.js';
 import { Op } from 'sequelize';
 
-// Create a new sheet data entry
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
 
+    if (!user_id || !link || !sheet_name || !frequency || !pre_prompt || !post_prompt) {
+        throw new Error('User ID, link, sheet name, frequency, pre-prompt, and post-prompt are required');
+    }
+
+    if (isNaN(user_id)) {
+        throw new Error('Valid user ID is required');
+    }
+
     try {
         const sheetData = await SheetData.create({
-            user_id,
-            link,
-            sheet_name,
-            frequency,
-            pre_prompt,
-            post_prompt
+            user_id: parseInt(user_id),
+            link: link.trim(),
+            sheet_name: sheet_name.trim(),
+            frequency: frequency.trim(),
+            pre_prompt: pre_prompt.trim(),
+            post_prompt: post_prompt.trim()
         });
         return sheetData.dataValues;
     }
@@ -21,10 +28,13 @@ export async function create(sheetDataInput) {
     }
 }
 
-// Find by ID
 export async function findById(id) {
+    if (!id || isNaN(id)) {
+        throw new Error('Valid sheet data ID is required');
+    }
+
     try {
-        const sheetData = await SheetData.findByPk(id);
+        const sheetData = await SheetData.findByPk(parseInt(id));
         return sheetData ? sheetData.dataValues : null;
     }
     catch (error) {
@@ -32,12 +42,19 @@ export async function findById(id) {
     }
 }
 
-// Find all sheet data entries for a specific user
 export async function findAllFromUser(userId, limit = 50) {
+    if (!userId || isNaN(userId)) {
+        throw new Error('Valid user ID is required');
+    }
+
+    if (limit && (isNaN(limit) || limit < 1)) {
+        throw new Error('Limit must be a positive number');
+    }
+
     try {
         const sheetDataEntries = await SheetData.findAll({
             where: {
-                user_id: userId
+                user_id: parseInt(userId)
             },
             attributes: ['id', 'user_id', 'link', 'sheet_name', 'frequency', 'pre_prompt', 'post_prompt', 'created_at'],
             order: [['created_at', 'DESC']],
@@ -50,12 +67,19 @@ export async function findAllFromUser(userId, limit = 50) {
     }
 }
 
-// Find by user ID
 export async function findByUserId(userId, limit = 20) {
+    if (!userId || isNaN(userId)) {
+        throw new Error('Valid user ID is required');
+    }
+
+    if (limit && (isNaN(limit) || limit < 1)) {
+        throw new Error('Limit must be a positive number');
+    }
+
     try {
         const sheetDataEntries = await SheetData.findAll({
             where: {
-                user_id: userId
+                user_id: parseInt(userId)
             },
             order: [['created_at', 'DESC']],
             limit: limit
@@ -67,11 +91,33 @@ export async function findByUserId(userId, limit = 20) {
     }
 }
 
-// Update sheet data by ID
 export async function updateById(id, updateData) {
+    if (!id || isNaN(id)) {
+        throw new Error('Valid sheet data ID is required');
+    }
+
+    const existingSheetData = await SheetData.findByPk(parseInt(id));
+    if (!existingSheetData) {
+        throw new Error('Sheet data not found');
+    }
+
+    const { link, sheet_name, frequency, pre_prompt, post_prompt, created_at } = updateData;
+    const updateFields = {};
+
+    if (link) updateFields.link = link.trim();
+    if (sheet_name) updateFields.sheet_name = sheet_name.trim();
+    if (frequency) updateFields.frequency = frequency.trim();
+    if (pre_prompt) updateFields.pre_prompt = pre_prompt.trim();
+    if (post_prompt) updateFields.post_prompt = post_prompt.trim();
+    if (created_at) updateFields.created_at = created_at;
+
+    if (Object.keys(updateFields).length === 0) {
+        throw new Error('No valid fields to update');
+    }
+
     try {
-        const [updatedRowsCount] = await SheetData.update(updateData, {
-            where: { id },
+        const [updatedRowsCount] = await SheetData.update(updateFields, {
+            where: { id: parseInt(id) },
             returning: true
         });
 
@@ -79,7 +125,7 @@ export async function updateById(id, updateData) {
             return null;
         }
 
-        const updatedSheetData = await SheetData.findByPk(id);
+        const updatedSheetData = await SheetData.findByPk(parseInt(id));
         return updatedSheetData.dataValues;
     }
     catch (error) {
@@ -87,10 +133,13 @@ export async function updateById(id, updateData) {
     }
 }
 
-// Delete sheet data by ID
 export async function deleteById(id) {
+    if (!id || isNaN(id)) {
+        throw new Error('Valid sheet data ID is required');
+    }
+
     try {
-        const sheetData = await SheetData.findByPk(id);
+        const sheetData = await SheetData.findByPk(parseInt(id));
         if (!sheetData) {
             return null;
         }
@@ -104,11 +153,14 @@ export async function deleteById(id) {
     }
 }
 
-// Delete all sheet data by user ID
 export async function deleteByUserId(userId) {
+    if (!userId || isNaN(userId)) {
+        throw new Error('Valid user ID is required');
+    }
+
     try {
         const deletedRowsCount = await SheetData.destroy({
-            where: { user_id: userId }
+            where: { user_id: parseInt(userId) }
         });
         return deletedRowsCount;
     }
@@ -117,10 +169,13 @@ export async function deleteByUserId(userId) {
     }
 }
 
-// Find user ID by sheet data ID
 export async function findUserIdById(id) {
+    if (!id || isNaN(id)) {
+        throw new Error('Valid sheet data ID is required');
+    }
+
     try {
-        const sheetData = await SheetData.findByPk(id, {
+        const sheetData = await SheetData.findByPk(parseInt(id), {
             attributes: ['user_id']
         });
         return sheetData ? sheetData.dataValues.user_id : null;
