@@ -3,6 +3,7 @@ import twilio from 'twilio';
 import nodemailer from 'nodemailer';
 import { findUserIdById } from '../repositories/sheetDataRepositories.js';
 import { findEmailById } from '../repositories/userRepositories.js';
+import { emailFormatter } from '../utils/emailFormatter.js';
 
 dotenv.config();
 
@@ -24,7 +25,9 @@ export async function sendMessage(message, sheetDataInfo) {
 
         const userEmail = await findEmailById(userId);
 
-        /* fsfsf
+        const formattedEmail = await emailFormatter(message, sheetDataInfo.sheet_name);
+
+        /*
         // Send via SMS
         await twilioClient.messages.create({
             body: `Daily Budget Summary:\n\n${message.text}`,
@@ -44,7 +47,7 @@ export async function sendMessage(message, sheetDataInfo) {
                 day: '2-digit'
             })}`,
             text: message.text,
-            html: message.html
+            html: formattedEmail.html
         });
 
         return { success: true };
