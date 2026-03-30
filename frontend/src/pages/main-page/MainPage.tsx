@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Navigation } from './components/Navigation';
+import { Navigation } from './components/nav/Navigation';
 import { HeroSection } from './components/HeroSection';
 import { SignupForm } from './components/SignupForm';
 import { checkAuth, getToken, decodeToken } from '../../utils/tokenAuth';

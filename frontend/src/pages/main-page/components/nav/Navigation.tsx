@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { UserAuthModal } from './userAuthModal';
-import { logout } from '../../../utils/tokenAuth';
+import { logout } from '../../../../utils/tokenAuth';
 
 export const Navigation = ({
     onAuthSuccess,
