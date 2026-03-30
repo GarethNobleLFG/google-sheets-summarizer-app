@@ -1,15 +1,39 @@
-import * as userService from '../services/userServices.js';
+import bcrypt from 'bcrypt';
+import * as userRepository from '../repositories/userRepositories.js';
+import { generateToken } from '../utils/jwtUtils.js';
 
-// Create a new user
 export async function createUser(req, res) {
     try {
         const { email, password } = req.body;
         
-        const user = await userService.createUser(email, password);
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                error: 'Email and password are required'
+            });
+        }
+
+        const saltRounds = 12;
+        const hashed_password = await bcrypt.hash(password, saltRounds);
+
+        const user = await userRepository.create({
+            email,
+            hashed_password
+        });
+
+        const { hashed_password: _, ...userResponse } = user;
+
+        const token = generateToken({
+            id: user.id,
+            email: user.email
+        });
         
         res.status(201).json({
             success: true,
-            data: user,
+            data: {
+                user: userResponse,
+                token
+            },
             message: 'User created successfully'
         });
         
@@ -17,7 +41,6 @@ export async function createUser(req, res) {
     catch (error) {
         console.error('Error creating user:', error);
         
-        // Handle specific errors with appropriate status codes
         if (error.message.includes('already exists')) {
             return res.status(409).json({
                 success: false,
@@ -39,28 +62,29 @@ export async function createUser(req, res) {
     }
 }
 
-// Get user by ID
 export async function getUserById(req, res) {
     try {
         const { id } = req.params;
         
-        const user = await userService.getUserById(id);
+        const user = await userRepository.findById(id);
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
+
+        const { hashed_password: _, ...userResponse } = user;
         
         res.status(200).json({
             success: true,
-            data: user
+            data: userResponse
         });
         
     } 
     catch (error) {
         console.error('Error fetching user:', error);
-        
-        if (error.message.includes('not found')) {
-            return res.status(404).json({
-                success: false,
-                error: error.message
-            });
-        }
         
         if (error.message.includes('required') || error.message.includes('Valid')) {
             return res.status(400).json({
@@ -76,28 +100,29 @@ export async function getUserById(req, res) {
     }
 }
 
-// Get user by email
 export async function getUserByEmail(req, res) {
     try {
         const { email } = req.params;
         
-        const user = await userService.getUserByEmail(email);
+        const user = await userRepository.findByEmail(email);
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
+
+        const { hashed_password: _, ...userResponse } = user;
         
         res.status(200).json({
             success: true,
-            data: user
+            data: userResponse
         });
         
     } 
     catch (error) {
         console.error('Error fetching user by email:', error);
-        
-        if (error.message.includes('not found')) {
-            return res.status(404).json({
-                success: false,
-                error: error.message
-            });
-        }
         
         if (error.message.includes('required')) {
             return res.status(400).json({
@@ -113,18 +138,22 @@ export async function getUserByEmail(req, res) {
     }
 }
 
-// Get all users
 export async function getAllUsers(req, res) {
     try {
         const { limit } = req.query;
         const userLimit = limit ? parseInt(limit) : undefined;
         
-        const result = await userService.getAllUsers(userLimit);
+        const users = await userRepository.findAll(userLimit);
+        const totalUsers = await userRepository.count();
         
         res.status(200).json({
             success: true,
-            data: result.users,
-            meta: result.meta
+            data: users,
+            meta: {
+                total: totalUsers,
+                count: users.length,
+                limit: userLimit || 50
+            }
         });
         
     } 
@@ -145,13 +174,19 @@ export async function getAllUsers(req, res) {
     }
 }
 
-// Update user
 export async function updateUser(req, res) {
     try {
         const { id } = req.params;
         const updateData = req.body;
         
-        const updatedUser = await userService.updateUser(id, updateData);
+        const updatedUser = await userRepository.updateById(id, updateData);
+        
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
         
         res.status(200).json({
             success: true,
@@ -191,12 +226,18 @@ export async function updateUser(req, res) {
     }
 }
 
-// Delete user
 export async function deleteUser(req, res) {
     try {
         const { id } = req.params;
         
-        const deletedUser = await userService.deleteUser(id);
+        const deletedUser = await userRepository.deleteById(id);
+        
+        if (!deletedUser) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
         
         res.status(200).json({
             success: true,
@@ -207,13 +248,6 @@ export async function deleteUser(req, res) {
     } 
     catch (error) {
         console.error('Error deleting user:', error);
-        
-        if (error.message.includes('not found')) {
-            return res.status(404).json({
-                success: false,
-                error: error.message
-            });
-        }
         
         if (error.message.includes('required')) {
             return res.status(400).json({
@@ -229,18 +263,24 @@ export async function deleteUser(req, res) {
     }
 }
 
-// Authenticate user (login)
 export async function loginUser(req, res) {
     try {
         const { email, password } = req.body;
         
-        const result = await userService.authenticateUser(email, password);
+        const user = await userRepository.authenticate(email, password);
+        
+        const { hashed_password: _, ...userResponse } = user;
+
+        const token = generateToken({
+            id: user.id,
+            email: user.email
+        });
         
         res.status(200).json({
             success: true,
             data: {
-                user: result.user,
-                token: result.token
+                user: userResponse,
+                token: token
             },
             message: 'Login successful'
         });
