@@ -10,10 +10,10 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-export async function generateGeneralSummary(spreadsheetUrl, sheetOptions, prePrompt, postPrompt ) {
+export async function generateGeneralSummary( sheetDataInfo, sheetOptions ) {
     try {
         // Step 1: Process and get result from google sheet using the URL
-        const sheetData = await processSheetForAI(spreadsheetUrl, sheetOptions);
+        const sheetData = await processSheetForAI(sheetDataInfo.link, sheetOptions);
 
         if (!sheetData.success) {
             throw new Error(`Failed to process sheet: ${sheetData.error}`);
@@ -22,7 +22,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions, prePr
         // Step 2: Create the analysis prompt for OpenAI to collect correct data from sheet
         const analysisPrompt = `
             RULES:
-                - ${prePrompt}
+                - ${sheetDataInfo.pre_prompt}
 
             SHEET DATA:
                 ${sheetData.csvContent}
@@ -37,7 +37,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions, prePr
             messages: [
                 {
                     role: "system",
-                    content: prePrompt
+                    content: sheetDataInfo.pre_prompt
                 },
                 {
                     role: "user",
@@ -53,7 +53,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions, prePr
         // Step 4: Create general summary prompt
         const generalPrompt = `
             RULES:
-                -  ${postPrompt}
+                -  ${sheetDataInfo.post_prompt}
 
             SHEET DATA:
                 ${analysisData}
@@ -79,7 +79,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions, prePr
             messages: [
                 {
                     role: "system",
-                    content: postPrompt
+                    content: sheetDataInfo.post_prompt
                 },
                 {
                     role: "user",
@@ -122,7 +122,7 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions, prePr
             success: true
         };
 
-        await sendMessage(response);
+        await sendMessage(response, sheetDataInfo);
 
         return {
             success: true,
@@ -131,7 +131,8 @@ export async function generateGeneralSummary(spreadsheetUrl, sheetOptions, prePr
             messageType: 'DocuSums Summary'
         };
 
-    } catch (error) {
+    } 
+    catch (error) {
         console.error('Error in general summary generation:', error);
         return {
             success: false,

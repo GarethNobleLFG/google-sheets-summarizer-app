@@ -36,7 +36,7 @@ export async function quickGenerateSummary(sheetId) {
         };
 
         // Generate the summary
-        const result = await generateGeneralSummary(sheetData.link, sheetOptions, sheetData.pre_prompt, sheetData.post_prompt);
+        const result = await generateGeneralSummary(sheetData, sheetOptions);
 
         if (!result.success) {
             throw new Error(`General summary failed: ${result.error}`);

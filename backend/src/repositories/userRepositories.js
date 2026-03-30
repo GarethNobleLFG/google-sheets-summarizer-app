@@ -4,14 +4,14 @@ import { Op } from 'sequelize';
 // Create a new user
 export async function create(userData) {
     const { email, hashed_password } = userData;
-    
+
     try {
         const user = await User.create({
             email,
             hashed_password
         });
         return user.dataValues;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to create user: ${error.message}`);
     }
@@ -22,7 +22,7 @@ export async function findById(id) {
     try {
         const user = await User.findByPk(id);
         return user ? user.dataValues : null;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to find user: ${error.message}`);
     }
@@ -35,7 +35,7 @@ export async function findByEmail(email) {
             where: { email }
         });
         return user ? user.dataValues : null;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to find user by email: ${error.message}`);
     }
@@ -50,7 +50,7 @@ export async function findAll(limit = 50) {
             limit: limit
         });
         return users.map(user => user.dataValues);
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to fetch users: ${error.message}`);
     }
@@ -63,16 +63,16 @@ export async function updateById(id, updateData) {
             where: { id },
             returning: true
         });
-        
+
         if (updatedRowsCount === 0) {
             return null;
         }
-        
+
         const updatedUser = await User.findByPk(id, {
             attributes: ['id', 'email'] // Exclude password from response
         });
         return updatedUser.dataValues;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to update user: ${error.message}`);
     }
@@ -87,12 +87,25 @@ export async function deleteById(id) {
         if (!user) {
             return null;
         }
-        
+
         const userData = user.dataValues;
         await user.destroy();
         return userData;
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to delete user: ${error.message}`);
+    }
+}
+
+// Find user email by ID
+export async function findEmailById(id) {
+    try {
+        const user = await User.findByPk(id, {
+            attributes: ['email']
+        });
+        return user ? user.dataValues.email : null;
+    }
+    catch (error) {
+        throw new Error(`Failed to find user email: ${error.message}`);
     }
 }

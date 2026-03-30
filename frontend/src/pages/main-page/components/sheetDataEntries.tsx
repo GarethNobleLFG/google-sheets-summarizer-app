@@ -39,7 +39,7 @@ export const SheetDataEntries = ({
             const token = getToken();
             if (token) {
                 await quickGenerateSummary(sheetId, token);
-                setNotification({ message: 'Summary generated successfully!', type: 'success', visible: true });
+                setNotification({ message: 'Summary generated successfully! Check your email.', type: 'success', visible: true });
                 setTimeout(() => setNotification(prev => ({ ...prev, visible: false })), 3000);
             }
         }

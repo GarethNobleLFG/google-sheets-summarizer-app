@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import twilio from 'twilio';
 import nodemailer from 'nodemailer';
+import { findUserIdById } from '../repositories/sheetDataRepositories.js';
+import { findEmailById } from '../repositories/userRepositories.js';
 
 dotenv.config();
 
@@ -15,8 +17,13 @@ const emailTransporter = nodemailer.createTransport({
     }
 });
 
-export async function sendMessage(message) {
+export async function sendMessage(message, sheetDataInfo) {
     try {
+
+        const userId = await findUserIdById(sheetDataInfo.id);
+
+        const userEmail = await findEmailById(userId);
+
         /* fsfsf
         // Send via SMS
         await twilioClient.messages.create({
@@ -25,13 +32,11 @@ export async function sendMessage(message) {
             to: process.env.YOUR_PHONE_NUMBER
         });
         */
-       // gsg sfsfsf sss
-       // dgdgd
 
         // Send email
         await emailTransporter.sendMail({
             from: process.env.EMAIL_USER,
-            to: process.env.YOUR_EMAIL,
+            to: userEmail,
             subject: `${message.messageType} - ${new Date().toLocaleDateString('en-US', {
                 timeZone: 'America/New_York',
                 year: 'numeric',

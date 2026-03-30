@@ -116,3 +116,16 @@ export async function deleteByUserId(userId) {
         throw new Error(`Failed to delete sheet data by user ID: ${error.message}`);
     }
 }
+
+// Find user ID by sheet data ID
+export async function findUserIdById(id) {
+    try {
+        const sheetData = await SheetData.findByPk(id, {
+            attributes: ['user_id']
+        });
+        return sheetData ? sheetData.dataValues.user_id : null;
+    }
+    catch (error) {
+        throw new Error(`Failed to find user ID: ${error.message}`);
+    }
+}
