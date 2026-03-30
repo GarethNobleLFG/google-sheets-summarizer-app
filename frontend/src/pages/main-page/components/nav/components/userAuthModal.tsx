@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { createUser, loginUser } from '../../../hooks/userHooks';
+import { createUser, loginUser } from '../../../../../hooks/userHooks';
 
 export const UserAuthModal = ({
     isOpen,

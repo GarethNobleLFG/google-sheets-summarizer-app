@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { UserAuthModal } from './userAuthModal';
+import { UserAuthModal } from './components/userAuthModal';
 import { logout } from '../../../../utils/tokenAuth';
 
 export const Navigation = ({
