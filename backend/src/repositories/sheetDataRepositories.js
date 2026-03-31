@@ -13,6 +13,10 @@ export async function create(sheetDataInput) {
     }
 
     try {
+        // Calculate next_run_at from cron_schedule
+        const interval = parser.parseExpression(cron_schedule.trim());
+        const nextRun = interval.next().toDate();
+
         const createData = {
             user_id: parseInt(user_id),
             link: link.trim(),
@@ -20,18 +24,17 @@ export async function create(sheetDataInput) {
             frequency: frequency.trim(),
             pre_prompt: pre_prompt.trim(),
             post_prompt: post_prompt.trim(),
-            cron_schedule: cron_schedule.trim()
+            cron_schedule: cron_schedule.trim(),
+            next_run_at: nextRun
         };
-
-        // Add next_run_at if provided, otherwise let the database handle it
-        if (next_run_at) {
-            createData.next_run_at = new Date(next_run_at);
-        }
 
         const sheetData = await SheetData.create(createData);
         return sheetData.dataValues;
     }
     catch (error) {
+        if (error.message.includes('Invalid cron expression')) {
+            throw new Error(`Invalid cron schedule format: ${error.message}`);
+        }
         throw new Error(`Failed to create sheet data: ${error.message}`);
     }
 }
