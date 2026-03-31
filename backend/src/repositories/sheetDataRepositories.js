@@ -2,7 +2,7 @@ import SheetData from '../models/sheetDataModel.js';
 import { Op } from 'sequelize';
 
 export async function create(sheetDataInput) {
-    const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt, cron_schedule, next_run_at } = sheetDataInput;
+    const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt, cron_schedule } = sheetDataInput;
 
     if (!user_id || !link || !sheet_name || !frequency || !pre_prompt || !post_prompt || !cron_schedule) {
         throw new Error('User ID, link, sheet name, frequency, pre-prompt, post-prompt, and cron schedule are required');
