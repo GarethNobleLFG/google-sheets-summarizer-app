@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { createSheetData, updateSheetData } from '../../../hooks/sheetDataHooks';
 import { getToken, decodeToken } from '../../../utils/tokenAuth';
 import { PromptInfoModal } from './promptQueModal';
+import { ScheduleSelector } from './ScheduleSelector';
 
 export const SignupForm = ({
     formData,
@@ -220,41 +221,10 @@ export const SignupForm = ({
                         </motion.div>
 
                         {/* Frequency */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: 0.9 }}
-                            className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-lg p-3 border border-white/50 dark:border-gray-700/50 shadow-lg"
-                        >
-                            <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 text-center">
-                                ⏰ Summary Frequency
-                            </label>
-                            <div className="grid grid-cols-4 gap-2">
-                                {['Daily', 'Weekly', 'Monthly', 'None'].map((freq) => (
-                                    <label key={freq} className={`flex flex-col items-center p-2 rounded-lg border-2 cursor-pointer transition-all
-                                    ${formData.frequency === freq.toLowerCase()
-                                            ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 shadow-md'
-                                            : 'border-gray-300 dark:border-gray-600 hover:border-indigo-300 bg-white/50 dark:bg-gray-700/50'
-                                        }
-                            `}>
-                                        <input
-                                            type="radio"
-                                            name="frequency"
-                                            value={freq.toLowerCase()}
-                                            checked={formData.frequency === freq.toLowerCase()}
-                                            onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
-                                            className="sr-only"
-                                        />
-                                        <div className="text-base mb-0.5">
-                                            {freq === 'Daily' ? '🌅' : freq === 'Weekly' ? '📅' : freq === 'Monthly' ? '📊' : freq === 'None' ? '🚫' : '📊'}
-                                        </div>
-                                        <span className="text-xs font-medium text-gray-900 dark:text-white">
-                                            {freq}
-                                        </span>
-                                    </label>
-                                ))}
-                            </div>
-                        </motion.div>
+                        <ScheduleSelector
+                            formData={formData}
+                            setFormData={setFormData}
+                        />
 
                         {/* Submit Button */}
                         <motion.button
@@ -307,9 +277,9 @@ export const SignupForm = ({
             </div>
 
             {/* Prompt Info Modal */}
-            <PromptInfoModal 
-                isOpen={showPromptInfo} 
-                setIsOpen={setShowPromptInfo} 
+            <PromptInfoModal
+                isOpen={showPromptInfo}
+                setIsOpen={setShowPromptInfo}
             />
 
         </motion.div>
