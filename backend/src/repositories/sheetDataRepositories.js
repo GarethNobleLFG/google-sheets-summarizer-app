@@ -1,6 +1,6 @@
 import SheetData from '../models/sheetDataModel.js';
 import { Op } from 'sequelize';
-import parser from 'cron-parser';
+import { Cron } from 'croner';
 
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
@@ -14,9 +14,9 @@ export async function create(sheetDataInput) {
     }
 
     try {
-        // Calculate next_run_at from cron_schedule
-        const interval = parser.parseExpression(frequency.trim());
-        const nextRun = interval.next().toDate();
+        // Calculate next_run_at from frequency (cron expression)
+        const job = new Cron(frequency.trim());
+        const nextRun = job.nextRun();
 
         const createData = {
             user_id: parseInt(user_id),

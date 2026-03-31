@@ -3,7 +3,7 @@ import * as sheetDataRepository from '../../repositories/sheetDataRepositories.j
 import { generateGeneralSummary } from '../ai-summary-services/generateGeneralSummary.js';
 import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
-import parser from 'cron-parser';
+import { Cron } from 'croner';
 
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
@@ -54,8 +54,8 @@ export async function pollUsersForScheduledSummaries() {
                         const result = await generateGeneralSummary(sheetData, sheetOptions);
 
                         // Calculate next run time from cron schedule
-                        const interval = parser.parseExpression(sheetData.frequency);
-                        const nextRun = interval.next().toDate();
+                        const job = new Cron(sheetData.frequency);
+                        const nextRun = job.nextRun();
 
                         // Update both created_at and next_run_at
                         await sheetDataRepository.updateById(sheetData.id, {
@@ -185,7 +185,7 @@ export async function triggerUserSummaries(userId) {
                     const result = await generateGeneralSummary(sheetData, sheetOptions);
 
                     // Calculate next run time from cron schedule
-                    const interval = parser.parseExpression(sheetData.frequency);
+                    const interval = cronParser.parseExpression(sheetData.frequency);
                     const nextRun = interval.next().toDate();
 
                     // Update both created_at and next_run_at
