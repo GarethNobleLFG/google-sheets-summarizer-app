@@ -54,7 +54,7 @@ export async function pollUsersForScheduledSummaries() {
                         const result = await generateGeneralSummary(sheetData, sheetOptions);
 
                         // Calculate next run time from cron schedule
-                        const interval = parser.parseExpression(sheetData.cron_schedule);
+                        const interval = parser.parseExpression(sheetData.frequency);
                         const nextRun = interval.next().toDate();
 
                         // Update both created_at and next_run_at
@@ -185,7 +185,7 @@ export async function triggerUserSummaries(userId) {
                     const result = await generateGeneralSummary(sheetData, sheetOptions);
 
                     // Calculate next run time from cron schedule
-                    const interval = parser.parseExpression(sheetData.cron_schedule);
+                    const interval = parser.parseExpression(sheetData.frequency);
                     const nextRun = interval.next().toDate();
 
                     // Update both created_at and next_run_at

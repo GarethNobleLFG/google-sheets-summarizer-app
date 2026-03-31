@@ -3,10 +3,10 @@ import { Op } from 'sequelize';
 import parser from 'cron-parser';
 
 export async function create(sheetDataInput) {
-    const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt, cron_schedule } = sheetDataInput;
+    const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
 
-    if (!user_id || !link || !sheet_name || !frequency || !pre_prompt || !post_prompt || !cron_schedule) {
-        throw new Error('User ID, link, sheet name, frequency, pre-prompt, post-prompt, and cron schedule are required');
+    if (!user_id || !link || !sheet_name || !frequency || !pre_prompt || !post_prompt) {
+        throw new Error('User ID, link, sheet name, frequency, pre-prompt, post-prompt are required');
     }
 
     if (isNaN(user_id)) {
@@ -15,7 +15,7 @@ export async function create(sheetDataInput) {
 
     try {
         // Calculate next_run_at from cron_schedule
-        const interval = parser.parseExpression(cron_schedule.trim());
+        const interval = parser.parseExpression(frequency.trim());
         const nextRun = interval.next().toDate();
 
         const createData = {
@@ -25,7 +25,6 @@ export async function create(sheetDataInput) {
             frequency: frequency.trim(),
             pre_prompt: pre_prompt.trim(),
             post_prompt: post_prompt.trim(),
-            cron_schedule: cron_schedule.trim(),
             next_run_at: nextRun
         };
 
@@ -68,7 +67,7 @@ export async function findAllFromUser(userId, limit = 50) {
             where: {
                 user_id: parseInt(userId)
             },
-            attributes: ['id', 'user_id', 'link', 'sheet_name', 'frequency', 'pre_prompt', 'post_prompt', 'cron_schedule', 'next_run_at', 'created_at'],
+            attributes: ['id', 'user_id', 'link', 'sheet_name', 'frequency', 'pre_prompt', 'post_prompt', 'next_run_at', 'created_at'],
             order: [['created_at', 'DESC']],
             limit: limit
         });
@@ -113,7 +112,7 @@ export async function updateById(id, updateData) {
         throw new Error('Sheet data not found');
     }
 
-    const { link, sheet_name, frequency, pre_prompt, post_prompt, cron_schedule, next_run_at, created_at } = updateData;
+    const { link, sheet_name, frequency, pre_prompt, post_prompt, next_run_at, created_at } = updateData;
     const updateFields = {};
 
     if (link) updateFields.link = link.trim();
@@ -121,7 +120,6 @@ export async function updateById(id, updateData) {
     if (frequency) updateFields.frequency = frequency.trim();
     if (pre_prompt) updateFields.pre_prompt = pre_prompt.trim();
     if (post_prompt) updateFields.post_prompt = post_prompt.trim();
-    if (cron_schedule) updateFields.cron_schedule = cron_schedule.trim();
     if (next_run_at) updateFields.next_run_at = next_run_at;
     if (created_at) updateFields.created_at = created_at;
 

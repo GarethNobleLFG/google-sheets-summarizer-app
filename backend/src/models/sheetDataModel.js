@@ -41,11 +41,6 @@ export default sequelize.define('SheetData', {
         allowNull: true,
         field: 'post_prompt'
     },
-    cron_schedule: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-        field: 'cron_schedule'
-    },
     next_run_at: {
         type: DataTypes.DATE,
         allowNull: true,
