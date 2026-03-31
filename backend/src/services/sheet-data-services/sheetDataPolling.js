@@ -3,6 +3,7 @@ import * as sheetDataRepository from '../../repositories/sheetDataRepositories.j
 import { generateGeneralSummary } from '../ai-summary-services/generateGeneralSummary.js';
 import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
+import parser from 'cron-parser';
 
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
@@ -31,7 +32,7 @@ export async function pollUsersForScheduledSummaries() {
                 // Process each sheet for this user - PARALLEL VERSION.
                 const sheetPromises = userSheetData.map(async (sheetData) => {
                     try {
-                        const shouldExecute = checkIfShouldExecute(sheetData.frequency, sheetData.created_at);
+                        const shouldExecute = checkIfShouldExecute(sheetData);
 
                         if (!shouldExecute) {
                             return { skipped: true, sheetId: sheetData.id };
@@ -52,9 +53,14 @@ export async function pollUsersForScheduledSummaries() {
 
                         const result = await generateGeneralSummary(sheetData, sheetOptions);
 
-                        // Update created_at to current time to reset the frequency timer
+                        // Calculate next run time from cron schedule
+                        const interval = parser.parseExpression(sheetData.cron_schedule);
+                        const nextRun = interval.next().toDate();
+
+                        // Update both created_at and next_run_at
                         await sheetDataRepository.updateById(sheetData.id, {
-                            created_at: new Date()
+                            created_at: new Date(),
+                            next_run_at: nextRun
                         });
 
                         if (!result.success) {
@@ -166,7 +172,8 @@ export async function triggerUserSummaries(userId) {
 
         for (const sheetData of userSheetData) {
             try {
-                const shouldExecute = checkIfShouldExecute(sheetData.frequency, sheetData.created_at);
+                // Fix for triggerUserSummaries function - replace lines 175-195:
+                const shouldExecute = checkIfShouldExecute(sheetData);
 
                 if (shouldExecute) {
                     const sheetOptions = {
@@ -177,6 +184,16 @@ export async function triggerUserSummaries(userId) {
 
                     const result = await generateGeneralSummary(sheetData, sheetOptions);
 
+                    // Calculate next run time from cron schedule
+                    const interval = parser.parseExpression(sheetData.cron_schedule);
+                    const nextRun = interval.next().toDate();
+
+                    // Update both created_at and next_run_at
+                    await sheetDataRepository.updateById(sheetData.id, {
+                        created_at: new Date(),
+                        next_run_at: nextRun
+                    });
+
                     if (!result.success) {
                         throw new Error(`General summary failed: ${result.error}`);
                     }
@@ -184,7 +201,6 @@ export async function triggerUserSummaries(userId) {
                     executed++;
                     console.log(`Executed summary for user ${userId}, sheet: ${sheetData.sheet_name}`);
                 }
-
             }
             catch (error) {
                 console.error(`Error processing sheet ${sheetData.id} for user ${userId}:`, error);

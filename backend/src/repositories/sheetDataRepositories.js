@@ -1,5 +1,6 @@
 import SheetData from '../models/sheetDataModel.js';
 import { Op } from 'sequelize';
+import parser from 'cron-parser';
 
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt, cron_schedule } = sheetDataInput;
