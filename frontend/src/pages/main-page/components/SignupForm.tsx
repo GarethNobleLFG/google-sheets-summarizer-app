@@ -256,6 +256,7 @@ export const SignupForm = ({
 
                         {/* Frequency */}
                         <ScheduleSelector
+                            key={formData.isEdit ? formData.id : 'new'}
                             formData={formData}
                             setFormData={setFormData}
                         />

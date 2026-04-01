@@ -37,13 +37,26 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         };
     }) => void;
 }) => {
-    const [scheduleType, setScheduleType] = useState<'minutes' | 'daily' | 'monthly' | 'yearly'>('daily');
-    const [values, setValues] = useState({
-        minutes: 15,
-        hour: 9,
-        minute: 0,
-        day: 1,
-        month: 1
+    const [scheduleType, setScheduleType] = useState<'minutes' | 'daily' | 'monthly' | 'yearly'>(() => {
+        // If the form is in editing, initlaize based on the schedule type thats already there.
+        if (formData.isEdit && formData.scheduleType) {
+            return formData.scheduleType;
+        }
+        return 'daily';
+    });
+
+    const [values, setValues] = useState(() => {
+        // If the form is in editing, initlaize based on the values thats already there.
+        if (formData.isEdit && formData.scheduleValues) {
+            return formData.scheduleValues;
+        }
+        return {
+            minutes: 15,
+            hour: 9,
+            minute: 0,
+            day: 1,
+            month: 1
+        };
     });
 
     const generateCronExpression = (
@@ -75,15 +88,26 @@ export const ScheduleSelector = ({ formData, setFormData }: {
     };
 
     const handleValueChange = (key: keyof typeof values, value: number): void => {
-        setValues(prev => ({ ...prev, [key]: value }));
-        const newCron = generateCronExpression(scheduleType, { ...values, [key]: value });
-        setFormData({ ...formData, frequency: newCron });
+        const updatedValues = { ...values, [key]: value };
+        setValues(updatedValues);
+        const newCron = generateCronExpression(scheduleType, updatedValues);
+        setFormData({
+            ...formData,
+            frequency: newCron,
+            scheduleType: scheduleType,
+            scheduleValues: updatedValues
+        });
     };
 
     const handleScheduleTypeChange = (newType: 'minutes' | 'daily' | 'monthly' | 'yearly'): void => {
         setScheduleType(newType);
         const newCron = generateCronExpression(newType, values);
-        setFormData({ ...formData, frequency: newCron });
+        setFormData({
+            ...formData,
+            frequency: newCron,
+            scheduleType: newType,
+            scheduleValues: values
+        });
     };
 
     return (
