@@ -108,7 +108,7 @@ export const SheetDataEntries = ({
                                             </svg>
                                         </div>
                                         <span
-                                            className="text-xs px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full font-medium"
+                                            className="truncate max-w-28 text-xs px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full font-medium"
                                             title={formatCronExpression(sheet.frequency)}
                                         >
                                             {formatCronExpressionShort(sheet.frequency)}
