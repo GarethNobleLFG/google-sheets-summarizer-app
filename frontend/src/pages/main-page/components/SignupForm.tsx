@@ -92,7 +92,7 @@ export const SignupForm = ({
                     token
                 );
 
-                showNotification('Sheet data updated successfully!', 'success');
+                showNotification('Sheet data updated successfully! Refresh page to see reflected edits!', 'success');
             }
             else {
                 // Create new sheet data
