@@ -117,11 +117,20 @@ export async function updateById(id, updateData) {
 
     if (link) updateFields.link = link.trim();
     if (sheet_name) updateFields.sheet_name = sheet_name.trim();
-    if (frequency) updateFields.frequency = frequency.trim();
     if (pre_prompt) updateFields.pre_prompt = pre_prompt.trim();
     if (post_prompt) updateFields.post_prompt = post_prompt.trim();
-    if (next_run_at) updateFields.next_run_at = next_run_at;
     if (created_at) updateFields.created_at = created_at;
+    if (next_run_at) updateFields.next_run_at = next_run_at;
+
+    if (frequency) {
+        updateFields.frequency = frequency.trim();
+        updateFields.created_at = new Date();
+
+        const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
+        const job = new Cron(cronExpression);
+        const nextRun = job.nextRun();
+        updateFields.next_run_at = nextRun;
+    }
 
     if (Object.keys(updateFields).length === 0) {
         throw new Error('No valid fields to update');
