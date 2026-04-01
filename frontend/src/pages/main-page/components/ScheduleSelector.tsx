@@ -2,17 +2,43 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 export const ScheduleSelector = ({ formData, setFormData }: {
-    formData: { sheetUrl: string; sheetName: string; frequency: string; prePrompt: string; postPrompt: string; isEdit: boolean; id?: string | number };
-    setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string; prePrompt: string; postPrompt: string; isEdit: boolean; id?: string | number }) => void;
+    formData: {
+        sheetUrl: string;
+        sheetName: string;
+        frequency: string;
+        prePrompt: string;
+        postPrompt: string;
+        isEdit: boolean;
+        id?: string | number;
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleValues?: {
+            minutes: number;
+            hour: number;
+            minute: number;
+            day: number;
+            month: number;
+        };
+    };
+    setFormData: (data: {
+        sheetUrl: string;
+        sheetName: string;
+        frequency: string;
+        prePrompt: string;
+        postPrompt: string;
+        isEdit: boolean;
+        id?: string | number;
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleValues?: {
+            minutes: number;
+            hour: number;
+            minute: number;
+            day: number;
+            month: number;
+        };
+    }) => void;
 }) => {
     const [scheduleType, setScheduleType] = useState<'minutes' | 'daily' | 'monthly' | 'yearly'>('daily');
-    const [values, setValues] = useState<{
-        minutes: number;
-        hour: number;
-        minute: number;
-        day: number;
-        month: number;
-    }>({
+    const [values, setValues] = useState({
         minutes: 15,
         hour: 9,
         minute: 0,

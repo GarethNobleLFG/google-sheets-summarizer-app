@@ -11,8 +11,40 @@ export const SignupForm = ({
     showNotification,
     addNewSheet
 }: {
-    formData: { sheetUrl: string; sheetName: string; frequency: string; prePrompt: string; postPrompt: string; isEdit: boolean; id?: string | number };
-    setFormData: (data: { sheetUrl: string; sheetName: string; frequency: string; prePrompt: string; postPrompt: string; isEdit: boolean; id?: string | number }) => void;
+    formData: {
+        sheetUrl: string;
+        sheetName: string;
+        frequency: string;
+        prePrompt: string;
+        postPrompt: string;
+        isEdit: boolean;
+        id?: string | number;
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleValues?: {
+            minutes: number;
+            hour: number;
+            minute: number;
+            day: number;
+            month: number;
+        };
+    };
+    setFormData: (data: {
+        sheetUrl: string;
+        sheetName: string;
+        frequency: string;
+        prePrompt: string;
+        postPrompt: string;
+        isEdit: boolean;
+        id?: string | number;
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleValues?: {
+            minutes: number;
+            hour: number;
+            minute: number;
+            day: number;
+            month: number;
+        };
+    }) => void;
     showNotification: (message: string, type: 'success' | 'error') => void;
     addNewSheet: (newSheet: {
         id: number;
@@ -87,7 +119,9 @@ export const SignupForm = ({
                 prePrompt: '',
                 postPrompt: '',
                 isEdit: false,
-                id: undefined
+                id: undefined,
+                scheduleType: undefined,
+                scheduleValues: undefined
             });
 
         }
@@ -259,7 +293,9 @@ export const SignupForm = ({
                                         prePrompt: '',
                                         postPrompt: '',
                                         isEdit: false,
-                                        id: undefined
+                                        id: undefined,
+                                        scheduleType: undefined,
+                                        scheduleValues: undefined
                                     });
                                 }}
                                 className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-sm flex items-center justify-center gap-2"

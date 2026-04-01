@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { deleteSheetData, quickGenerateSummary } from '../../../hooks/sheetDataHooks';
 import { getToken } from '../../../utils/tokenAuth';
 import { Notification } from './Notification';
-import { formatCronExpression, formatCronExpressionShort } from '../../../utils/cronFormatter';
+import { formatCronExpression, formatCronExpressionShort, parseCronExpression } from '../../../utils/cronFormatter';
 
 export const SheetDataEntries = ({
     onEditSheet,
@@ -17,6 +17,14 @@ export const SheetDataEntries = ({
         frequency: string;
         pre_prompt: string;
         post_prompt: string;
+        scheduleType: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleValues: {
+            minutes: number;
+            hour: number;
+            minute: number;
+            day: number;
+            month: number;
+        };
     }) => void;
     sheetData: {
         id: number;
@@ -169,14 +177,19 @@ export const SheetDataEntries = ({
                                             </button>
                                             <button
                                                 className="text-indigo-500 hover:text-indigo-600 font-medium"
-                                                onClick={() => onEditSheet({
-                                                    id: sheet.id,
-                                                    link: sheet.link,
-                                                    sheet_name: sheet.sheet_name,
-                                                    frequency: sheet.frequency,
-                                                    pre_prompt: sheet.pre_prompt,
-                                                    post_prompt: sheet.post_prompt
-                                                })}
+                                                onClick={() => {
+                                                    const parsedCron = parseCronExpression(sheet.frequency);
+                                                    onEditSheet({
+                                                        id: sheet.id,
+                                                        link: sheet.link,
+                                                        sheet_name: sheet.sheet_name,
+                                                        frequency: sheet.frequency,
+                                                        pre_prompt: sheet.pre_prompt,
+                                                        post_prompt: sheet.post_prompt,
+                                                        scheduleType: parsedCron?.scheduleType || 'daily',
+                                                        scheduleValues: parsedCron?.values || { minutes: 15, hour: 9, minute: 0, day: 1, month: 1 }
+                                                    });
+                                                }}
                                             >
                                                 Edit
                                             </button>

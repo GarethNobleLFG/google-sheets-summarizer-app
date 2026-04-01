@@ -31,6 +31,14 @@ export const MainPage = () => {
         postPrompt: string;
         isEdit: boolean;
         id?: string | number;
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleValues?: {
+            minutes: number;
+            hour: number;
+            minute: number;
+            day: number;
+            month: number;
+        };
     }>({
         sheetUrl: '',
         sheetName: '',
@@ -96,6 +104,14 @@ export const MainPage = () => {
         frequency: string;
         pre_prompt: string;
         post_prompt: string;
+        scheduleType: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleValues: {
+            minutes: number;
+            hour: number;
+            minute: number;
+            day: number;
+            month: number;
+        };
     }) => {
         setFormData({
             sheetUrl: sheet.link,
@@ -104,7 +120,9 @@ export const MainPage = () => {
             prePrompt: sheet.pre_prompt || '',
             postPrompt: sheet.post_prompt || '',
             isEdit: true,
-            id: sheet.id
+            id: sheet.id,
+            scheduleType: sheet.scheduleType,
+            scheduleValues: sheet.scheduleValues
         });
     };
 
