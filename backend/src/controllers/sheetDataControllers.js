@@ -227,22 +227,32 @@ export async function deleteAllUserSheetData(req, res) {
 
 export async function pollUsersForScheduledSummaries(req, res) {
     try {
+        // Send response immediately since this is background processing
         res.status(200).json({
             success: true,
             message: 'Polling started in background'
         });
 
-        const result = await sheetDataServices.pollUsersForScheduledSummaries();
+        // Run the polling in background without blocking the response
+        sheetDataServices.pollUsersForScheduledSummaries()
+            .catch(error => {
+                // Log error but don't try to send response (already sent above)
+                console.error('Background polling error:', error);
+            });
     }
     catch (error) {
-        console.error('Error polling users for scheduled summaries:', error);
-
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error'
-        });
+        if (!res.headersSent) {
+            console.error('Error starting polling:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        } else {
+            console.error('Polling error (response already sent):', error);
+        }
     }
 }
+
 
 export async function triggerUserSummaries(req, res) {
     try {

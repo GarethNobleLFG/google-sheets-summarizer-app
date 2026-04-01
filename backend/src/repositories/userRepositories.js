@@ -12,7 +12,7 @@ export async function create(userData) {
     const existingUser = await User.findOne({
         where: { email }
     });
-    
+
     if (existingUser) {
         throw new Error('User with this email already exists');
     }
@@ -85,7 +85,7 @@ export async function updateById(id, updateData) {
     if (password) {
         const saltRounds = 12;
         updateFields.hashed_password = await bcrypt.hash(password, saltRounds);
-    } 
+    }
     else if (hashed_password) {
         updateFields.hashed_password = hashed_password;
     }
@@ -152,13 +152,18 @@ export async function findEmailById(id) {
     }
 }
 
-export async function count() {
+// Function for finding users in database.
+export async function findAll(limit = 1000, offset = 0) {
     try {
-        const totalUsers = await User.count();
-        return totalUsers;
+        const users = await User.findAll({
+            limit: limit,
+            offset: offset,
+            attributes: ['id', 'email'] // Only return necessary fields
+        });
+        return users.map(user => user.dataValues);
     }
     catch (error) {
-        throw new Error(`Failed to count users: ${error.message}`);
+        throw new Error(`Failed to fetch users: ${error.message}`);
     }
 }
 
