@@ -20,6 +20,12 @@ export default sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
         field: 'hashed_password'
+    },
+    sums_used: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        field: 'sums_used'
     }
 }, {
     tableName: 'users',

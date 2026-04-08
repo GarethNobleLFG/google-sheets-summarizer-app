@@ -20,7 +20,8 @@ export async function create(userData) {
     try {
         const user = await User.create({
             email: email.trim(),
-            hashed_password
+            hashed_password,
+            sums_used: 0
         });
         return user.dataValues;
     }
@@ -69,7 +70,7 @@ export async function updateById(id, updateData) {
         throw new Error('User not found');
     }
 
-    const { email, password, hashed_password } = updateData;
+    const { email, password, hashed_password, sums_used } = updateData;
     const updateFields = {};
 
     if (email) {
@@ -90,6 +91,13 @@ export async function updateById(id, updateData) {
         updateFields.hashed_password = hashed_password;
     }
 
+    if (sums_used !== undefined) {
+        if (!Number.isInteger(sums_used) || sums_used < 0) {
+            throw new Error('sums_used must be a non-negative integer');
+        }
+        updateFields.sums_used = sums_used;
+    }
+
     if (Object.keys(updateFields).length === 0) {
         throw new Error('No valid fields to update');
     }
@@ -105,7 +113,7 @@ export async function updateById(id, updateData) {
         }
 
         const updatedUser = await User.findByPk(parseInt(id), {
-            attributes: ['id', 'email']
+            attributes: ['id', 'email', 'sums_used']
         });
         return updatedUser.dataValues;
     }
@@ -158,7 +166,7 @@ export async function findAll(limit = 1000, offset = 0) {
         const users = await User.findAll({
             limit: limit,
             offset: offset,
-            attributes: ['id', 'email'] // Only return necessary fields
+            attributes: ['id', 'email', 'sums_used']
         });
         return users.map(user => user.dataValues);
     }
