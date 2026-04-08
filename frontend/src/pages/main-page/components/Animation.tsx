@@ -187,7 +187,30 @@ export const Animation = () => {
                     </div>
                 </motion.div>
 
-                {/* Saturn Ring 1 - Far top right */}
+                {/* Floating logo */}
+                <motion.img
+                    src="/5968557.png"
+                    alt="Logo"
+                    className="absolute w-8 h-8 z-10"
+                    style={{
+                        top: "-40px",
+                        right: "-30px",
+                    }}
+                    animate={{
+                        y: [0, -10, 5, -8, 0],
+                        x: [0, 8, -5, 3, 0],
+                        rotate: [0, 5, -3, 8, 0],
+                        scale: [1, 1.1, 0.9, 1.05, 1],
+                    }}
+                    transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.5,
+                    }}
+                />
+
+                {/* Saturn Ring 1 - Far top right 
                 <motion.div
                     className="absolute -top-8 -right-12 w-20 h-6 border-2 border-indigo-400/70 rounded-full"
                     animate={{ rotate: [0, 360] }}
@@ -198,6 +221,7 @@ export const Animation = () => {
                         repeatType: "loop"
                     }}
                 />
+                */}
 
                 {/* Saturn Ring 2 - Far left side */}
                 <motion.div
