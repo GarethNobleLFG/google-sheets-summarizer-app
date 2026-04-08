@@ -27,89 +27,97 @@ export async function pollUsersForScheduledSummaries() {
                     return { userId: user.id, processed: 1, executed: 0, errors: [] };
                 }
 
-                console.log(`Processing ${userSheetData.length} sheets for user ${user.id} in parallel.`);
+                if (user.sums_used < parseInt(process.env.SUMS_LIMIT)) {
 
-                // Process each sheet for this user - PARALLEL VERSION.
-                const sheetPromises = userSheetData.map(async (sheetData) => {
-                    try {
-                        const shouldExecute = checkIfShouldExecute(sheetData);
+                    console.log(`Processing ${userSheetData.length} sheets for user ${user.id} in parallel.`);
 
-                        if (!shouldExecute) {
-                            return { skipped: true, sheetId: sheetData.id };
-                        }
+                    // Process each sheet for this user - PARALLEL VERSION.
+                    const sheetPromises = userSheetData.map(async (sheetData) => {
+                        try {
+                            const shouldExecute = checkIfShouldExecute(sheetData);
 
-                        // Validate URL before processing
-                        const spreadsheetId = extractSpreadsheetId(sheetData.link);
+                            if (!shouldExecute) {
+                                return { skipped: true, sheetId: sheetData.id };
+                            }
 
-                        if (!spreadsheetId || spreadsheetId === sheetData.link) {
-                            throw new Error(`Invalid Google Sheets URL: ${sheetData.link}`);
-                        }
+                            // Validate URL before processing
+                            const spreadsheetId = extractSpreadsheetId(sheetData.link);
 
-                        const sheetOptions = {
-                            range: `${sheetData.sheet_name}!A:Z`,
-                            filterEmptyRows: true,
-                            maxPreviewRows: 100
-                        };
+                            if (!spreadsheetId || spreadsheetId === sheetData.link) {
+                                throw new Error(`Invalid Google Sheets URL: ${sheetData.link}`);
+                            }
 
-                        const result = await generateGeneralSummary(sheetData, sheetOptions);
+                            const sheetOptions = {
+                                range: `${sheetData.sheet_name}!A:Z`,
+                                filterEmptyRows: true,
+                                maxPreviewRows: 100
+                            };
 
-                        // Calculate next run time from cron schedule
-                        const job = new Cron(sheetData.frequency);
-                        const nextRun = job.nextRun();
+                            const result = await generateGeneralSummary(sheetData, sheetOptions);
 
-                        // Update both created_at and next_run_at
-                        await sheetDataRepository.updateById(sheetData.id, {
-                            created_at: new Date(),
-                            next_run_at: nextRun
-                        });
+                            if (!result.success) {
+                                throw new Error(`General summary failed: ${result.error}`);
+                            }
 
-                        if (!result.success) {
-                            throw new Error(`General summary failed: ${result.error}`);
-                        }
+                            // Calculate next run time from cron schedule
+                            const job = new Cron(sheetData.frequency);
+                            const nextRun = job.nextRun();
 
-                        return { success: true, sheetId: sheetData.id };
-
-                    }
-                    catch (error) {
-                        return {
-                            error: true,
-                            sheetId: sheetData.id,
-                            message: error.message,
-                            sheetUrl: sheetData.link
-                        };
-                    }
-                });
-
-                // Wait for all sheets to complete being processed.
-                const sheetResults = await Promise.allSettled(sheetPromises);
-
-                // Process results for this user
-                let userExecuted = 0;
-                const userErrors = [];
-
-                sheetResults.forEach((result) => {
-                    if (result.status === 'fulfilled') {
-                        if (result.value.success) {
-                            userExecuted++;
-                        }
-                        else if (result.value.error) {
-                            userErrors.push({
-                                userId: user.id,
-                                sheetId: result.value.sheetId,
-                                sheetUrl: result.value.sheetUrl,
-                                error: result.value.message
+                            // Update both created_at and next_run_at
+                            await sheetDataRepository.updateById(sheetData.id, {
+                                created_at: new Date(),
+                                next_run_at: nextRun
                             });
+
+                            // Increment user's summary count
+                            await userRepository.updateById(user.id, {
+                                sums_used: user.sums_used + 1
+                            });
+
+                            return { success: true, sheetId: sheetData.id };
+
                         }
-                    }
-                });
+                        catch (error) {
+                            return {
+                                error: true,
+                                sheetId: sheetData.id,
+                                message: error.message,
+                                sheetUrl: sheetData.link
+                            };
+                        }
+                    });
 
-                return {
-                    userId: user.id,
-                    processed: 1,
-                    executed: userExecuted,
-                    errors: userErrors
-                };
+                    // Wait for all sheets to complete being processed.
+                    const sheetResults = await Promise.allSettled(sheetPromises);
 
+                    // Process results for this user
+                    let userExecuted = 0;
+                    const userErrors = [];
+
+                    sheetResults.forEach((result) => {
+                        if (result.status === 'fulfilled') {
+                            if (result.value.success) {
+                                userExecuted++;
+                            }
+                            else if (result.value.error) {
+                                userErrors.push({
+                                    userId: user.id,
+                                    sheetId: result.value.sheetId,
+                                    sheetUrl: result.value.sheetUrl,
+                                    error: result.value.message
+                                });
+                            }
+                        }
+                    });
+
+                    return {
+                        userId: user.id,
+                        processed: 1,
+                        executed: userExecuted,
+                        errors: userErrors
+                    };
+
+                }
             }
             catch (error) {
                 console.error(`Error processing user ${user.id}:`, error);
@@ -162,6 +170,16 @@ export async function triggerUserSummaries(userId) {
             throw new Error('Valid user ID is required');
         }
 
+        // Check user limit
+        const user = await userRepository.findById(parseInt(userId));
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if (user.sums_used >= parseInt(process.env.SUMS_LIMIT)) {
+            throw new Error('Summary limit exceeded. You have reached your maximum number of summaries.');
+        }
+
         console.log(`Manually triggering summaries for user ${userId}`);
 
         // Get all sheet data for this user
@@ -184,9 +202,13 @@ export async function triggerUserSummaries(userId) {
 
                     const result = await generateGeneralSummary(sheetData, sheetOptions);
 
+                    if (!result.success) {
+                        throw new Error(`General summary failed: ${result.error}`);
+                    }
+
                     // Calculate next run time from cron schedule
-                    const interval = cronParser.parseExpression(sheetData.frequency);
-                    const nextRun = interval.next().toDate();
+                    const job = new Cron(sheetData.frequency);
+                    const nextRun = job.nextRun();
 
                     // Update both created_at and next_run_at
                     await sheetDataRepository.updateById(sheetData.id, {
@@ -194,9 +216,10 @@ export async function triggerUserSummaries(userId) {
                         next_run_at: nextRun
                     });
 
-                    if (!result.success) {
-                        throw new Error(`General summary failed: ${result.error}`);
-                    }
+                    // Increment user's summary count
+                    await userRepository.updateById(parseInt(userId), {
+                        sums_used: user.sums_used + 1
+                    });
 
                     executed++;
                     console.log(`Executed summary for user ${userId}, sheet: ${sheetData.sheet_name}`);

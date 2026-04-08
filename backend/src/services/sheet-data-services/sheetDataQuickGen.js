@@ -1,6 +1,7 @@
 import { generateGeneralSummary } from '../ai-summary-services/generateGeneralSummary.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 import * as sheetDataRepository from '../../repositories/sheetDataRepositories.js';
+import * as userRepository from '../../repositories/userRepositories.js';
 
 export async function quickGenerateSummary(sheetId) {
     try {
@@ -18,26 +19,43 @@ export async function quickGenerateSummary(sheetId) {
             throw new Error('Sheet data must contain link and sheet_name properties');
         }
 
-        const spreadsheetId = extractSpreadsheetId(sheetData.link);
+        // Check if user is within their summary limit
+        const user = await userRepository.findById(sheetData.user_id);
 
-        if (!spreadsheetId || spreadsheetId === sheetData.link) {
-            throw new Error(`Invalid Google Sheets URL: ${sheetData.link}`);
+        if (!user) {
+            throw new Error('User not found');
         }
 
-        const sheetOptions = {
-            range: `${sheetData.sheet_name}!A:Z`,
-            filterEmptyRows: true,
-            maxPreviewRows: 100
-        };
+        if (user.sums_used < parseInt(process.env.SUMS_LIMIT)) {
+            const spreadsheetId = extractSpreadsheetId(sheetData.link);
 
-        const result = await generateGeneralSummary(sheetData, sheetOptions);
+            if (!spreadsheetId || spreadsheetId === sheetData.link) {
+                throw new Error(`Invalid Google Sheets URL: ${sheetData.link}`);
+            }
 
-        if (!result.success) {
-            throw new Error(`General summary failed: ${result.error}`);
+            const sheetOptions = {
+                range: `${sheetData.sheet_name}!A:Z`,
+                filterEmptyRows: true,
+                maxPreviewRows: 100
+            };
+
+            const result = await generateGeneralSummary(sheetData, sheetOptions);
+
+            if (!result.success) {
+                throw new Error(`General summary failed: ${result.error}`);
+            }
+
+            // Increment user's summary count
+            await userRepository.updateById(user.id, {
+                sums_used: user.sums_used + 1
+            });
+
+            return result;
         }
-
-        return result;
-    } 
+        else {
+            throw new Error('Summary limit exceeded. You have reached your maximum number of summaries.');
+        }
+    }
     catch (error) {
         console.error(`Error generating summary for sheet ID ${sheetId}:`, error);
         return {
