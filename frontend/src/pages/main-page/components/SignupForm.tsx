@@ -194,6 +194,7 @@ export const SignupForm = ({
                                 placeholder="My Budget"
                                 value={formData.sheetName}
                                 onChange={(e) => setFormData({ ...formData, sheetName: e.target.value })}
+                                maxLength={50}
                                 className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white placeholder-gray-500 transition-all"
                             />
                         </motion.div>
@@ -222,6 +223,7 @@ export const SignupForm = ({
                                 onChange={(e) => setFormData({ ...formData, prePrompt: e.target.value })}
                                 required
                                 rows={2}
+                                maxLength={500}
                                 className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white placeholder-gray-500 transition-all resize-none"
                             />
                         </motion.div>
@@ -250,6 +252,7 @@ export const SignupForm = ({
                                 onChange={(e) => setFormData({ ...formData, postPrompt: e.target.value })}
                                 required
                                 rows={2}
+                                maxLength={500}
                                 className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white placeholder-gray-500 transition-all resize-none"
                             />
                         </motion.div>
