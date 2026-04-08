@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { deleteSheetData, quickGenerateSummary } from '../../../hooks/sheetDataHooks';
 import { getToken } from '../../../utils/tokenAuth';
 import { Notification } from './Notification';
@@ -39,6 +39,11 @@ export const SheetDataEntries = ({
 }) => {
     const [loadingSheets, setLoadingSheets] = useState<Set<number>>(new Set());
     const [notification, setNotification] = useState({ message: '', type: 'success' as 'success' | 'error', visible: false });
+
+    // Set document title.
+    useEffect(() => {
+        document.title = 'Welcome to DocuSums';
+    }, []);
 
     const handleQuickSummary = async (sheetId: number) => {
         try {

@@ -55,6 +55,11 @@ export const MainPage = () => {
         visible: boolean;
     }>({ message: '', type: 'success', visible: false });
 
+    // Set document title.
+    useEffect(() => {
+        document.title = 'Welcome to DocuSums';
+    }, []);
+
     useEffect(() => {
         const loadSheetData = async () => {
             if (isAuthenticated && user) {
