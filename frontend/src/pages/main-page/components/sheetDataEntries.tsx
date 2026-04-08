@@ -42,7 +42,7 @@ export const SheetDataEntries = ({
 
     // Set document title.
     useEffect(() => {
-        document.title = 'Welcome to DocuSums';
+        document.title = 'Start Summaries';
     }, []);
 
     const handleQuickSummary = async (sheetId: number) => {
