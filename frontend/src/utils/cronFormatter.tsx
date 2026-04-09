@@ -89,21 +89,6 @@ export const parseCronExpression = (cronExpression: string): {
       };
     }
 
-    // Daily: minute hour * * *
-    if (day === '*' && month === '*') {
-      return {
-        scheduleType: 'daily',
-        values: {
-          minutes: 15,
-          minute: parseInt(minute),
-          hour: parseInt(hour),
-          day: parseInt(day),
-          month: 1,
-          weekday: 1
-        }
-      };
-    }
-
     // Weekly: minute hour * * weekday
     const [, , , , dayOfWeek] = parts;
     if (day === '*' && month === '*' && dayOfWeek !== '*') {
@@ -116,6 +101,21 @@ export const parseCronExpression = (cronExpression: string): {
           day: 1,
           month: 1,
           weekday: parseInt(dayOfWeek)
+        }
+      };
+    }
+
+    // Daily: minute hour * * *
+    if (day === '*' && month === '*') {
+      return {
+        scheduleType: 'daily',
+        values: {
+          minutes: 15,
+          minute: parseInt(minute),
+          hour: parseInt(hour),
+          day: parseInt(day),
+          month: 1,
+          weekday: 1
         }
       };
     }
