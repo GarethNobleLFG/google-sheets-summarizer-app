@@ -17,13 +17,14 @@ export const SheetDataEntries = ({
         frequency: string;
         pre_prompt: string;
         post_prompt: string;
-        scheduleType: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleType: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
         scheduleValues: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
             month: number;
+            none: string;
         };
     }) => void;
     sheetData: {
@@ -192,7 +193,15 @@ export const SheetDataEntries = ({
                                                         pre_prompt: sheet.pre_prompt,
                                                         post_prompt: sheet.post_prompt,
                                                         scheduleType: parsedCron?.scheduleType || 'daily',
-                                                        scheduleValues: parsedCron?.values || { minutes: 15, hour: 9, minute: 0, day: 1, month: 1 }
+                                                        scheduleValues: {
+                                                            minutes: 15,
+                                                            hour: 9,
+                                                            minute: 0,
+                                                            day: 1,
+                                                            month: 1,
+                                                            none: '',
+                                                            ...(parsedCron?.values || {})
+                                                        }
                                                     });
                                                 }}
                                             >

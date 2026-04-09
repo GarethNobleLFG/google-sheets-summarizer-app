@@ -19,13 +19,14 @@ export const SignupForm = ({
         postPrompt: string;
         isEdit: boolean;
         id?: string | number;
-        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
         scheduleValues?: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
             month: number;
+            none: string;
         };
     };
     setFormData: (data: {
@@ -36,13 +37,14 @@ export const SignupForm = ({
         postPrompt: string;
         isEdit: boolean;
         id?: string | number;
-        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
         scheduleValues?: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
             month: number;
+            none: string;
         };
     }) => void;
     showNotification: (message: string, type: 'success' | 'error') => void;

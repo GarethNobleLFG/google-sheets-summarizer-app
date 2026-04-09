@@ -10,13 +10,14 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         postPrompt: string;
         isEdit: boolean;
         id?: string | number;
-        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
         scheduleValues?: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
             month: number;
+            none: string;
         };
     };
     setFormData: (data: {
@@ -27,17 +28,18 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         postPrompt: string;
         isEdit: boolean;
         id?: string | number;
-        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly';
+        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
         scheduleValues?: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
             month: number;
+            none: string;
         };
     }) => void;
 }) => {
-    const [scheduleType, setScheduleType] = useState<'minutes' | 'daily' | 'monthly' | 'yearly'>(() => {
+    const [scheduleType, setScheduleType] = useState<'minutes' | 'daily' | 'monthly' | 'yearly' | 'none'>(() => {
         // If the form is in editing, initlaize based on the schedule type thats already there.
         if (formData.isEdit && formData.scheduleType) {
             return formData.scheduleType;
@@ -55,18 +57,20 @@ export const ScheduleSelector = ({ formData, setFormData }: {
             hour: 9,
             minute: 0,
             day: 1,
-            month: 1
+            month: 1,
+            none: ''
         };
     });
 
     const generateCronExpression = (
-        scheduleType: 'minutes' | 'daily' | 'monthly' | 'yearly',
+        scheduleType: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none',
         values: {
             minutes?: number;
             hour?: number;
             minute?: number;
             day?: number;
             month?: number;
+            none?: string;
         }
     ): string => {
         switch (scheduleType) {
@@ -82,6 +86,8 @@ export const ScheduleSelector = ({ formData, setFormData }: {
             case 'yearly':
                 // Every year on specific date and time: minute hour day month *
                 return `${values.minute || 0} ${values.hour || 9} ${values.day || 1} ${values.month || 1} *`;
+            case 'none':
+                return 'none';
             default:
                 return '0 9 * * *';
         }
@@ -99,7 +105,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         });
     };
 
-    const handleScheduleTypeChange = (newType: 'minutes' | 'daily' | 'monthly' | 'yearly'): void => {
+    const handleScheduleTypeChange = (newType: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none'): void => {
         setScheduleType(newType);
         const newCron = generateCronExpression(newType, values);
         setFormData({
@@ -126,7 +132,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                 <select
                     value={scheduleType}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        handleScheduleTypeChange(e.target.value as 'minutes' | 'daily' | 'monthly' | 'yearly')
+                        handleScheduleTypeChange(e.target.value as 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none')
                     }
                     className="w-full px-2 py-1 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white"
                 >
@@ -134,6 +140,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                     <option value="daily">Every day at xx:xx</option>
                     <option value="monthly">Every x of the month at xx:xx</option>
                     <option value="yearly">Every year on specific date</option>
+                    <option value="none">No automatic schedule</option>
                 </select>
             </div>
 
@@ -267,6 +274,12 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
+                    </div>
+                )}
+
+                {scheduleType === 'none' && (
+                    <div className="text-sm text-gray-600 dark:text-gray-400 italic">
+                        Manual execution only - no automatic scheduling
                     </div>
                 )}
             </div>
