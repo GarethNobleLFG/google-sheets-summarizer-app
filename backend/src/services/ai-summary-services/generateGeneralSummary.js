@@ -102,7 +102,7 @@ export async function generateGeneralSummary( sheetDataInfo, sheetOptions ) {
         // Step 7: Save to database
         try {
             const summaryData = {
-                summary_type: 'DocuSums Summary',
+                summary_type: 'ScriptSums Summary',
                 text_version: textVersion, 
                 html_version: htmlVersion  
             };
@@ -118,7 +118,7 @@ export async function generateGeneralSummary( sheetDataInfo, sheetOptions ) {
         const response = {
             text: textVersion,
             html: htmlVersion,
-            messageType: 'DocuSums Summary',
+            messageType: 'ScriptSums Summary',
             success: true
         };
 
@@ -128,7 +128,7 @@ export async function generateGeneralSummary( sheetDataInfo, sheetOptions ) {
             success: true,
             text: textVersion,
             html: htmlVersion,
-            messageType: 'DocuSums Summary'
+            messageType: 'ScriptSums Summary'
         };
 
     } 

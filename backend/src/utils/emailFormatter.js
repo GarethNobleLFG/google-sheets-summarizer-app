@@ -4,7 +4,7 @@ export function emailFormatter(message, sheetName) {
     const htmlHeader = `
         <div style="background: linear-gradient(135deg, #111827 0%, #1f2937 100%); padding: 20px; margin-bottom: 20px; border-radius: 8px; text-align: center; font-family: 'Times New Roman', Times, serif;">
             <h1 style="color: #60a5fa; margin: 0; font-size: 24px; font-weight: bold;">
-                📊 DocuSums
+                📊 ScriptSums
             </h1>
             <p style="color: #d1d5db; margin: 5px 0 0 0; font-size: 14px;">
                 Automated Spreadsheet Summaries
@@ -23,7 +23,7 @@ export function emailFormatter(message, sheetName) {
         <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #111827 0%, #1f2937 100%); border-radius: 8px; border-top: 3px solid #60a5fa; font-family: 'Times New Roman', Times, serif;">
             <div style="text-align: center; color: #9ca3af; font-size: 14px;">
                 <p style="margin: 0 0 10px 0;">
-                    📧 This is an automated summary from <strong style="color: #60a5fa;">DocuSums</strong>
+                    📧 This is an automated summary from <strong style="color: #60a5fa;">ScriptSums</strong>
                 </p>
                 <p style="margin: 0 0 15px 0;">
                     🚀 Streamlining your spreadsheet insights
@@ -45,6 +45,6 @@ export function emailFormatter(message, sheetName) {
     return {
         ...message,
         html: htmlHeader + sheetNameHeader + wrappedHtml + htmlFooter,
-        messageType: messageType || 'DocuSums Summary'
+        messageType: messageType || 'ScriptSums Summary'
     };
 }
