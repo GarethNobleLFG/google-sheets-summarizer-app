@@ -59,7 +59,7 @@ export const MainPage = () => {
 
     // Set document title.
     useEffect(() => {
-        document.title = 'DocuSums';
+        document.title = 'ScriptSums';
     }, []);
 
     useEffect(() => {
