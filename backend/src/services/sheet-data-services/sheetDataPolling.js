@@ -69,11 +69,6 @@ export async function pollUsersForScheduledSummaries() {
                                 next_run_at: nextRun
                             });
 
-                            // Increment user's summary count
-                            await userRepository.updateById(user.id, {
-                                sums_used: user.sums_used + 1
-                            });
-
                             return { success: true, sheetId: sheetData.id };
 
                         }
@@ -109,6 +104,12 @@ export async function pollUsersForScheduledSummaries() {
                             }
                         }
                     });
+
+                    if (userExecuted > 0) {
+                        await userRepository.updateById(user.id, {
+                            sums_used: user.sums_used + userExecuted
+                        });
+                    }
 
                     return {
                         userId: user.id,
@@ -216,11 +217,6 @@ export async function triggerUserSummaries(userId) {
                         next_run_at: nextRun
                     });
 
-                    // Increment user's summary count
-                    await userRepository.updateById(parseInt(userId), {
-                        sums_used: user.sums_used + 1
-                    });
-
                     executed++;
                     console.log(`Executed summary for user ${userId}, sheet: ${sheetData.sheet_name}`);
                 }
@@ -229,6 +225,12 @@ export async function triggerUserSummaries(userId) {
                 console.error(`Error processing sheet ${sheetData.id} for user ${userId}:`, error);
                 errors.push(`Sheet ${sheetData.sheet_name}: ${error.message}`);
             }
+        }
+
+        if (executed > 0) {
+            await userRepository.updateById(parseInt(userId), {
+                sums_used: user.sums_used + executed
+            });
         }
 
         return { executed, errors };
