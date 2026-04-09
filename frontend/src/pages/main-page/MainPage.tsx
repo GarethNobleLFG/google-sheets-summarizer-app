@@ -31,19 +31,20 @@ export const MainPage = () => {
         postPrompt: string;
         isEdit: boolean;
         id?: string | number;
-        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
+        scheduleType?: 'minutes' | 'daily' | 'weekday' | 'monthly' | 'yearly' | 'none';
         scheduleValues?: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
             month: number;
+            weekday: number;
             none: string;
         };
     }>({
         sheetUrl: '',
         sheetName: '',
-        frequency: 'weekly',
+        frequency: 'weekday',
         prePrompt: '',
         postPrompt: '',
         isEdit: false,
@@ -110,13 +111,14 @@ export const MainPage = () => {
         frequency: string;
         pre_prompt: string;
         post_prompt: string;
-        scheduleType: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
-        scheduleValues: {
+        scheduleType?: 'minutes' | 'daily' | 'weekday' | 'monthly' | 'yearly' | 'none';
+        scheduleValues?: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
             month: number;
+            weekday: number;
             none: string;
         };
     }) => {

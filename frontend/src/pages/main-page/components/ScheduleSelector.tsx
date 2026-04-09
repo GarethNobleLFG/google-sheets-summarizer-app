@@ -10,12 +10,13 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         postPrompt: string;
         isEdit: boolean;
         id?: string | number;
-        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
+        scheduleType?: 'minutes' | 'daily' | 'weekday' | 'monthly' | 'yearly' | 'none';
         scheduleValues?: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
+            weekday: number;
             month: number;
             none: string;
         };
@@ -28,18 +29,19 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         postPrompt: string;
         isEdit: boolean;
         id?: string | number;
-        scheduleType?: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none';
+        scheduleType?: 'minutes' | 'daily' | 'weekday' | 'monthly' | 'yearly' | 'none';
         scheduleValues?: {
             minutes: number;
             hour: number;
             minute: number;
             day: number;
             month: number;
+            weekday: number;
             none: string;
         };
     }) => void;
 }) => {
-    const [scheduleType, setScheduleType] = useState<'minutes' | 'daily' | 'monthly' | 'yearly' | 'none'>(() => {
+    const [scheduleType, setScheduleType] = useState<'minutes' | 'daily' | 'weekday' | 'monthly' | 'yearly' | 'none'>(() => {
         // If the form is in editing, initlaize based on the schedule type thats already there.
         if (formData.isEdit && formData.scheduleType) {
             return formData.scheduleType;
@@ -58,17 +60,19 @@ export const ScheduleSelector = ({ formData, setFormData }: {
             minute: 0,
             day: 1,
             month: 1,
+            weekday: 1,
             none: ''
         };
     });
 
     const generateCronExpression = (
-        scheduleType: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none',
+        scheduleType: 'minutes' | 'daily' | 'weekday' | 'monthly' | 'yearly' | 'none',
         values: {
             minutes?: number;
             hour?: number;
             minute?: number;
             day?: number;
+            weekday?:number;
             month?: number;
             none?: string;
         }
@@ -80,6 +84,9 @@ export const ScheduleSelector = ({ formData, setFormData }: {
             case 'daily':
                 // Every day at specific time: minute hour * * *
                 return `${values.minute || 0} ${values.hour || 9} * * *`;
+            case 'weekday':
+                // Every week on specific day at specific time: minute hour * * weekday
+                return `${values.minute || 0} ${values.hour || 9} * * ${values.weekday || 1}`;
             case 'monthly':
                 // Every X day of month at specific time: minute hour day * *
                 return `${values.minute || 0} ${values.hour || 9} ${values.day || 1} * *`;
@@ -105,7 +112,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         });
     };
 
-    const handleScheduleTypeChange = (newType: 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none'): void => {
+    const handleScheduleTypeChange = (newType: 'minutes' | 'daily' | 'weekday' | 'monthly' | 'yearly' | 'none'): void => {
         setScheduleType(newType);
         const newCron = generateCronExpression(newType, values);
         setFormData({
@@ -132,12 +139,13 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                 <select
                     value={scheduleType}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        handleScheduleTypeChange(e.target.value as 'minutes' | 'daily' | 'monthly' | 'yearly' | 'none')
+                        handleScheduleTypeChange(e.target.value as 'minutes' | 'daily' | 'weekday' | 'monthly' | 'yearly' | 'none')
                     }
                     className="w-full px-2 py-1 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white"
                 >
                     <option value="minutes">Every x minutes</option>
                     <option value="daily">Every day at xx:xx</option>
+                    <option value="weekday">Every week on [day] at xx:xx</option>
                     <option value="monthly">Every x of the month at xx:xx</option>
                     <option value="yearly">Every year on specific date</option>
                     <option value="none">No automatic schedule</option>
@@ -166,6 +174,49 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                 {scheduleType === 'daily' && (
                     <div className="flex items-center gap-2 text-sm">
                         <span className="text-gray-700 dark:text-gray-300">Every day at</span>
+                        <input
+                            type="number"
+                            min="0"
+                            max="23"
+                            value={values.hour}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleValueChange('hour', parseInt(e.target.value) || 0)
+                            }
+                            className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
+                        />
+                        <span className="text-gray-700 dark:text-gray-300">:</span>
+                        <input
+                            type="number"
+                            min="0"
+                            max="59"
+                            value={values.minute}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleValueChange('minute', parseInt(e.target.value) || 0)
+                            }
+                            className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
+                        />
+                    </div>
+                )}
+
+                {scheduleType === 'weekday' && (
+                    <div className="flex items-center gap-2 text-sm flex-wrap">
+                        <span className="text-gray-700 dark:text-gray-300">Every week on</span>
+                        <select
+                            value={values.weekday}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                                handleValueChange('weekday', parseInt(e.target.value) || 1)
+                            }
+                            className="px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
+                        >
+                            <option value={0}>Sunday</option>
+                            <option value={1}>Monday</option>
+                            <option value={2}>Tuesday</option>
+                            <option value={3}>Wednesday</option>
+                            <option value={4}>Thursday</option>
+                            <option value={5}>Friday</option>
+                            <option value={6}>Saturday</option>
+                        </select>
+                        <span className="text-gray-700 dark:text-gray-300">at</span>
                         <input
                             type="number"
                             min="0"
