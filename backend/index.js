@@ -1,9 +1,9 @@
 import app from './src/app.js';  
 
-if (process.env.NODE_ENV !== 'production') {    
-    app.listen(process.env.PORT, () => {
-        console.log(`Server is running on port ${process.env.PORT}!`);
-    });
-}
+const port = process.env.PORT || 5000;
 
-export default app; 
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}! (${process.env.NODE_ENV})`);
+});
+
+export default app;

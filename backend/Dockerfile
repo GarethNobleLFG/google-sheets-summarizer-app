@@ -5,8 +5,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including dev dependencies)
-RUN npm ci
+# Install only production dependencies
+RUN npm ci --only=production
 
 # Copy source code
 COPY . .
@@ -19,8 +19,8 @@ RUN adduser -S nodejs -u 1001
 RUN chown -R nodejs:nodejs /app
 USER nodejs
 
-# Expose port
-EXPOSE 3000
+# Expose port 5000 (from your .env file)
+EXPOSE 5000
 
-# Run development server with nodemon
-CMD ["npm", "run", "dev"]
+# Use production start command
+CMD ["npm", "start"]
