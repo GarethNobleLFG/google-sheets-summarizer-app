@@ -1,6 +1,8 @@
+import { API_BASE_URL } from '../config/api';
+
 // POST - Create Sheet Data
 export const createSheetData = async (userId: number, link: string, sheetName: string, frequency: string, prePrompt: string, postPrompt: string, token?: string) => {
-    const response = await fetch('http://localhost:5000/sheet-data', {
+    const response = await fetch(`${API_BASE_URL}/sheet-data`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -15,7 +17,7 @@ export const createSheetData = async (userId: number, link: string, sheetName: s
 
 // GET - Get Sheet Data By ID
 export const getSheetDataById = async (id: string | number, token?: string) => {
-    const response = await fetch(`http://localhost:5000/sheet-data/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/sheet-data/${id}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
         },
@@ -28,8 +30,8 @@ export const getSheetDataById = async (id: string | number, token?: string) => {
 // GET - Get All Sheet Data From User
 export const getAllSheetDataFromUser = async (userId: string | number, limit?: number, token?: string) => {
     const url = limit
-        ? `http://localhost:5000/sheet-data/user/${userId}/all?limit=${limit}`
-        : `http://localhost:5000/sheet-data/user/${userId}/all`;
+        ? `${API_BASE_URL}/sheet-data/user/${userId}/all?limit=${limit}`
+        : `${API_BASE_URL}/sheet-data/user/${userId}/all`;
     const response = await fetch(url, {
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -42,7 +44,7 @@ export const getAllSheetDataFromUser = async (userId: string | number, limit?: n
 
 // PUT - Update Sheet Data
 export const updateSheetData = async (id: string | number, updateData: { userId?: number; link?: string; sheetName?: string; frequency?: string; prePrompt?: string; postPrompt?: string }, token?: string) => {
-    const response = await fetch(`http://localhost:5000/sheet-data/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/sheet-data/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -57,7 +59,7 @@ export const updateSheetData = async (id: string | number, updateData: { userId?
 
 // DELETE - Delete Sheet Data
 export const deleteSheetData = async (id: string | number, token?: string) => {
-    const response = await fetch(`http://localhost:5000/sheet-data/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/sheet-data/${id}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -70,7 +72,7 @@ export const deleteSheetData = async (id: string | number, token?: string) => {
 
 // DELETE - Delete All User Sheet Data
 export const deleteAllUserSheetData = async (userId: string | number, token?: string) => {
-    const response = await fetch(`http://localhost:5000/sheet-data/user/${userId}/all`, {
+    const response = await fetch(`${API_BASE_URL}/sheet-data/user/${userId}/all`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -83,7 +85,7 @@ export const deleteAllUserSheetData = async (userId: string | number, token?: st
 
 // POST - Trigger User Summaries
 export const triggerUserSummaries = async (userId: string | number, token?: string) => {
-    const response = await fetch(`http://localhost:5000/sheet-data/user/${userId}/trigger`, {
+    const response = await fetch(`${API_BASE_URL}/sheet-data/user/${userId}/trigger`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -96,7 +98,7 @@ export const triggerUserSummaries = async (userId: string | number, token?: stri
 
 // POST - Quick Generate Summary
 export const quickGenerateSummary = async (id: string | number, token?: string) => {
-    const response = await fetch(`http://localhost:5000/sheet-data/quick-generate/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/sheet-data/quick-generate/${id}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
