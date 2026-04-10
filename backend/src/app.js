@@ -11,7 +11,7 @@ const app = express();
 app.use(cors({
     origin: [
         'http://localhost:5173', // Local development
-        'https://frontend-931672612970.us-central1.run.app' // Your frontend URL
+        'https://frontend-931672612970.europe-west1.run.app' // Production frontend
     ],
     credentials: true
 }));
