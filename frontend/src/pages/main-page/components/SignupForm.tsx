@@ -143,22 +143,22 @@ export const SignupForm = ({
 
     return (
         <motion.div
-            className="flex-1 flex items-center justify-center pt-10 bg-gradient-to-br from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm border-l border-gray-200/50 dark:border-gray-700/50"
+            className="flex-1 flex items-center justify-center pt-6 sm:pt-10 px-4 sm:px-6 md:px-0 bg-gradient-to-br from-white/50 to-gray-50/50 dark:from-gray-800/50 dark:to-gray-900/50 backdrop-blur-sm border-l border-gray-200/50 dark:border-gray-700/50"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
         >
-            <div className="w-full max-w-lg mb-10">
+            <div className="w-full max-w-md sm:max-w-lg mb-6 sm:mb-10">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                    <div className="text-center mb-6">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    <div className="text-center mb-5 sm:mb-6">
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
                             Get Started
                         </h2>
-                        <p className="text-base text-gray-600 dark:text-gray-300">
+                        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                             Setup your automated summaries
                         </p>
                     </div>

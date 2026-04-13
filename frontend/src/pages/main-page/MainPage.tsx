@@ -173,9 +173,9 @@ export const MainPage = () => {
             />
 
             {/* Main Content */}
-            <div className="flex h-screen pt-10 items-start">
+            <div className="flex flex-col md:flex-row h-screen pt-16 md:pt-10 items-start">
                 {isAuthenticated && user ? (
-                    <div className="w-1/2 flex items-start justify-center pt-24 px-6 lg:px-12">
+                    <div className="w-full md:w-1/2 flex items-start justify-center pt-8 md:pt-24 px-4 sm:px-6 lg:px-12">
                         <SheetDataEntries
                             onEditSheet={handleEditSheet}
                             sheetData={sheetData}
@@ -185,13 +185,13 @@ export const MainPage = () => {
                 ) : (
                     <>
                         {/* Hero Section - Left Side */}
-                        <div className="w-1/2 flex items-start justify-center pt-24 px-6 lg:px-12">
+                        <div className="w-full md:w-1/2 flex items-start justify-center pt-8 md:pt-24 px-4 sm:px-6 lg:px-12">
                             <HeroSection />
                         </div>
                     </>
                 )}
                 {/* Signup Form - Right Side */}
-                <div className="w-1/2 h-full">
+                <div className="w-full md:w-1/2 h-full pt-32 md:pt-0">
                     <SignupForm
                         showNotification={showNotification}
                         formData={formData}
