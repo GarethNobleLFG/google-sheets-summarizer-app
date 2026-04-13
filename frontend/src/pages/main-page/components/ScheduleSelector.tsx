@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 export const ScheduleSelector = ({ formData, setFormData }: {
@@ -72,7 +72,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
             hour?: number;
             minute?: number;
             day?: number;
-            weekday?:number;
+            weekday?: number;
             month?: number;
             none?: string;
         }
@@ -99,6 +99,18 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                 return '0 9 * * *';
         }
     };
+
+    useEffect(() => {
+        if (!formData.frequency || formData.frequency === 'weekday' || formData.frequency === 'daily') {
+            const initialCron = generateCronExpression(scheduleType, values);
+            setFormData({
+                ...formData,
+                frequency: initialCron,
+                scheduleType: scheduleType,
+                scheduleValues: values
+            });
+        }
+    }, []);
 
     const handleValueChange = (key: keyof typeof values, value: number): void => {
         const updatedValues = { ...values, [key]: value };

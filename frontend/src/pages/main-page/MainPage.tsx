@@ -44,7 +44,7 @@ export const MainPage = () => {
     }>({
         sheetUrl: '',
         sheetName: '',
-        frequency: 'weekday',
+        frequency: '0 9 * * *',
         prePrompt: '',
         postPrompt: '',
         isEdit: false,
