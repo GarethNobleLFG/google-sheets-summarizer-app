@@ -19,8 +19,8 @@ RUN adduser -S nodejs -u 1001
 RUN chown -R nodejs:nodejs /app
 USER nodejs
 
-# Expose port 5000 (from your .env file)
-EXPOSE 5000
+# Expose port 8080 (Google Cloud Run standard)
+EXPOSE 8080
 
 # Use production start command
 CMD ["npm", "start"]

@@ -11,7 +11,8 @@ const app = express();
 app.use(cors({
     origin: [
         'http://localhost:5173', // Local development
-        'https://frontend-931672612970.europe-west1.run.app' // Production frontend
+        'https://frontend-931672612970.europe-west1.run.app',
+        'https://scriptsums.com' // Production frontend
     ],
     credentials: true
 }));
