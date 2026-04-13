@@ -51,6 +51,14 @@ export const Navigation = ({
                         <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
                             <button onClick={() => setShowFeaturesModal(true)} className="hover:text-indigo-600 transition-colors">Features</button>
                             <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
+                            <a 
+                                href="https://docs.google.com/forms/d/e/1FAIpQLSeeFqZeGf8sAZgIa0rvOVO4u_OY0BBcBIF-trckV0heVyIYBg/viewform?usp=dialog" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="hover:text-indigo-600 transition-colors"
+                            >
+                                Leave Some Feedback!
+                            </a>
                             <span className="text-gray-700 dark:text-gray-200 text-sm font-medium">
                                 {user.email}
                             </span>
@@ -65,6 +73,14 @@ export const Navigation = ({
                         <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
                             <button onClick={() => setShowFeaturesModal(true)} className="hover:text-indigo-600 transition-colors">Features</button>
                             <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
+                            <a 
+                                href="https://docs.google.com/forms/d/e/1FAIpQLSeeFqZeGf8sAZgIa0rvOVO4u_OY0BBcBIF-trckV0heVyIYBg/viewform?usp=dialog" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="hover:text-indigo-600 transition-colors"
+                            >
+                                Leave Some Feedback!
+                            </a>
                             <button
                                 onClick={() => setShowAuthModal(true)}
                                 className="px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-lg hover:shadow-lg transition-all text-sm"
@@ -111,6 +127,15 @@ export const Navigation = ({
                                 </button>
                                 <a href="#" className="block text-gray-600 dark:text-gray-300 hover:text-indigo-600 transition-colors py-2">
                                     Pricing
+                                </a>
+                                <a 
+                                    href="https://docs.google.com/forms/d/e/1FAIpQLSeeFqZeGf8sAZgIa0rvOVO4u_OY0BBcBIF-trckV0heVyIYBg/viewform?usp=dialog" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="block text-gray-600 dark:text-gray-300 hover:text-indigo-600 transition-colors py-2"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    Leave Some Feedback!
                                 </a>
                                 {isAuthenticated && user ? (
                                     <>
