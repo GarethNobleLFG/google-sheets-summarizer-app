@@ -155,7 +155,6 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                     }
                     className="w-full px-2 py-1 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white"
                 >
-                    <option value="minutes">Every x minutes</option>
                     <option value="daily">Every day at xx:xx</option>
                     <option value="weekday">Every week on [day] at xx:xx</option>
                     <option value="monthly">Every x of the month at xx:xx</option>
