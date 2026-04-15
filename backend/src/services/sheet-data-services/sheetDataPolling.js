@@ -60,8 +60,23 @@ export async function pollUsersForScheduledSummaries() {
                             }
 
                             // Calculate next run time from cron schedule
-                            const job = new Cron(sheetData.frequency);
-                            const nextRun = job.nextRun();
+                            if (sheetData.frequency.toLowerCase() !== 'none') {
+                                const job = new Cron(sheetData.frequency);
+                                const nextRun = job.nextRun();
+
+                                // Update both created_at and next_run_at
+                                await sheetDataRepository.updateById(sheetData.id, {
+                                    created_at: new Date(),
+                                    next_run_at: nextRun
+                                });
+                            }
+                            else {
+                                // Just update created_at for "none" frequency
+                                await sheetDataRepository.updateById(sheetData.id, {
+                                    created_at: new Date(),
+                                    next_run_at: null
+                                });
+                            }
 
                             // Update both created_at and next_run_at
                             await sheetDataRepository.updateById(sheetData.id, {
@@ -208,8 +223,23 @@ export async function triggerUserSummaries(userId) {
                     }
 
                     // Calculate next run time from cron schedule
-                    const job = new Cron(sheetData.frequency);
-                    const nextRun = job.nextRun();
+                    if (sheetData.frequency.toLowerCase() !== 'none') {
+                        const job = new Cron(sheetData.frequency);
+                        const nextRun = job.nextRun();
+
+                        // Update both created_at and next_run_at
+                        await sheetDataRepository.updateById(sheetData.id, {
+                            created_at: new Date(),
+                            next_run_at: nextRun
+                        });
+                    } 
+                    else {
+                        // Just update created_at for "none" frequency
+                        await sheetDataRepository.updateById(sheetData.id, {
+                            created_at: new Date(),
+                            next_run_at: null
+                        });
+                    }
 
                     // Update both created_at and next_run_at
                     await sheetDataRepository.updateById(sheetData.id, {

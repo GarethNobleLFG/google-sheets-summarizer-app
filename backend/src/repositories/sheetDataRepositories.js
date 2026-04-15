@@ -15,8 +15,12 @@ export async function create(sheetDataInput) {
 
     try {
         // Calculate next_run_at from frequency (cron expression)
-        const job = new Cron(frequency.trim());
-        const nextRun = job.nextRun();
+        let nextRun = null;
+
+        if (frequency.trim().toLowerCase() !== 'none') {
+            const job = new Cron(frequency.trim());
+            nextRun = job.nextRun();
+        }
 
         const createData = {
             user_id: parseInt(user_id),
@@ -127,9 +131,15 @@ export async function updateById(id, updateData) {
         updateFields.created_at = new Date();
 
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
-        const job = new Cron(cronExpression);
-        const nextRun = job.nextRun();
-        updateFields.next_run_at = nextRun;
+
+        if (cronExpression.toLowerCase() !== 'none') {
+            const job = new Cron(cronExpression);
+            const nextRun = job.nextRun();
+            updateFields.next_run_at = nextRun;
+        }
+        else {
+            updateFields.next_run_at = null;
+        }
     }
 
     if (Object.keys(updateFields).length === 0) {
