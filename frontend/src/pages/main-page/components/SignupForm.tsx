@@ -191,7 +191,7 @@ export const SignupForm = ({
                             className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-lg p-3 border border-white/50 dark:border-gray-700/50 shadow-lg"
                         >
                             <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                                📝 Sheet Name
+                                📝 Sheet Name (**must be name of sheet, not name of Google Sheet file)
                             </label>
                             <input
                                 type="text"
