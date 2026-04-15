@@ -57,6 +57,10 @@ export const MainPage = () => {
         visible: boolean;
     }>({ message: '', type: 'success', visible: false });
 
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    const triggerRefresh = () => setRefreshTrigger(prev => prev + 1);
+
     // Set document title.
     useEffect(() => {
         document.title = 'ScriptSums';
@@ -85,7 +89,7 @@ export const MainPage = () => {
         };
 
         loadSheetData();
-    }, [isAuthenticated, user]);
+    }, [isAuthenticated, user, refreshTrigger]);
 
     const showNotification = (message: string, type: 'success' | 'error') => {
         setNotification({ message, type, visible: true });
@@ -197,6 +201,7 @@ export const MainPage = () => {
                         formData={formData}
                         setFormData={setFormData}
                         addNewSheet={addNewSheet}
+                        triggerRefresh={triggerRefresh}
                     />
                 </div>
             </div>

@@ -9,7 +9,8 @@ export const SignupForm = ({
     formData,
     setFormData,
     showNotification,
-    addNewSheet
+    addNewSheet,
+    triggerRefresh
 }: {
     formData: {
         sheetUrl: string;
@@ -59,6 +60,7 @@ export const SignupForm = ({
         post_prompt: string;
         created_at: string;
     }) => void;
+    triggerRefresh: () => void;
 }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [showPromptInfo, setShowPromptInfo] = useState(false);
@@ -97,6 +99,7 @@ export const SignupForm = ({
                 );
 
                 showNotification('Sheet data updated successfully! Refresh page to see reflected edits!', 'success');
+                triggerRefresh();
             }
             else {
                 // Create new sheet data
