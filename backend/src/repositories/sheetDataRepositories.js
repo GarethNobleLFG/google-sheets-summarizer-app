@@ -23,7 +23,7 @@ export async function create(sheetDataInput) {
             const userTimezone = await userRepository.findTimezoneById(user_id);
 
             nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
-            createdAt = new Date(new Date().toLocaleString("en-US", { timeZone: userTimezone }));
+            createdAt = new Date(new Date().toLocaleString("en-CA", { timeZone: userTimezone }));
         }
 
         const createData = {
