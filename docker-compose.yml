@@ -24,28 +24,24 @@ services: # Backend API
 
   # Frontend
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: node:20-alpine  
     container_name: sheets-summarizer-frontend
+    working_dir: /app
     ports:
       - "5173:5173"
+    env_file:
+      - ./.env  
     environment:
       - NODE_ENV=development
       - HOST=0.0.0.0
       - PORT=5173
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
-      - BROWSER=none
-      - FAST_REFRESH=true
-      - WDS_SOCKET_HOST=localhost
-      - WDS_SOCKET_PORT=0
     restart: unless-stopped
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    env_file: ./.env
-    command: npm run dev
+    command: sh -c "npm install && npm run dev"
     networks:
       - app-network
 
