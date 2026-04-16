@@ -175,7 +175,7 @@ export const SignupForm = ({
                             className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-lg p-3 border border-white/50 dark:border-gray-700/50 shadow-lg"
                         >
                             <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                                📊 Google Sheet URL
+                                📊 Google Sheet URL (**ensure Google Sheet has shareable link)
                             </label>
                             <input
                                 type="url"
