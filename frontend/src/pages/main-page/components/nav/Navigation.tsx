@@ -50,7 +50,7 @@ export const Navigation = ({
                     {isAuthenticated && user ? (
                         <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
                             <button onClick={() => setShowFeaturesModal(true)} className="hover:text-indigo-600 transition-colors">Features</button>
-                            <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
+                            {/* <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a> */}
                             <a 
                                 href="https://docs.google.com/forms/d/e/1FAIpQLSeeFqZeGf8sAZgIa0rvOVO4u_OY0BBcBIF-trckV0heVyIYBg/viewform?usp=dialog" 
                                 target="_blank" 
@@ -72,7 +72,7 @@ export const Navigation = ({
                     ) : (
                         <div className="hidden md:flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-300">
                             <button onClick={() => setShowFeaturesModal(true)} className="hover:text-indigo-600 transition-colors">Features</button>
-                            <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a>
+                            {/* <a href="#" className="hover:text-indigo-600 transition-colors">Pricing</a> */}
                             <a 
                                 href="https://docs.google.com/forms/d/e/1FAIpQLSeeFqZeGf8sAZgIa0rvOVO4u_OY0BBcBIF-trckV0heVyIYBg/viewform?usp=dialog" 
                                 target="_blank" 
@@ -125,9 +125,9 @@ export const Navigation = ({
                                 >
                                     Features
                                 </button>
-                                <a href="#" className="block text-gray-600 dark:text-gray-300 hover:text-indigo-600 transition-colors py-2">
+                                {/* <a href="#" className="block text-gray-600 dark:text-gray-300 hover:text-indigo-600 transition-colors py-2">
                                     Pricing
-                                </a>
+                                </a> */}
                                 <a 
                                     href="https://docs.google.com/forms/d/e/1FAIpQLSeeFqZeGf8sAZgIa0rvOVO4u_OY0BBcBIF-trckV0heVyIYBg/viewform?usp=dialog" 
                                     target="_blank" 

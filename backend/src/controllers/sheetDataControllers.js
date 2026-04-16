@@ -113,7 +113,15 @@ export async function getAllSheetDataFromUser(req, res) {
 export async function updateSheetData(req, res) {
     try {
         const { id } = req.params;
-        const updateData = req.body;
+        const { userId, link, sheetName, frequency, prePrompt, postPrompt } = req.body;
+
+        const updateData = {};
+        if (userId !== undefined) updateData.user_id = userId;
+        if (link !== undefined) updateData.link = link;
+        if (sheetName !== undefined) updateData.sheet_name = sheetName;
+        if (frequency !== undefined) updateData.frequency = frequency;
+        if (prePrompt !== undefined) updateData.pre_prompt = prePrompt;
+        if (postPrompt !== undefined) updateData.post_prompt = postPrompt;
 
         const updatedSheetData = await sheetDataRepository.updateById(id, updateData);
 
