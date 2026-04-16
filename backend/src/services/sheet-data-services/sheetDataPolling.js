@@ -65,7 +65,7 @@ export async function pollUsersForScheduledSummaries() {
 
                                 // Update both created_at and next_run_at
                                 await sheetDataRepository.updateById(sheetData.id, {
-                                    created_at: new Date(),
+                                    created_at: new Date(new Date().toLocaleString("en-CA", { timeZone: user.timezone })),
                                     next_run_at: nextRun
                                 });
                             }
@@ -214,7 +214,7 @@ export async function triggerUserSummaries(userId) {
 
                         // Update both created_at and next_run_at
                         await sheetDataRepository.updateById(sheetData.id, {
-                            created_at: new Date(),
+                            created_at: new Date(new Date().toLocaleString("en-CA", { timeZone: user.timezone })),
                             next_run_at: nextRun
                         });
                     }

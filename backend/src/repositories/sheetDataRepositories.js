@@ -17,12 +17,13 @@ export async function create(sheetDataInput) {
     try {
         // Calculate next_run_at from frequency (cron expression)
         let nextRun = null;
+        let createdAt = null;
 
         if (frequency.trim().toLowerCase() !== 'none') {
-            const user = await userRepository.findById(user_id);
-            const userTimezone = user?.timezone;
+            const userTimezone = await userRepository.findTimezoneById(user_id);
 
             nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
+            createdAt = new Date(new Date().toLocaleString("en-US", { timeZone: userTimezone }));
         }
 
         const createData = {
@@ -34,6 +35,10 @@ export async function create(sheetDataInput) {
             post_prompt: post_prompt.trim(),
             next_run_at: nextRun
         };
+
+        if (createdAt) {
+            createData.created_at = createdAt;
+        }
 
         const sheetData = await SheetData.create(createData);
         return sheetData.dataValues;
@@ -131,14 +136,14 @@ export async function updateById(id, updateData) {
 
     if (frequency) {
         updateFields.frequency = frequency.trim();
-        updateFields.created_at = new Date();
+
+        const userTimezone = await userRepository.findTimezoneById(existingSheetData.user_id);
+
+        updateFields.created_at = new Date(new Date().toLocaleString("en-CA", { timeZone: userTimezone }));
 
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 
         if (cronExpression.toLowerCase() !== 'none') {
-            const user = await userRepository.findById(existingSheetData.user_id);
-            const userTimezone = user?.timezone;
-
             updateFields.next_run_at = calculateNextRunTime(cronExpression, userTimezone);
         }
     }
