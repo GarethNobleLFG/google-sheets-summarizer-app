@@ -2,12 +2,18 @@ import { API_BASE_URL } from '../config/api';
 
 // User Registration
 export const createUser = async (email: string, password: string) => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
     const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+            email,
+            password,
+            timezone
+        }),
     });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
@@ -22,12 +28,18 @@ export const createUser = async (email: string, password: string) => {
 
 // User Login
 export const loginUser = async (email: string, password: string) => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
     const response = await fetch(`${API_BASE_URL}/users/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 
+            email, 
+            password,
+            timezone 
+        }),
     });
     const data = await response.json();
     if (!data.success) throw new Error(data.error);
