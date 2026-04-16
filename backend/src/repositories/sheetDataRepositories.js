@@ -1,6 +1,7 @@
 import SheetData from '../models/sheetDataModel.js';
 import { Op } from 'sequelize';
 import { calculateNextRunTime } from '../utils/calculateNextRunTime.js';
+import * as userRepository from './userRepositories.js';
 
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
@@ -18,7 +19,10 @@ export async function create(sheetDataInput) {
         let nextRun = null;
 
         if (frequency.trim().toLowerCase() !== 'none') {
-            nextRun = calculateNextRunTime(frequency.trim());
+            const user = await userRepository.findById(user_id);
+            const userTimezone = user?.timezone;
+
+            nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
         }
 
         const createData = {
@@ -132,7 +136,10 @@ export async function updateById(id, updateData) {
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 
         if (cronExpression.toLowerCase() !== 'none') {
-            updateFields.next_run_at = calculateNextRunTime(cronExpression);
+            const user = await userRepository.findById(existingSheetData.user_id);
+            const userTimezone = user?.timezone;
+
+            updateFields.next_run_at = calculateNextRunTime(cronExpression, userTimezone);
         }
     }
 
