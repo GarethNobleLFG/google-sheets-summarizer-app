@@ -282,9 +282,14 @@ export async function deleteUser(req, res) {
 
 export async function loginUser(req, res) {
     try {
-        const { email, password } = req.body;
+        const { email, password, timezone } = req.body;
 
         const user = await userRepository.authenticate(email, password);
+
+        if (timezone && timezone !== user.timezone) {
+            await userRepository.updateById(user.id, { timezone });
+            user.timezone = timezone;
+        }
 
         const { hashed_password: _, ...userResponse } = user;
 
