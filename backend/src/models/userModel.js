@@ -26,6 +26,12 @@ export default sequelize.define('User', {
         allowNull: false,
         defaultValue: 0,
         field: 'sums_used'
+    },
+    timezone: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        defaultValue: 'UTC',
+        field: 'timezone'
     }
 }, {
     tableName: 'users',
