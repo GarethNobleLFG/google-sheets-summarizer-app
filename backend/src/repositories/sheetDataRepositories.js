@@ -1,6 +1,6 @@
 import SheetData from '../models/sheetDataModel.js';
 import { Op } from 'sequelize';
-import { Cron } from 'croner';
+import { calculateNextRunTime } from '../utils/calculateNextRunTime.js';
 
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
@@ -18,8 +18,7 @@ export async function create(sheetDataInput) {
         let nextRun = null;
 
         if (frequency.trim().toLowerCase() !== 'none') {
-            const job = new Cron(frequency.trim());
-            nextRun = job.nextRun();
+            nextRun = calculateNextRunTime(frequency.trim());
         }
 
         const createData = {
@@ -133,12 +132,7 @@ export async function updateById(id, updateData) {
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 
         if (cronExpression.toLowerCase() !== 'none') {
-            const job = new Cron(cronExpression);
-            const nextRun = job.nextRun();
-            updateFields.next_run_at = nextRun;
-        }
-        else {
-            updateFields.next_run_at = null;
+            updateFields.next_run_at = calculateNextRunTime(cronExpression);
         }
     }
 

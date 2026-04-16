@@ -3,7 +3,7 @@ import * as sheetDataRepository from '../../repositories/sheetDataRepositories.j
 import { generateGeneralSummary } from '../ai-summary-services/generateGeneralSummary.js';
 import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
-import { Cron } from 'croner';
+import { calculateNextRunTime } from '../../utils/calculateNextRunTime.js';
 
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
@@ -61,8 +61,7 @@ export async function pollUsersForScheduledSummaries() {
 
                             // Calculate next run time from cron schedule
                             if (sheetData.frequency.toLowerCase() !== 'none') {
-                                const job = new Cron(sheetData.frequency);
-                                const nextRun = job.nextRun();
+                                const nextRun = calculateNextRunTime(sheetData.frequency);
 
                                 // Update both created_at and next_run_at
                                 await sheetDataRepository.updateById(sheetData.id, {
@@ -70,12 +69,6 @@ export async function pollUsersForScheduledSummaries() {
                                     next_run_at: nextRun
                                 });
                             }
-
-                            // Update both created_at and next_run_at
-                            await sheetDataRepository.updateById(sheetData.id, {
-                                created_at: new Date(),
-                                next_run_at: nextRun
-                            });
 
                             return { success: true, sheetId: sheetData.id };
 
@@ -217,21 +210,14 @@ export async function triggerUserSummaries(userId) {
 
                     // Calculate next run time from cron schedule
                     if (sheetData.frequency.toLowerCase() !== 'none') {
-                        const job = new Cron(sheetData.frequency);
-                        const nextRun = job.nextRun();
+                        const nextRun = calculateNextRunTime(sheetData.frequency);
 
                         // Update both created_at and next_run_at
                         await sheetDataRepository.updateById(sheetData.id, {
                             created_at: new Date(),
                             next_run_at: nextRun
                         });
-                    } 
-
-                    // Update both created_at and next_run_at
-                    await sheetDataRepository.updateById(sheetData.id, {
-                        created_at: new Date(),
-                        next_run_at: nextRun
-                    });
+                    }
 
                     executed++;
                     console.log(`Executed summary for user ${userId}, sheet: ${sheetData.sheet_name}`);
