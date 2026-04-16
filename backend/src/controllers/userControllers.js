@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import * as userRepository from '../repositories/userRepositories.js';
 import { generateToken } from '../utils/jwtUtils.js';
+import { convertForTimezone } from '../services/sheet-data-services/convertForTimezone.js';
 
 export async function createUser(req, res) {
     try {
@@ -181,20 +182,20 @@ export async function updateUser(req, res) {
         const {
             email,
             password,
-            sumsUsed,      
-            sums_used,     
-            timeZone,      
-            timezone       
+            sumsUsed,
+            sums_used,
+            timeZone,
+            timezone
         } = req.body;
 
         // Build update data object with correct field names for repository
         const updateData = {};
         if (email !== undefined) updateData.email = email;
         if (password !== undefined) updateData.password = password;
-        if (sumsUsed !== undefined) updateData.sums_used = sumsUsed;          
-        if (sums_used !== undefined) updateData.sums_used = sums_used;         
-        if (timeZone !== undefined) updateData.timezone = timeZone;            
-        if (timezone !== undefined) updateData.timezone = timezone;            
+        if (sumsUsed !== undefined) updateData.sums_used = sumsUsed;
+        if (sums_used !== undefined) updateData.sums_used = sums_used;
+        if (timeZone !== undefined) updateData.timezone = timeZone;
+        if (timezone !== undefined) updateData.timezone = timezone;
 
         const updatedUser = await userRepository.updateById(id, updateData);
 
@@ -289,6 +290,13 @@ export async function loginUser(req, res) {
         if (timezone && timezone !== user.timezone) {
             await userRepository.updateById(user.id, { timezone });
             user.timezone = timezone;
+
+            try {
+                await convertForTimezone(user.id);
+            }
+            catch (conversionError) {
+                console.error('Timezone conversion failed:', conversionError.message);
+            }
         }
 
         const { hashed_password: _, ...userResponse } = user;
