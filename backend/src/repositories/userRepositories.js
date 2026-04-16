@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 
 export async function create(userData) {
-    const { email, hashed_password } = userData;
+    const { email, hashed_password, timezone } = userData;
 
     if (!email || !hashed_password) {
         throw new Error('Email and password are required');
@@ -21,7 +21,8 @@ export async function create(userData) {
         const user = await User.create({
             email: email.trim(),
             hashed_password,
-            sums_used: 0
+            sums_used: 0,
+            timezone: timezone || 'UTC'
         });
         return user.dataValues;
     }
@@ -70,7 +71,7 @@ export async function updateById(id, updateData) {
         throw new Error('User not found');
     }
 
-    const { email, password, hashed_password, sums_used } = updateData;
+    const { email, password, hashed_password, sums_used, timezone } = updateData;
     const updateFields = {};
 
     if (email) {
@@ -98,6 +99,10 @@ export async function updateById(id, updateData) {
         updateFields.sums_used = sums_used;
     }
 
+    if (timezone) {
+        updateFields.timezone = timezone.trim();
+    }
+
     if (Object.keys(updateFields).length === 0) {
         throw new Error('No valid fields to update');
     }
@@ -113,7 +118,7 @@ export async function updateById(id, updateData) {
         }
 
         const updatedUser = await User.findByPk(parseInt(id), {
-            attributes: ['id', 'email', 'sums_used']
+            attributes: ['id', 'email', 'sums_used', 'timezone']
         });
         return updatedUser.dataValues;
     }
@@ -166,7 +171,7 @@ export async function findAll(limit = 1000, offset = 0) {
         const users = await User.findAll({
             limit: limit,
             offset: offset,
-            attributes: ['id', 'email', 'sums_used']
+            attributes: ['id', 'email', 'sums_used', 'timezone']
         });
         return users.map(user => user.dataValues);
     }
@@ -202,5 +207,21 @@ export async function authenticate(email, password) {
             throw error;
         }
         throw new Error(`Failed to authenticate user: ${error.message}`);
+    }
+}
+
+export async function findTimezoneById(id) {
+    if (!id || isNaN(id)) {
+        throw new Error('Valid user ID is required');
+    }
+
+    try {
+        const user = await User.findByPk(parseInt(id), {
+            attributes: ['timezone']
+        });
+        return user ? user.dataValues.timezone : 'UTC';
+    }
+    catch (error) {
+        throw new Error(`Failed to find user timezone: ${error.message}`);
     }
 }
