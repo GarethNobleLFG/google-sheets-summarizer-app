@@ -2,24 +2,24 @@ version: '3.8'
 
 services: # Backend API
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: node:20-alpine
     container_name: sheets-summarizer-backend
+    working_dir: /app
     env_file:
       - ./.env
     environment:
       NODE_ENV: development
       PORT: 5000
       CHOKIDAR_USEPOLLING: true
-      CHOKIDAR_INTERVAL: 1000 # Add this
+      CHOKIDAR_INTERVAL: 1000
     ports:
       - "5000:5000"
     networks:
       - app-network
     volumes:
-      - ./backend:/app # Mount entire backend folder
-      - /app/node_modules # But exclude node_modules
+      - ./backend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev"
     restart: unless-stopped
 
   # Frontend
