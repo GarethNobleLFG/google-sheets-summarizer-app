@@ -22,10 +22,15 @@ export function calculateNextRunTime(cronExpression, timezone = 'UTC') {
             });
 
             if (todayScheduled > nowInUserTimezone) {
-                nextRun = todayScheduled.toFormat('yyyy-MM-dd HH:mm:ss');
+                nextRun = todayScheduled.toJSDate();
             }
         }
     }
 
+    // Convert final result to timezone-aware string format
+    if (nextRun) {
+        return DateTime.fromJSDate(nextRun).setZone(timezone).toFormat('yyyy-MM-dd HH:mm:ss');
+    }
+    
     return nextRun;
 }
