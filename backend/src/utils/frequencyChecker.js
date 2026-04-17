@@ -6,10 +6,8 @@ export function checkIfShouldExecute(sheetData, userTimezone = 'UTC') {
     }
     
     if (sheetData.next_run_at) {
-        const nextRunTime = DateTime.fromFormat(sheetData.next_run_at, 'yyyy-MM-dd HH:mm:ss', { zone: userTimezone });
-        // ↑ Luxon correctly interprets this as being in the USER's timezone with the flag at the end 
+        const nextRunTime = DateTime.fromJSDate(sheetData.next_run_at).setZone(userTimezone);
         const now = DateTime.now().setZone(userTimezone);
-        
         return now >= nextRunTime;
     }
     
