@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import { sendMessage } from '../messagingService.js';
 import { processSheetForAI } from '../google/googleSheetService.js';
-import { create } from '../../repositories/sheetSummary.js';  
+import { create } from '../../repositories/sheetSummary.js';
 
 dotenv.config();
 
@@ -10,7 +10,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-export async function generateGeneralSummary( sheetDataInfo, sheetOptions ) {
+export async function generateGeneralSummary(sheetDataInfo, sheetOptions) {
     try {
         // Step 1: Process and get result from google sheet using the URL
         const sheetData = await processSheetForAI(sheetDataInfo.link, sheetOptions);
@@ -103,8 +103,8 @@ export async function generateGeneralSummary( sheetDataInfo, sheetOptions ) {
         try {
             const summaryData = {
                 summary_type: 'ScriptSums Summary',
-                text_version: textVersion, 
-                html_version: htmlVersion  
+                text_version: textVersion,
+                html_version: htmlVersion
             };
 
             const savedSummary = await create(summaryData);
@@ -122,7 +122,13 @@ export async function generateGeneralSummary( sheetDataInfo, sheetOptions ) {
             success: true
         };
 
-        await sendMessage(response, sheetDataInfo);
+        try {
+            await sendMessage(response, sheetDataInfo);
+            console.log('Email sent successfully');
+        } 
+        catch (emailError) {
+            console.error('Email sending failed (continuing anyway):', emailError.message);
+        }
 
         return {
             success: true,
@@ -131,7 +137,7 @@ export async function generateGeneralSummary( sheetDataInfo, sheetOptions ) {
             messageType: 'ScriptSums Summary'
         };
 
-    } 
+    }
     catch (error) {
         console.error('Error in general summary generation:', error);
         return {

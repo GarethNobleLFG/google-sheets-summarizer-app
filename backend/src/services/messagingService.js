@@ -10,12 +10,19 @@ dotenv.config();
 // Initialize services
 //const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-const emailTransporter = nodemailer.createTransport({
+const emailTransporter = nodemailer.createTransporter({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    pool: true,
+    maxConnections: 1,
+    rateDelta: 20000,
+    rateLimit: 5,
+    connectionTimeout: 60000,
+    greetingTimeout: 30000,
+    socketTimeout: 75000
 });
 
 export async function sendMessage(message, sheetDataInfo) {
