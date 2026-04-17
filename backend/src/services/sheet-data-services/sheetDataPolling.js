@@ -35,7 +35,7 @@ export async function pollUsersForScheduledSummaries() {
                     // Process each sheet for this user - PARALLEL VERSION.
                     const sheetPromises = userSheetData.map(async (sheetData) => {
                         try {
-                            const shouldExecute = checkIfShouldExecute(sheetData);
+                            const shouldExecute = checkIfShouldExecute(sheetData, user.timezone);
 
                             if (!shouldExecute) {
                                 return { skipped: true, sheetId: sheetData.id };
@@ -203,7 +203,7 @@ export async function triggerUserSummaries(userId) {
         for (const sheetData of userSheetData) {
             try {
                 // Fix for triggerUserSummaries function - replace lines 175-195:
-                const shouldExecute = checkIfShouldExecute(sheetData);
+                const shouldExecute = checkIfShouldExecute(sheetData, user.timezone);
 
                 if (shouldExecute) {
                     const sheetOptions = {
