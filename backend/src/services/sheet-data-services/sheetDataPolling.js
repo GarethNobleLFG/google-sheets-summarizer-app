@@ -119,8 +119,17 @@ export async function pollUsersForScheduledSummaries() {
                         executed: userExecuted,
                         errors: userErrors
                     };
-
                 }
+                else {
+                    console.log(`User ${user.id} has exceeded their summary limit (${user.sums_used}/${process.env.SUMS_LIMIT})`);
+                    return {
+                        userId: user.id,
+                        processed: 1,
+                        executed: 0,
+                        errors: []
+                    };
+                }
+
             }
             catch (error) {
                 console.error(`Error processing user ${user.id}:`, error);
