@@ -2,6 +2,7 @@ import SheetData from '../models/sheetDataModel.js';
 import { Op } from 'sequelize';
 import { calculateNextRunTime } from '../utils/calculateNextRunTime.js';
 import * as userRepository from './userRepositories.js';
+import { DateTime } from 'luxon';
 
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
@@ -21,22 +22,10 @@ export async function create(sheetDataInput) {
 
         if (frequency.trim().toLowerCase() !== 'none') {
             const userTimezone = await userRepository.findTimezoneById(user_id);
-
             nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
 
-            const now = new Date();
-            const userTimeString = new Intl.DateTimeFormat('en-CA', {
-                timeZone: userTimezone,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            }).format(now).replace(/(\d{4})-(\d{2})-(\d{2}), (\d{2}):(\d{2}):(\d{2})/, '$1-$2-$3T$4:$5:$6');
-
-            createdAt = new Date(userTimeString);
+            const nowInUserTz = DateTime.now().setZone(userTimezone);
+            createdAt = nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss');
         }
 
         const createData = {
@@ -152,19 +141,8 @@ export async function updateById(id, updateData) {
 
         const userTimezone = await userRepository.findTimezoneById(existingSheetData.user_id);
 
-        const now = new Date();
-        const userTimeString = new Intl.DateTimeFormat('en-CA', {
-            timeZone: userTimezone,
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-        }).format(now).replace(/(\d{4})-(\d{2})-(\d{2}), (\d{2}):(\d{2}):(\d{2})/, '$1-$2-$3T$4:$5:$6');
-
-        updateFields.created_at = new Date(userTimeString);
+        const nowInUserTz = DateTime.now().setZone(userTimezone);
+        updateFields.created_at = nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss');
 
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 

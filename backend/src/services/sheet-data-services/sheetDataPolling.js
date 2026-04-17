@@ -4,6 +4,7 @@ import { generateGeneralSummary } from '../ai-summary-services/generateGeneralSu
 import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 import { calculateNextRunTime } from '../../utils/calculateNextRunTime.js';
+import { DateTime } from 'luxon';
 
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
@@ -65,7 +66,7 @@ export async function pollUsersForScheduledSummaries() {
 
                                 // Update both created_at and next_run_at
                                 await sheetDataRepository.updateById(sheetData.id, {
-                                    created_at: new Date(new Date().toLocaleString("en-CA", { timeZone: user.timezone })),
+                                    created_at: DateTime.now().setZone(user.timezone).toFormat('yyyy-MM-dd HH:mm:ss'),
                                     next_run_at: nextRun
                                 });
                             }
@@ -214,7 +215,7 @@ export async function triggerUserSummaries(userId) {
 
                         // Update both created_at and next_run_at
                         await sheetDataRepository.updateById(sheetData.id, {
-                            created_at: new Date(new Date().toLocaleString("en-CA", { timeZone: user.timezone })),
+                            created_at: DateTime.now().setZone(user.timezone).toFormat('yyyy-MM-dd HH:mm:ss'),
                             next_run_at: nextRun
                         });
                     }

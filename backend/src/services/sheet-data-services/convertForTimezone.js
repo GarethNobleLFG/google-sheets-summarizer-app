@@ -1,5 +1,6 @@
 import * as userRepository from '../../repositories/userRepositories.js';
 import * as sheetDataRepository from '../../repositories/sheetDataRepositories.js';
+import { DateTime } from 'luxon';
 
 export async function convertForTimezone(userId) {
     try {
@@ -8,13 +9,13 @@ export async function convertForTimezone(userId) {
         }
 
         const userTimezone = await userRepository.findTimezoneById(parseInt(userId));
-        
+
         if (!userTimezone) {
             throw new Error('User not found');
         }
 
         const userSheetData = await sheetDataRepository.findAllFromUser(parseInt(userId), 1000);
-        
+
         if (!userSheetData || userSheetData.length === 0) {
             return { message: 'No sheet data found for user', converted: 0 };
         }
@@ -25,13 +26,19 @@ export async function convertForTimezone(userId) {
         for (const sheetData of userSheetData) {
             try {
                 const updateFields = {};
-                
+
                 if (sheetData.created_at) {
-                    updateFields.created_at = new Date(new Date(sheetData.created_at).toLocaleString("en-CA", { timeZone: userTimezone }));
+                    const convertedCreatedAt = DateTime.fromJSDate(sheetData.created_at)
+                        .setZone(userTimezone)
+                        .toFormat('yyyy-MM-dd HH:mm:ss');
+                    updateFields.created_at = convertedCreatedAt;
                 }
-                
+
                 if (sheetData.next_run_at) {
-                    updateFields.next_run_at = new Date(new Date(sheetData.next_run_at).toLocaleString("en-CA", { timeZone: userTimezone }));
+                    const convertedNextRunAt = DateTime.fromJSDate(sheetData.next_run_at)
+                        .setZone(userTimezone)
+                        .toFormat('yyyy-MM-dd HH:mm:ss');
+                    updateFields.next_run_at = convertedNextRunAt;
                 }
 
                 if (Object.keys(updateFields).length > 0) {
@@ -44,13 +51,13 @@ export async function convertForTimezone(userId) {
             }
         }
 
-        return { 
-            message: `Converted ${converted} sheet data entries for user ${userId}`, 
-            converted, 
-            errors 
+        return {
+            message: `Converted ${converted} sheet data entries for user ${userId}`,
+            converted,
+            errors
         };
 
-    } 
+    }
     catch (error) {
         throw new Error(`Failed to convert timestamps: ${error.message}`);
     }
