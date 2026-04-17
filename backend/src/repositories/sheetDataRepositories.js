@@ -23,7 +23,20 @@ export async function create(sheetDataInput) {
             const userTimezone = await userRepository.findTimezoneById(user_id);
 
             nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
-            createdAt = new Date(new Date().toLocaleString("en-CA", { timeZone: userTimezone }));
+
+            const now = new Date();
+            const userTimeString = new Intl.DateTimeFormat('en-CA', {
+                timeZone: userTimezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now).replace(/(\d{4})-(\d{2})-(\d{2}), (\d{2}):(\d{2}):(\d{2})/, '$1-$2-$3T$4:$5:$6');
+
+            createdAt = new Date(userTimeString);
         }
 
         const createData = {
@@ -139,7 +152,19 @@ export async function updateById(id, updateData) {
 
         const userTimezone = await userRepository.findTimezoneById(existingSheetData.user_id);
 
-        updateFields.created_at = new Date(new Date().toLocaleString("en-CA", { timeZone: userTimezone }));
+        const now = new Date();
+        const userTimeString = new Intl.DateTimeFormat('en-CA', {
+            timeZone: userTimezone,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).format(now).replace(/(\d{4})-(\d{2})-(\d{2}), (\d{2}):(\d{2}):(\d{2})/, '$1-$2-$3T$4:$5:$6');
+
+        updateFields.created_at = new Date(userTimeString);
 
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 
