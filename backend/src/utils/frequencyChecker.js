@@ -9,15 +9,22 @@ export function checkIfShouldExecute(sheetData, userTimezone = 'UTC') {
         let nextRunTime;
         
         if (typeof sheetData.next_run_at === 'string') {
-            nextRunTime = DateTime.fromFormat(sheetData.next_run_at, 'yyyy-MM-dd HH:mm:ss', { zone: userTimezone });
+            nextRunTime = DateTime.fromSQL(sheetData.next_run_at, { zone: userTimezone });
         } 
         else {
-            const timeString = DateTime.fromJSDate(sheetData.next_run_at).toFormat('yyyy-MM-dd HH:mm:ss');
-            nextRunTime = DateTime.fromFormat(timeString, 'yyyy-MM-dd HH:mm:ss', { zone: userTimezone });
+            nextRunTime = DateTime
+                .fromJSDate(sheetData.next_run_at)
+                .setZone(userTimezone);
+        }
+
+        if (!nextRunTime.isValid) {
+            console.log("Invalid DateTime:", nextRunTime.invalidExplanation);
+            return false;
         }
         
         const now = DateTime.now().setZone(userTimezone);
-        return now >= nextRunTime;
+
+        return now.toMillis() >= nextRunTime.toMillis();
     }
     
     return false;
