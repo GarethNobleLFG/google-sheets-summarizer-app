@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon';
-import { getCurrentTimeInTimezone } from './timeUtil.js';
 
 export function checkIfShouldExecute(sheetData, userTimezone) {
     if (sheetData.frequency && sheetData.frequency.toLowerCase() === 'none') {
