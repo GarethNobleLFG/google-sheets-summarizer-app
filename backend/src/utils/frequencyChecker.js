@@ -10,12 +10,10 @@ export function checkIfShouldExecute(sheetData, userTimezone) {
         let nextRunTime;
 
         if (typeof sheetData.next_run_at === 'string') {
-            nextRunTime = DateTime.fromSQL(sheetData.next_run_at, { zone: userTimezone });
+            nextRunTime = DateTime.fromSQL(sheetData.next_run_at).setZone(userTimezone);
         }
         else {
-            let dbTime = DateTime.fromJSDate(sheetData.next_run_at).toUTC().toISO();
-
-            nextRunTime = DateTime.fromISO(dbTime, { zone: userTimezone });
+            nextRunTime = DateTime.fromJSDate(sheetData.next_run_at).setZone(userTimezone);
         }
 
         if (!nextRunTime.isValid) {
@@ -24,11 +22,7 @@ export function checkIfShouldExecute(sheetData, userTimezone) {
         }
 
         // Get current time, return false if parsing fails        
-        const now = getCurrentTimeInTimezone(userTimezone);
-        if (now === null) {
-            console.log("Failed to get current time from API, skipping execution check");
-            return false;
-        }
+        const now = DateTime.now().setZone(userTimezone);
 
         if (nextRunTime.zoneName !== userTimezone) {
             console.log(`Error: nextRunTime timezone mismatch. Expected: ${userTimezone}, Got: ${nextRunTime.zoneName}`);

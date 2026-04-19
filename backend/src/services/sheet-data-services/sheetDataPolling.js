@@ -5,7 +5,6 @@ import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 import { calculateNextRunTime } from '../../utils/calculateNextRunTime.js';
 import { DateTime } from 'luxon';
-import { getCurrentTimeInTimezone } from '../../utils/timeUtil.js';
 
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
@@ -65,9 +64,8 @@ export async function pollUsersForScheduledSummaries() {
                             if (sheetData.frequency.toLowerCase() !== 'none') {
                                 const nextRun = calculateNextRunTime(sheetData.frequency, user.timezone);
 
-                                const nowInUserTz = getCurrentTimeInTimezone(user.timezone);
                                 await sheetDataRepository.updateById(sheetData.id, {
-                                    created_at: nowInUserTz ? nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss') : null,
+                                    created_at:  DateTime.now().setZone(user.timezone).toFormat('yyyy-MM-dd HH:mm:ss'),
                                     next_run_at: nextRun
                                 });
                             }
@@ -223,9 +221,8 @@ export async function triggerUserSummaries(userId) {
                     if (sheetData.frequency.toLowerCase() !== 'none') {
                         const nextRun = calculateNextRunTime(sheetData.frequency, user.timezone);
 
-                        const nowInUserTz = getCurrentTimeInTimezone(user.timezone);
                         await sheetDataRepository.updateById(sheetData.id, {
-                            created_at: nowInUserTz ? nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss') : null,
+                            created_at: DateTime.now().setZone(user.timezone).toFormat('yyyy-MM-dd HH:mm:ss'),
                             next_run_at: nextRun
                         });
                     }

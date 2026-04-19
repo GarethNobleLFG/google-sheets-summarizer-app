@@ -3,7 +3,6 @@ import { Op } from 'sequelize';
 import { calculateNextRunTime } from '../utils/calculateNextRunTime.js';
 import * as userRepository from './userRepositories.js';
 import { DateTime } from 'luxon';
-import { getCurrentTimeInTimezone } from '../utils/timeUtil.js';
 
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
@@ -25,7 +24,7 @@ export async function create(sheetDataInput) {
             const userTimezone = await userRepository.findTimezoneById(user_id);
             nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
 
-            createdAt = getCurrentTimeInTimezone(userTimezone).toFormat('yyyy-MM-dd HH:mm:ss');
+            createdAt = DateTime.now().setZone(userTimezone).toFormat('yyyy-MM-dd HH:mm:ss');
         }
 
         const createData = {
@@ -141,7 +140,7 @@ export async function updateById(id, updateData) {
 
         const userTimezone = await userRepository.findTimezoneById(existingSheetData.user_id);
 
-        updateFields.created_at = getCurrentTimeInTimezone(userTimezone).toFormat('yyyy-MM-dd HH:mm:ss');
+        updateFields.created_at = DateTime.now().setZone(userTimezone).toFormat('yyyy-MM-dd HH:mm:ss');
 
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 

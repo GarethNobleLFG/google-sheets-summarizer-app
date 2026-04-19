@@ -24,11 +24,7 @@ export async function convertForTimezone(userId) {
         for (const sheetData of userSheetData) {
             try {
                 if (sheetData.created_at) {
-                    let dbTime = DateTime.fromJSDate(sheetData.created_at).toUTC().toISO();
-
-                    let conversion = DateTime.fromISO(dbTime, { zone: userTimezone });
-
-                    const convertedCreatedAt = conversion.toFormat('yyyy-MM-dd HH:mm:ss');
+                    const convertedCreatedAt = DateTime.fromJSDate(nextRun).setZone(timezone).toFormat('yyyy-MM-dd HH:mm:ss');
 
                     await sheetDataRepository.updateById(sheetData.id, {
                         created_at: convertedCreatedAt
