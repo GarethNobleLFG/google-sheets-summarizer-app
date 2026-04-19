@@ -91,8 +91,8 @@ export const SheetDataEntries = ({
                     </h1>
 
                     <p className="text-lg leading-relaxed text-gray-600 dark:text-gray-300 mb-8 max-w-2xl">
-                        Manage and monitor your Google Sheets summaries.
-                        {sheetData.length === 0 ? 'Add your first sheet to get started.' : `You have ${sheetData.length} active sheet${sheetData.length !== 1 ? 's' : ''}.`}
+                        Manage and monitor your Google Sheets summaries. <strong>All Sheet Data scheduled run times will update automatically per your timezone on login.</strong> <br></br>
+                        {sheetData.length === 0 ? ' Add your first sheet to get started.' : ` You have ${sheetData.length} active sheet${sheetData.length !== 1 ? 's' : ''}.`}
                     </p>
 
                     {sheetData.length === 0 ? (

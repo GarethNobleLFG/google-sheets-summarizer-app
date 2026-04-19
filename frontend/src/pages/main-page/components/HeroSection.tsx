@@ -46,7 +46,7 @@ export const HeroSection = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">Scheduled Reports</span>
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">Timezone-Aware Scheduled Reports</span>
                         </div>
                         <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
