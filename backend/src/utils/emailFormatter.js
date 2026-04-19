@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 export function emailFormatter(message, sheetName) {
     const { html, messageType } = message;
 
@@ -19,6 +21,8 @@ export function emailFormatter(message, sheetName) {
 
     const wrappedHtml = `<div style="font-family: 'Times New Roman', Times, serif;">${html}</div>`;
 
+    const now = DateTime.now().setZone('America/New_York');
+    
     const htmlFooter = `
         <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #111827 0%, #1f2937 100%); border-radius: 8px; border-top: 3px solid #60a5fa; font-family: 'Times New Roman', Times, serif;">
             <div style="text-align: center; color: #9ca3af; font-size: 14px;">
@@ -29,14 +33,13 @@ export function emailFormatter(message, sheetName) {
                     🚀 Streamlining your spreadsheet insights
                 </p>
                 <p style="margin: 0; color: #6b7280; font-size: 12px;">
-                    Generated on: ${new Date().toLocaleDateString('en-US', {
-        timeZone: 'America/New_York',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    })} EST
+                    Generated on: ${now.toLocaleString({
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })} EST
                 </p>
             </div>
         </div>

@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import twilio from 'twilio';
 import nodemailer from 'nodemailer';
+import { DateTime } from 'luxon';
 import { findUserIdById } from '../repositories/sheetDataRepositories.js';
 import { findEmailById } from '../repositories/userRepositories.js';
 import { emailFormatter } from '../utils/emailFormatter.js';
@@ -34,6 +35,8 @@ export async function sendMessage(message, sheetDataInfo) {
 
         const formattedEmail = await emailFormatter(message, sheetDataInfo.sheet_name);
 
+        const now = DateTime.now().setZone('America/New_York');
+
         /*
         // Send via SMS
         await twilioClient.messages.create({
@@ -47,8 +50,7 @@ export async function sendMessage(message, sheetDataInfo) {
         await emailTransporter.sendMail({
             from: process.env.EMAIL_USER,
             to: userEmail,
-            subject: `${message.messageType} - ${new Date().toLocaleDateString('en-US', {
-                timeZone: 'America/New_York',
+            subject: `${message.messageType} - ${now.toLocaleString({
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit'

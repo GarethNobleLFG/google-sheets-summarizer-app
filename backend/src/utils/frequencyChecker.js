@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-export function checkIfShouldExecute(sheetData, userTimezone = 'UTC') {
+export function checkIfShouldExecute(sheetData, userTimezone) {
     if (sheetData.frequency && sheetData.frequency.toLowerCase() === 'none') {
         return false;
     }
@@ -23,6 +23,15 @@ export function checkIfShouldExecute(sheetData, userTimezone = 'UTC') {
         }
         
         const now = DateTime.now().setZone(userTimezone);
+
+        if (nextRunTime.zoneName !== userTimezone) {
+            console.log(`Error: nextRunTime timezone mismatch. Expected: ${userTimezone}, Got: ${nextRunTime.zoneName}`);
+            return false;
+        } 
+        else if (now.zoneName !== userTimezone) {
+            console.log(`Error: now timezone mismatch. Expected: ${userTimezone}, Got: ${now.zoneName}`);
+            return false;
+        }
 
         return now.toMillis() >= nextRunTime.toMillis();
     }
