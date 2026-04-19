@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import { calculateNextRunTime } from '../utils/calculateNextRunTime.js';
 import * as userRepository from './userRepositories.js';
 import { DateTime } from 'luxon';
+import { getCurrentTimeInTimezone } from '../utils/timeUtil.js';
 
 export async function create(sheetDataInput) {
     const { user_id, link, sheet_name, frequency, pre_prompt, post_prompt } = sheetDataInput;
@@ -22,10 +23,15 @@ export async function create(sheetDataInput) {
 
         if (frequency.trim().toLowerCase() !== 'none') {
             const userTimezone = await userRepository.findTimezoneById(user_id);
-            nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
+            nextRun = await calculateNextRunTime(frequency.trim(), userTimezone);
 
-            const nowInUserTz = DateTime.now().setZone(userTimezone);
-            createdAt = nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss');
+            const nowInUserTz = await getCurrentTimeInTimezone(userTimezone);
+            if (!nowInUserTz) {
+                console.log("Cannot get current time, skipping created_at update");
+            }
+            else {
+                createdAt = nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss');
+            }
         }
 
         const createData = {
@@ -141,13 +147,18 @@ export async function updateById(id, updateData) {
 
         const userTimezone = await userRepository.findTimezoneById(existingSheetData.user_id);
 
-        const nowInUserTz = DateTime.now().setZone(userTimezone);
-        updateFields.created_at = nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss');
+        const nowInUserTz = await getCurrentTimeInTimezone(userTimezone);
+        if (!nowInUserTz) {
+            console.log("Cannot get current time, skipping created_at update");
+        }
+        else {
+            updateFields.created_at = nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss');
+        }
 
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 
         if (cronExpression.toLowerCase() !== 'none') {
-            updateFields.next_run_at = calculateNextRunTime(cronExpression, userTimezone);
+            updateFields.next_run_at = await calculateNextRunTime(cronExpression, userTimezone);
         }
     }
 

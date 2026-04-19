@@ -5,6 +5,7 @@ import { checkIfShouldExecute } from '../../utils/frequencyChecker.js';
 import { extractSpreadsheetId } from '../../utils/urlHelper.js';
 import { calculateNextRunTime } from '../../utils/calculateNextRunTime.js';
 import { DateTime } from 'luxon';
+import { getCurrentTimeInTimezone } from '../../utils/timeUtil.js';
 
 // Main polling function.
 export async function pollUsersForScheduledSummaries() {
@@ -35,7 +36,7 @@ export async function pollUsersForScheduledSummaries() {
                     // Process each sheet for this user - PARALLEL VERSION.
                     const sheetPromises = userSheetData.map(async (sheetData) => {
                         try {
-                            const shouldExecute = checkIfShouldExecute(sheetData, user.timezone);
+                            const shouldExecute = await checkIfShouldExecute(sheetData, user.timezone);
 
                             if (!shouldExecute) {
                                 return { skipped: true, sheetId: sheetData.id };
@@ -62,11 +63,11 @@ export async function pollUsersForScheduledSummaries() {
 
                             // Calculate next run time from cron schedule
                             if (sheetData.frequency.toLowerCase() !== 'none') {
-                                const nextRun = calculateNextRunTime(sheetData.frequency, user.timezone);
+                                const nextRun = await calculateNextRunTime(sheetData.frequency, user.timezone);
 
-                                // Update both created_at and next_run_at
+                                const nowInUserTz = await getCurrentTimeInTimezone(user.timezone);
                                 await sheetDataRepository.updateById(sheetData.id, {
-                                    created_at: DateTime.now().setZone(user.timezone).toFormat('yyyy-MM-dd HH:mm:ss'),
+                                    created_at: nowInUserTz ? nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss') : null,
                                     next_run_at: nextRun
                                 });
                             }
@@ -203,7 +204,7 @@ export async function triggerUserSummaries(userId) {
         for (const sheetData of userSheetData) {
             try {
                 // Fix for triggerUserSummaries function - replace lines 175-195:
-                const shouldExecute = checkIfShouldExecute(sheetData, user.timezone);
+                const shouldExecute = await checkIfShouldExecute(sheetData, user.timezone);
 
                 if (shouldExecute) {
                     const sheetOptions = {
@@ -220,11 +221,11 @@ export async function triggerUserSummaries(userId) {
 
                     // Calculate next run time from cron schedule
                     if (sheetData.frequency.toLowerCase() !== 'none') {
-                        const nextRun = calculateNextRunTime(sheetData.frequency, user.timezone);
+                        const nextRun = await calculateNextRunTime(sheetData.frequency, user.timezone);
 
-                        // Update both created_at and next_run_at
+                        const nowInUserTz = await getCurrentTimeInTimezone(user.timezone);
                         await sheetDataRepository.updateById(sheetData.id, {
-                            created_at: DateTime.now().setZone(user.timezone).toFormat('yyyy-MM-dd HH:mm:ss'),
+                            created_at: nowInUserTz ? nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss') : null,
                             next_run_at: nextRun
                         });
                     }

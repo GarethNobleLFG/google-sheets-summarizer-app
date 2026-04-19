@@ -1,15 +1,20 @@
 import { Cron } from 'croner';
 import { DateTime } from 'luxon';
+import { getCurrentTimeInTimezone } from './timeUtil.js';
 
-export function calculateNextRunTime(cronExpression, timezone) {
+export async function calculateNextRunTime(cronExpression, timezone) {
     const job = new Cron(cronExpression, { timezone });
     let nextRun = job.nextRun();
 
-    const nowInUserTimezone = DateTime.now().setZone(timezone);
+    const nowInUserTimezone = await getCurrentTimeInTimezone(timezone);
+    if (!nowInUserTimezone) {
+        console.log("Failed to get current time for next run calculation, using fallback");
+        return null;
+    }
 
     if (nextRun) {
-        let nextRunLuxon = DateTime.fromJSDate(nextRun).setZone(timezone);
-        
+        let nextRunLuxon = DateTime.fromJSDate(nextRun, { zone: timezone });
+
         // If nextRun is tomorrow but today's time hasn't reached the scheduled time as if it were today, use today
         if (nextRunLuxon.day > nowInUserTimezone.day) {
             const cronParts = cronExpression.split(' ');
@@ -17,11 +22,11 @@ export function calculateNextRunTime(cronExpression, timezone) {
                 const scheduledMinute = parseInt(cronParts[0]);
                 const scheduledHour = parseInt(cronParts[1]);
 
-                const todayScheduled = nowInUserTimezone.set({ 
-                    hour: scheduledHour, 
-                    minute: scheduledMinute, 
-                    second: 0, 
-                    millisecond: 0 
+                const todayScheduled = nowInUserTimezone.set({
+                    hour: scheduledHour,
+                    minute: scheduledMinute,
+                    second: 0,
+                    millisecond: 0
                 });
 
                 if (todayScheduled.toMillis() > nowInUserTimezone.toMillis()) {
@@ -29,9 +34,9 @@ export function calculateNextRunTime(cronExpression, timezone) {
                 }
             }
         }
-        
+
         return nextRunLuxon.toFormat('yyyy-MM-dd HH:mm:ss');
     }
-    
+
     return nextRun;
 }

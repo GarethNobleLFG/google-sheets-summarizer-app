@@ -62,3 +62,7 @@ export async function convertForTimezone(userId) {
         throw new Error(`Failed to convert timestamps: ${error.message}`);
     }
 }
+
+
+// { zone: timezone }: "Interpret this Date as being in this timezone"
+// .setZone(timezone): "Convert this DateTime to this timezone"
