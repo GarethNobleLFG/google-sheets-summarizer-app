@@ -63,9 +63,9 @@ export async function pollUsersForScheduledSummaries() {
 
                             // Calculate next run time from cron schedule
                             if (sheetData.frequency.toLowerCase() !== 'none') {
-                                const nextRun = await calculateNextRunTime(sheetData.frequency, user.timezone);
+                                const nextRun = calculateNextRunTime(sheetData.frequency, user.timezone);
 
-                                const nowInUserTz = await getCurrentTimeInTimezone(user.timezone);
+                                const nowInUserTz = getCurrentTimeInTimezone(user.timezone);
                                 await sheetDataRepository.updateById(sheetData.id, {
                                     created_at: nowInUserTz ? nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss') : null,
                                     next_run_at: nextRun
@@ -221,9 +221,9 @@ export async function triggerUserSummaries(userId) {
 
                     // Calculate next run time from cron schedule
                     if (sheetData.frequency.toLowerCase() !== 'none') {
-                        const nextRun = await calculateNextRunTime(sheetData.frequency, user.timezone);
+                        const nextRun = calculateNextRunTime(sheetData.frequency, user.timezone);
 
-                        const nowInUserTz = await getCurrentTimeInTimezone(user.timezone);
+                        const nowInUserTz = getCurrentTimeInTimezone(user.timezone);
                         await sheetDataRepository.updateById(sheetData.id, {
                             created_at: nowInUserTz ? nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss') : null,
                             next_run_at: nextRun

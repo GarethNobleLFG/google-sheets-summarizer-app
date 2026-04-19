@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { getCurrentTimeInTimezone } from './timeUtil.js';
 
-export async function checkIfShouldExecute(sheetData, userTimezone) {
+export function checkIfShouldExecute(sheetData, userTimezone) {
     if (sheetData.frequency && sheetData.frequency.toLowerCase() === 'none') {
         return false;
     }
@@ -13,7 +13,9 @@ export async function checkIfShouldExecute(sheetData, userTimezone) {
             nextRunTime = DateTime.fromSQL(sheetData.next_run_at, { zone: userTimezone });
         }
         else {
-            nextRunTime = DateTime.fromJSDate(sheetData.next_run_at, { zone: userTimezone });
+            let dbTime = DateTime.fromJSDate(sheetData.next_run_at).toUTC().toISO();
+
+            nextRunTime = DateTime.fromISO(dbTime, { zone: userTimezone });
         }
 
         if (!nextRunTime.isValid) {
@@ -21,8 +23,8 @@ export async function checkIfShouldExecute(sheetData, userTimezone) {
             return false;
         }
 
-        // Get current time from API, return false if API fails
-        const now = await getCurrentTimeInTimezone(userTimezone);
+        // Get current time, return false if parsing fails        
+        const now = getCurrentTimeInTimezone(userTimezone);
         if (now === null) {
             console.log("Failed to get current time from API, skipping execution check");
             return false;

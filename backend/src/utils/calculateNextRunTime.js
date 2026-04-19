@@ -2,19 +2,20 @@ import { Cron } from 'croner';
 import { DateTime } from 'luxon';
 import { getCurrentTimeInTimezone } from './timeUtil.js';
 
-export async function calculateNextRunTime(cronExpression, timezone) {
-    const job = new Cron(cronExpression, { timezone });
+export function calculateNextRunTime(cronExpression, timezone) {
+    const job = new Cron(cronExpression, { timezone }); // ✅ Cron calculates in user timezone. Prevents againt offset time arithmetic.
     let nextRun = job.nextRun();
 
-    const nowInUserTimezone = await getCurrentTimeInTimezone(timezone);
-    if (!nowInUserTimezone) {
-        console.log("Failed to get current time for next run calculation, using fallback");
+    let time = DateTime.fromJSDate(nextRun).toUTC().toISO(); // Force to UTC
+    let nextRunLuxon = DateTime.fromISO(time, { zone: timezone }); // Interpret UTC in user timezone
+
+    const nowInUserTimezone = getCurrentTimeInTimezone(timezone);
+    if (!nowInUserTimezone.isValid) {
+        console.log("Failed to parse current time for next run calculation");
         return null;
     }
 
-    if (nextRun) {
-        let nextRunLuxon = DateTime.fromJSDate(nextRun, { zone: timezone });
-
+    if (nextRunLuxon) {
         // If nextRun is tomorrow but today's time hasn't reached the scheduled time as if it were today, use today
         if (nextRunLuxon.day > nowInUserTimezone.day) {
             const cronParts = cronExpression.split(' ');

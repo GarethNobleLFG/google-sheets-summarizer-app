@@ -9,13 +9,11 @@ export async function convertForTimezone(userId) {
         }
 
         const userTimezone = await userRepository.findTimezoneById(parseInt(userId));
-
         if (!userTimezone) {
             throw new Error('User not found');
         }
 
         const userSheetData = await sheetDataRepository.findAllFromUser(parseInt(userId), 1000);
-
         if (!userSheetData || userSheetData.length === 0) {
             return { message: 'No sheet data found for user', converted: 0 };
         }
@@ -25,24 +23,17 @@ export async function convertForTimezone(userId) {
 
         for (const sheetData of userSheetData) {
             try {
-                const updateFields = {};
-
                 if (sheetData.created_at) {
-                    const convertedCreatedAt = DateTime.fromJSDate(sheetData.created_at)
-                        .setZone(userTimezone)
-                        .toFormat('yyyy-MM-dd HH:mm:ss');
-                    updateFields.created_at = convertedCreatedAt;
-                }
+                    let dbTime = DateTime.fromJSDate(sheetData.created_at).toUTC().toISO();
 
-                if (sheetData.next_run_at) {
-                    const convertedNextRunAt = DateTime.fromJSDate(sheetData.next_run_at)
-                        .setZone(userTimezone)
-                        .toFormat('yyyy-MM-dd HH:mm:ss');
-                    updateFields.next_run_at = convertedNextRunAt;
-                }
+                    let conversion = DateTime.fromISO(dbTime, { zone: userTimezone });
 
-                if (Object.keys(updateFields).length > 0) {
-                    await sheetDataRepository.updateById(sheetData.id, updateFields);
+                    const convertedCreatedAt = conversion.toFormat('yyyy-MM-dd HH:mm:ss');
+
+                    await sheetDataRepository.updateById(sheetData.id, {
+                        created_at: convertedCreatedAt
+                    });
+
                     converted++;
                 }
             }
@@ -62,7 +53,3 @@ export async function convertForTimezone(userId) {
         throw new Error(`Failed to convert timestamps: ${error.message}`);
     }
 }
-
-
-// { zone: timezone }: "Interpret this Date as being in this timezone"
-// .setZone(timezone): "Convert this DateTime to this timezone"

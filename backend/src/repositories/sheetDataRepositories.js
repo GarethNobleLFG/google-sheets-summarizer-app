@@ -23,15 +23,9 @@ export async function create(sheetDataInput) {
 
         if (frequency.trim().toLowerCase() !== 'none') {
             const userTimezone = await userRepository.findTimezoneById(user_id);
-            nextRun = await calculateNextRunTime(frequency.trim(), userTimezone);
+            nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
 
-            const nowInUserTz = await getCurrentTimeInTimezone(userTimezone);
-            if (!nowInUserTz) {
-                console.log("Cannot get current time, skipping created_at update");
-            }
-            else {
-                createdAt = nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss');
-            }
+            createdAt = getCurrentTimeInTimezone(userTimezone).toFormat('yyyy-MM-dd HH:mm:ss');
         }
 
         const createData = {
@@ -147,18 +141,12 @@ export async function updateById(id, updateData) {
 
         const userTimezone = await userRepository.findTimezoneById(existingSheetData.user_id);
 
-        const nowInUserTz = await getCurrentTimeInTimezone(userTimezone);
-        if (!nowInUserTz) {
-            console.log("Cannot get current time, skipping created_at update");
-        }
-        else {
-            updateFields.created_at = nowInUserTz.toFormat('yyyy-MM-dd HH:mm:ss');
-        }
+        updateFields.created_at = getCurrentTimeInTimezone(userTimezone).toFormat('yyyy-MM-dd HH:mm:ss');
 
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 
         if (cronExpression.toLowerCase() !== 'none') {
-            updateFields.next_run_at = await calculateNextRunTime(cronExpression, userTimezone);
+            updateFields.next_run_at = calculateNextRunTime(cronExpression, userTimezone);
         }
     }
 
