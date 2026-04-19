@@ -21,7 +21,7 @@ export const HeroSection = () => {
                     </div>
 
                     <h1 className="text-3xl lg:text-4xl xl:text-5xl font-black leading-tight mb-4 whitespace-nowrap">
-                        <span className="text-gray-900 dark:text-white">Smart </span>
+                        <span className="text-gray-900 dark:text-white">AI Driven </span>
                         <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">Sheet </span>
                         <span className="text-gray-900 dark:text-white">Summaries</span>
                     </h1>
@@ -38,7 +38,7 @@ export const HeroSection = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">Automated Analysis</span>
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">Prompt Based Responses</span>
                         </div>
                         <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full flex items-center justify-center">
