@@ -2,28 +2,30 @@ import { Cron } from 'croner';
 import { DateTime } from 'luxon';
 
 export function calculateNextRunTime(cronExpression, timezone) {
-    const nowInUserTimezone = DateTime.now().setZone(timezone);
+    const nowInUserTimezone = DateTime.now();
 
     if (!nowInUserTimezone.isValid) {
         console.error("Failed to parse current time for next run calculation");
         return null;
     }
 
-    // 1. Get the start of today in the user's zone
     const startOfToday = nowInUserTimezone.startOf('day').toJSDate();
 
-    // 2. Initialize Croner
-    const job = new Cron(cronExpression, { timezone });
+    const job = new Cron(cronExpression, { timezone }); // This will account for DST, so calc will be aware of that hour shift
     let nextRun = job.nextRun(startOfToday);
     
     if (!nextRun) return null;
 
-    let nextRunLuxon = DateTime.fromJSDate(nextRun).setZone(timezone);
+    let nextRunLuxon = DateTime.fromJSDate(nextRun); 
 
     if (nextRunLuxon <= nowInUserTimezone) {
         nextRun = job.nextRun(); // Causes calc to start for the next day period
-        nextRunLuxon = DateTime.fromJSDate(nextRun).setZone(timezone);
+        nextRunLuxon = DateTime.fromJSDate(nextRun);
     }
 
-    return nextRunLuxon.toFormat('yyyy-MM-dd HH:mm:ss');
+    return nextRunLuxon.toISO();
 }
+
+
+// .toISO() - Creates the string with the correct Eastern offset
+// **** .toISO() is your workaround for Sequelize's automatic UTC conversion. ****

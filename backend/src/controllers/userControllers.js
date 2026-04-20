@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import * as userRepository from '../repositories/userRepositories.js';
 import { generateToken } from '../utils/jwtUtils.js';
-import { convertForTimezone } from '../services/sheet-data-services/convertForTimezone.js';
 
 export async function createUser(req, res) {
     try {
@@ -290,13 +289,6 @@ export async function loginUser(req, res) {
         if (timezone && timezone !== user.timezone) {
             await userRepository.updateById(user.id, { timezone });
             user.timezone = timezone;
-
-            try {
-                await convertForTimezone(user.id);
-            }
-            catch (conversionError) {
-                console.error('Timezone conversion failed:', conversionError.message);
-            }
         }
 
         const { hashed_password: _, ...userResponse } = user;

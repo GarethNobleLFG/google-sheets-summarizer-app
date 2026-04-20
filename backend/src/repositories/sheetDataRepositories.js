@@ -24,7 +24,7 @@ export async function create(sheetDataInput) {
             const userTimezone = await userRepository.findTimezoneById(user_id);
             nextRun = calculateNextRunTime(frequency.trim(), userTimezone);
 
-            createdAt = DateTime.now().setZone(userTimezone).toFormat('yyyy-MM-dd HH:mm:ss');
+            createdAt = DateTime.now().toISO();
         }
 
         const createData = {
@@ -140,7 +140,7 @@ export async function updateById(id, updateData) {
 
         const userTimezone = await userRepository.findTimezoneById(existingSheetData.user_id);
 
-        updateFields.created_at = DateTime.now().setZone(userTimezone).toFormat('yyyy-MM-dd HH:mm:ss');
+        updateFields.created_at = DateTime.now().toISO();
 
         const cronExpression = frequency ? frequency.trim() : existingSheetData.frequency;
 
