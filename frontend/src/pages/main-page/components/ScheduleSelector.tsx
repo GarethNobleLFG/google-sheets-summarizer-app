@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { validateAndParseHour } from '../../../utils/inputValidation';
 
 export const ScheduleSelector = ({ formData, setFormData }: {
     formData: {
@@ -136,10 +135,6 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         });
     };
 
-    const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        validateAndParseHour(e.target.value, 9, (value: number) => handleValueChange('hour', value));
-    };
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -180,7 +175,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             max="59"
                             value={values.minutes}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                handleValueChange('minutes', isNaN(parseInt(e.target.value)) ? 15 : parseInt(e.target.value))
+                                handleValueChange('minutes', parseInt(e.target.value) || 15)
                             }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
@@ -196,7 +191,9 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             min="0"
                             max="23"
                             value={values.hour}
-                            onChange={handleHourChange}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleValueChange('hour', parseInt(e.target.value) || 0)
+                            }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
                         <span className="text-gray-700 dark:text-gray-300">:</span>
@@ -206,7 +203,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             max="59"
                             value={values.minute}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                handleValueChange('minute', isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value))
+                                handleValueChange('minute', parseInt(e.target.value) || 0)
                             }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
@@ -237,7 +234,9 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             min="0"
                             max="23"
                             value={values.hour}
-                            onChange={handleHourChange}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleValueChange('hour', parseInt(e.target.value) || 0)
+                            }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
                         <span className="text-gray-700 dark:text-gray-300">:</span>
@@ -273,7 +272,9 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             min="0"
                             max="23"
                             value={values.hour}
-                            onChange={handleHourChange}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleValueChange('hour', parseInt(e.target.value) || 0)
+                            }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
                         <span className="text-gray-700 dark:text-gray-300">:</span>
@@ -320,7 +321,9 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             min="0"
                             max="23"
                             value={values.hour}
-                            onChange={handleHourChange}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                handleValueChange('hour', parseInt(e.target.value) || 0)
+                            }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
                         <span className="text-gray-700 dark:text-gray-300">:</span>
