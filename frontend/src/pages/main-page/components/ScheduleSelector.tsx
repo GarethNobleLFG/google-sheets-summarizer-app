@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { validateAndParseHour } from '../../../utils/inputValidation';
 
 export const ScheduleSelector = ({ formData, setFormData }: {
     formData: {
@@ -83,16 +84,16 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                 return `*/${values.minutes || 15} * * * *`;
             case 'daily':
                 // Every day at specific time: minute hour * * *
-                return `${values.minute || 0} ${values.hour || 9} * * *`;
+                return `${values.minute || 0} ${values.hour ?? 9} * * *`;
             case 'weekday':
                 // Every week on specific day at specific time: minute hour * * weekday
-                return `${values.minute || 0} ${values.hour || 9} * * ${values.weekday || 1}`;
+                return `${values.minute || 0} ${values.hour ?? 9} * * ${values.weekday || 1}`;
             case 'monthly':
                 // Every X day of month at specific time: minute hour day * *
-                return `${values.minute || 0} ${values.hour || 9} ${values.day || 1} * *`;
+                return `${values.minute || 0} ${values.hour ?? 9} ${values.day || 1} * *`;
             case 'yearly':
                 // Every year on specific date and time: minute hour day month *
-                return `${values.minute || 0} ${values.hour || 9} ${values.day || 1} ${values.month || 1} *`;
+                return `${values.minute || 0} ${values.hour ?? 9} ${values.day || 1} ${values.month || 1} *`;
             case 'none':
                 return 'none';
             default:
@@ -135,6 +136,10 @@ export const ScheduleSelector = ({ formData, setFormData }: {
         });
     };
 
+    const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        validateAndParseHour(e.target.value, 9, (value: number) => handleValueChange('hour', value));
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -175,7 +180,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             max="59"
                             value={values.minutes}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                handleValueChange('minutes', parseInt(e.target.value) || 15)
+                                handleValueChange('minutes', isNaN(parseInt(e.target.value)) ? 15 : parseInt(e.target.value))
                             }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
@@ -191,9 +196,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             min="0"
                             max="23"
                             value={values.hour}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                handleValueChange('hour', parseInt(e.target.value) || 0)
-                            }
+                            onChange={handleHourChange}
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
                         <span className="text-gray-700 dark:text-gray-300">:</span>
@@ -203,7 +206,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             max="59"
                             value={values.minute}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                handleValueChange('minute', parseInt(e.target.value) || 0)
+                                handleValueChange('minute', isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value))
                             }
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
@@ -234,9 +237,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             min="0"
                             max="23"
                             value={values.hour}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                handleValueChange('hour', parseInt(e.target.value) || 0)
-                            }
+                            onChange={handleHourChange}
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
                         <span className="text-gray-700 dark:text-gray-300">:</span>
@@ -272,9 +273,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             min="0"
                             max="23"
                             value={values.hour}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                handleValueChange('hour', parseInt(e.target.value) || 0)
-                            }
+                            onChange={handleHourChange}
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
                         <span className="text-gray-700 dark:text-gray-300">:</span>
@@ -321,9 +320,7 @@ export const ScheduleSelector = ({ formData, setFormData }: {
                             min="0"
                             max="23"
                             value={values.hour}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                handleValueChange('hour', parseInt(e.target.value) || 0)
-                            }
+                            onChange={handleHourChange}
                             className="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-center text-gray-900 dark:text-white"
                         />
                         <span className="text-gray-700 dark:text-gray-300">:</span>
