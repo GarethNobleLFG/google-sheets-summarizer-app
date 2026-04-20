@@ -24,7 +24,13 @@ export async function create(userData) {
             sums_used: 0,
             timezone: timezone || 'UTC'
         });
-        return user.dataValues;
+        const returnedValues = {
+            id: user.id,
+            email: user.email,
+            sums_used: user.sums_used,
+            timezone: user.timezone
+        }
+        return returnedValues;
     }
     catch (error) {
         throw new Error(`Failed to create user: ${error.message}`);
@@ -38,7 +44,12 @@ export async function findById(id) {
 
     try {
         const user = await User.findByPk(parseInt(id));
-        return user ? user.dataValues : null;
+        return user ? {
+            id: user.id,
+            email: user.email,
+            sums_used: user.sums_used,
+            timezone: user.timezone
+        } : null;
     }
     catch (error) {
         throw new Error(`Failed to find user: ${error.message}`);
@@ -54,7 +65,12 @@ export async function findByEmail(email) {
         const user = await User.findOne({
             where: { email: email.trim() }
         });
-        return user ? user.dataValues : null;
+        return user ? {
+            id: user.id,
+            email: user.email,
+            sums_used: user.sums_used,
+            timezone: user.timezone
+        } : null;
     }
     catch (error) {
         throw new Error(`Failed to find user by email: ${error.message}`);
@@ -120,7 +136,12 @@ export async function updateById(id, updateData) {
         const updatedUser = await User.findByPk(parseInt(id), {
             attributes: ['id', 'email', 'sums_used', 'timezone']
         });
-        return updatedUser.dataValues;
+        return {
+            id: updatedUser.id,
+            email: updatedUser.email,
+            sums_used: updatedUser.sums_used,
+            timezone: updatedUser.timezone
+        };
     }
     catch (error) {
         throw new Error(`Failed to update user: ${error.message}`);
@@ -140,9 +161,11 @@ export async function deleteById(id) {
             return null;
         }
 
-        const userData = user.dataValues;
         await user.destroy();
-        return userData;
+        return {
+            id: user.id,
+            email: user.email
+        };
     }
     catch (error) {
         throw new Error(`Failed to delete user: ${error.message}`);
@@ -158,7 +181,7 @@ export async function findEmailById(id) {
         const user = await User.findByPk(parseInt(id), {
             attributes: ['email']
         });
-        return user ? user.dataValues.email : null;
+        return user ? user.email : null;
     }
     catch (error) {
         throw new Error(`Failed to find user email: ${error.message}`);
@@ -173,7 +196,12 @@ export async function findAll(limit = 1000, offset = 0) {
             offset: offset,
             attributes: ['id', 'email', 'sums_used', 'timezone']
         });
-        return users.map(user => user.dataValues);
+        return users.map(user => ({
+            id: user.id,
+            email: user.email,
+            sums_used: user.sums_used,
+            timezone: user.timezone
+        }));
     }
     catch (error) {
         throw new Error(`Failed to fetch users: ${error.message}`);
@@ -200,7 +228,12 @@ export async function authenticate(email, password) {
             throw new Error('Invalid credentials');
         }
 
-        return user.dataValues;
+        return {
+            id: user.id,
+            email: user.email,
+            sums_used: user.sums_used,
+            timezone: user.timezone
+        };
     }
     catch (error) {
         if (error.message === 'Invalid credentials') {
@@ -219,7 +252,7 @@ export async function findTimezoneById(id) {
         const user = await User.findByPk(parseInt(id), {
             attributes: ['timezone']
         });
-        return user ? user.dataValues.timezone : 'UTC';
+        return user ? user.timezone : 'UTC';
     }
     catch (error) {
         throw new Error(`Failed to find user timezone: ${error.message}`);

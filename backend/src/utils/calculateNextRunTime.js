@@ -11,7 +11,7 @@ export function calculateNextRunTime(cronExpression, timezone) {
 
     const startOfToday = nowInUserTimezone.startOf('day').toJSDate();
 
-    const job = new Cron(cronExpression, { timezone }); // This will account for DST, so calc will be aware of that hour shift
+    const job = new Cron(cronExpression, { timezone }); // This will account for DST, does proper math for utc time to be a certain time in given timezone
     let nextRun = job.nextRun(startOfToday);
     
     if (!nextRun) return null;
