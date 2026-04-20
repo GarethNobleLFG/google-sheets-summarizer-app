@@ -23,9 +23,5 @@ export function calculateNextRunTime(cronExpression, timezone) {
         nextRunLuxon = DateTime.fromJSDate(nextRun);
     }
 
-    return nextRunLuxon.toISO();
+    return nextRunLuxon.toJSDate();
 }
-
-
-// .toISO() - Creates the string with the correct Eastern offset
-// **** .toISO() is your workaround for Sequelize's automatic UTC conversion. ****

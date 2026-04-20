@@ -65,7 +65,7 @@ export async function pollUsersForScheduledSummaries() {
                                 const nextRun = calculateNextRunTime(sheetData.frequency, user.timezone);
 
                                 await sheetDataRepository.updateById(sheetData.id, {
-                                    created_at:  DateTime.now().toISO(),
+                                    created_at:  DateTime.now().toJSDate(),
                                     next_run_at: nextRun
                                 });
                             }
@@ -222,7 +222,7 @@ export async function triggerUserSummaries(userId) {
                         const nextRun = calculateNextRunTime(sheetData.frequency, user.timezone);
 
                         await sheetDataRepository.updateById(sheetData.id, {
-                            created_at: DateTime.now().toISO(),
+                            created_at: DateTime.now().toJSDate(),
                             next_run_at: nextRun
                         });
                     }

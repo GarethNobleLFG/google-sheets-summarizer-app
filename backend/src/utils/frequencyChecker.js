@@ -5,11 +5,13 @@ export function checkIfShouldExecute(sheetData) {
         return false;
     }
 
-    let nextRunTime = DateTime.fromISO(sheetData.next_run_at); 
+    let nextRunTime = DateTime.fromJSDate(sheetData.next_run_at);
 
-    if (!nextRunTime.isValid) return false;
+    if (!nextRunTime.isValid) {
+        return false;
+    }
 
-    const now = DateTime.now()
+    const now = DateTime.now();
 
     return now >= nextRunTime;
 }
